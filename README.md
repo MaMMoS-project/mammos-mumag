@@ -18,5 +18,5 @@ Please refer to `mumag/pymag/t` repository for an example of these configuration
 
 To run the docker image use:
 ```bash
-docker run -v $(pwd):/io hystmag <system-name>
+docker run --volume $(pwd):/io --user="$(id -u):$(id -g)" hystmag <system-name>
 ```
