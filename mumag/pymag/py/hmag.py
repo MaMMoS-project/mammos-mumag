@@ -4,12 +4,15 @@ from time import time
 import esys.escript as e
 from esys.escript.linearPDEs import LinearSinglePDE, SolverOptions
 from esys.weipa import saveVTK
+from esys.escript.pdetools import MaskFromTag
+
+import numpy as np
 
 from materials import Materials
 from magnetization import getM
 from matrix import gx, gy, gz
 from tools import get_meas, dot, read_Js
-  
+
 def findBoundary(x):
   xe = []
   for i in range(3):
@@ -19,16 +22,55 @@ def findBoundary(x):
                + e.whereZero(x[2]+xe[2]) + e.whereZero(x[2]-xe[2])
   return boundaryMask
 
+def check_domain(x):
+  Rinf = e.sup(e.length(x))
+  airbox = abs(np.sum(e.convertToNumpy(e.whereZero(e.length(x)-Rinf)))-8) < 1e-8
+  return airbox, Rinf
+  
+# IEEE TRANSACTIONS ON MAGNETICS, VOL. 26, NO. 5, SEPTEMBER 1990   
+def get_T3D(domain,R,Rinf,tags):
+  k = e.Tensor(0,e.Function(domain))
+  xx = e.Function(domain).getX()    
+  x0 = xx[0]
+  x1 = xx[1]
+  x2 = xx[2]
+  x  = e.length(xx)
+  a2 = R*(Rinf-R)
+  ax = Rinf/x
+  a2x2 = a2/(x*x)
+  k[0,0] =  a2x2*(1+(ax*(2-ax)/(ax-1)**2)*(1-(x0/x)**2))
+  k[1,1] =  a2x2*(1+(ax*(2-ax)/(ax-1)**2)*(1-(x1/x)**2))
+  k[2,2] =  a2x2*(1+(ax*(2-ax)/(ax-1)**2)*(1-(x2/x)**2))
+  k[0,1] = -a2x2*((ax*(2-ax)/(ax-1)**2)*(x0/x)*(x1/x))
+  k[0,2] = -a2x2*((ax*(2-ax)/(ax-1)**2)*(x0/x)*(x2/x))
+  k[1,2] = -a2x2*((ax*(2-ax)/(ax-1)**2)*(x1/x)*(x2/x))
+  k[1,0] = k[0,1]
+  k[2,0] = k[0,2]
+  k[2,1] = k[1,2]
+  for tag in tags[:-1]:
+    k.setTaggedValue(tag,e.kronecker(domain))
+  return k  
+
 class Hmag:
-  def __init__(self, Js, volume,tol=1e-8,verbose=0):
+  def __init__(self, Js, volume, tol=1e-8,verbose=0):
     self.cum_time = 0.
     self.rhs_time = 0.
     self.u_time = 0.
     self.grad_time = 0.
     domain = Js.getDomain() 
+    
     x = domain.getX()
-    boundaryMask = findBoundary(x)
-    k = e.kronecker(domain) 
+    Rinf = e.sup(e.length(x))
+    boundaryMask =  e.whereZero(e.length(x)-Rinf)
+    airbox = abs(np.sum(e.convertToNumpy(boundaryMask))-8) < 1e-8
+    if airbox:
+      boundaryMask = findBoundary(x)
+      k = e.kronecker(domain)
+    else:
+      tags = e.Function(domain).getListOfTags()
+      R = e.sup(e.length(x)*MaskFromTag(domain,tags[-2]))      
+      k = get_T3D(domain,R,Rinf,tags)
+    
     self._poisson = LinearSinglePDE(domain,isComplex=False)
     self._poisson.setSymmetryOn()
     self._poisson.setValue(A=k,q=boundaryMask,r=0.0)
@@ -112,7 +154,7 @@ if __name__ == '__main__':
     
   # Hmag solver  
   materials = Materials(name)
-  hmag = Hmag(materials.Js,materials.volume,1)
+  hmag = Hmag(materials.Js, materials.volume, 1e-12, 1)
   
   # scalar potential, field, and energy
   m = getM(e.wherePositive(materials.meas),[0.,0.,1.])

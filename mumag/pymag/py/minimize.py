@@ -124,10 +124,10 @@ class MumagFunc(CostFunction):
 class Minimize:
   def __init__(self,external,exani,hmag,min_params):
     self.cum_time = 0.
-    trunction, m_tol, grad_tol, verbose = min_params
+    truncation, m_tol, grad_tol, verbose = min_params
     self.F = MumagFunc(external,exani,hmag)    
     self._solver = LBFGSM(self.F,logger=get_logger('min',verbose))
-    self._solver.setOptions(truncation=trunction,m_tol=m_tol,grad_tol=grad_tol,scaleSearchDirection=False)
+    self._solver.setOptions(truncation=truncation,m_tol=m_tol,grad_tol=grad_tol,scaleSearchDirection=False)
     
   def solve(self,m):
     T0 = time()

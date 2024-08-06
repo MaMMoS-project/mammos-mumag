@@ -14,6 +14,76 @@ To run the simulation, one needs to have following configuration files in the wo
 2. `<system-name>.krn` which defines material parameters of each grain in the magnetic material.
 3. `<system-name>.p2` which defines the simulation parameters, such as, external field range, step size of hysteresis, size of the geometry, initial magnetisation, etc.
 
+# Example
+
+## Create a finite element mesh for micromagnetic simulations
+
+We use Salome https://www.salome-platform.org/ for geometry and mesh generation.
+Please see `mumag/meshing` for an example.
+
+
+
+To create a mesh file:
+```bash
+cd mumag/meshing
+salome_install_path/SALOME-9.12.0/salome -t cube.py
+../py/tofly3 -e 1,2 cube.unv cube.fly
+```
+
+In order to define space dependent material properties, groups are created in the Salome geometry and the Salome mesh. Group names are 1, 2, 3, .....
+These numbers refer to the line numbers of the *.krn file.
+
+## Show the materials
+
+The file cube.krn contains one line per mesh region.
+Each line contains
+
+theta phi K1 0 Js A
+
+where
+
+|    |    |
+| -------- | ----------- |
+| theta | is the angle of the magnetocrystalline anisotropy axis from the z-direction in radians |
+| phi | is the angle of the magnetocrystalline anisotropy axis from the x-direction in radians |
+| K1 | is the uniaxial anisotropy constant in J/m3 | 
+| 0  | is a placeholder for K2 (currently not implemented) |  
+| Js | is the magnetic polarization in T | 
+| A  | is the exchange constant in J/m  |
+
+The last two lines denote a sphere enclosing the magnetic region and a spherical shell. 
+
+To create a vtu file that shows the materials use   
+```bash
+run-escript ../py/materials.py cube
+```
+
+## Open boundary problem
+
+The magnetostatic potential is set to zero at infinity. To treat this boundary condition numerically, we can enclose the magnetic materials in an airbox or apply the spherical shell transformation.
+
+### Airbox
+
+The air box has to be around 5 times larger than the extension of the magnet. See
+Chen, Qiushi, and Adalbert Konrad. "A review of finite element open boundary techniques for static and quasi-static electromagnetic field problems." IEEE Transactions on Magnetics 33.1 (1997): 663-676.
+
+### Spherical shell transformation
+
+Alternatively we can apply a transformation. A shell sourrounding the magnet is transformed to fill the space between the magnet and infinity. The most straight forward geometry is a spherical shell. See
+Imhoff, J. F., et al. "An original solution for unbounded electromagnetic 2D-and 3D-problems throughout the finite element method." IEEE Transactions on Magnetics 26.5 (1990): 1659-1661.  
+
+The two last groups defined in Salome are a sphere sourrounding the magnetic material and the spherical shell.
+
+### Magnetostatic energy
+
+To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
+
+```bash
+run-escript ../py/hmag.py cube
+```
+
+
+
 Please refer to `mumag/pymag/t` repository for an example of these configuration files.
 
 To run the docker image use:
