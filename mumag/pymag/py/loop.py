@@ -18,7 +18,7 @@ class Loop:
     m, h, start, final, step, self._mstep, self._mfinal, min_params = params    
     self._external = External(start, final, step, h, materials.meas, materials.volume)
     exani = ExAni(materials.A, materials.K, materials.u, materials.volume)
-    hmag_on, truncation, tol_u, tol_mxh, verbose = min_params
+    hmag_on, truncation, tol_u, tol_mxh, precond_iter, verbose = min_params
     if hmag_on==1:  
       hmag = Hmag(materials.Js, materials.volume, tol_u, verbose)
     else:

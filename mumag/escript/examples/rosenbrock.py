@@ -75,7 +75,7 @@ class RosenFunc(CostFunction):
         # here the Hessian is updated when at the first iteration step and when
         # the BFGS is restarted.
         if initializeHessian:
-            self.invH = np.linalg.inv(rosen_hess(m))
+          self.invH = np.linalg.inv(rosen_hess(m))
         return self.invH.dot(r)
 
     def getNorm(self, m):

@@ -1,21 +1,107 @@
 import esys.escript as e
 from esys.escript.minimizer import CostFunction
-from lbfgs import LBFGSM
+#from lbfgsm import LBFGSM
+from lbfgs import LBFGS
 
 from tools import dot, Linf_norm, L2_norm, get_logger
 
 import logging
 from time import time
 
+import numpy as np
+
+def inner3(a,b):
+  c = e.Vector(0,e.Solution(a.getDomain()))
+  ab = e.inner(a,b)
+  c[0] = ab
+  c[1] = ab
+  c[2] = ab
+  return c
+
+def projection(m,h):
+  mh = inner3(m,h)
+  return h-(mh*m)
+
+'''
+def cg(self,m,gNoProj, x,b,k, itmax):
+    normB = self._fun.norm(b)
+    tau   = self.computeTau(normB,k)
+    r     = b-self.hessianVector(m,gNoProj,x)
+    p     = r.copy()                                                  
+    rr0   = self._fun.dot(r,r)
+    for j in range(itmax):           
+      Ap = self.hessianVector(m,gNoProj,p)
+      rho = self._fun.dot(Ap,p)
+      if rho < 0:
+        return x
+      alpha = rr0/rho
+      x = x + alpha*p
+      r = r - alpha*Ap
+      rr = self._fun.dot(r,r)
+      if isinstance(r,e.Data):
+        d = math.sqrt(rr)/normB
+      else:
+        d = math.sqrt(rr.value)/normB
+      if d < tau:
+        break
+      beta = rr/rr0
+      p = execute(r + beta*p)
+      rr0 = rr
+    return x
+'''
+
 class MumagFunc(CostFunction):
-    def __init__(self, external,exani,hmag):
+    def __init__(self, external,exani,hmag,cgiter=5):
         super().__init__()
         self._external = external
         self._exani = exani
         self._hmag = hmag
+        self.cgiter = cgiter
         self.dot_time = 0.
         self.norm_time = 0.
         self.energies_time = 0.
+
+    def hessianVector(self,m,gloc,p):
+        hp   = self._exani.solve_g(p) # self._fun.gLocalNoProj(p)
+        php  = projection(m,hp)
+        ph   = inner3(p,gloc)
+        hm   = inner3(m,gloc)
+        Hp   = php - (hm*p) # - ph*m  # omitting this term makes the hessian symmetric 
+        return Hp
+
+    def simplecg(self, m, gloc, x, b):
+        eps2  = np.sqrt(np.finfo(float).eps)
+        normB = self.getL2NormAndCount(b)
+        tau = min(1.0, normB)
+       
+        r   = b-self.hessianVector(m,gloc,x)
+        p   = r.copy()
+        rr0 = self.getDualProductAndCount(r,r)
+
+        d = np.sqrt(rr0) / normB
+        if d < tau:
+          return x
+
+        for j in range(self.cgiter):
+          Ap = self.hessianVector(m, gloc, p)
+          rho = self.getDualProductAndCount(Ap, p)
+          if rho < eps2 * self.getDualProductAndCount(p, p):  # Luksan, Vlcek, technical report 1177
+             # print(j,'exit Luksan')
+             return x
+          alpha = rr0 / rho
+          x += alpha * p
+          r -= alpha * Ap
+          rr = self.getDualProductAndCount(r, r)
+          d = np.sqrt(rr) / normB
+          if d < tau:
+            # print(j,'exit tau')
+            return x
+          beta = rr / rr0
+          p = r + beta * p
+          rr0 = rr
+
+        return x
+
 
     def getDualProduct(self,  m, g):
         T0 = time()
@@ -64,25 +150,30 @@ class MumagFunc(CostFunction):
         n = L2_norm(m)
         self.norm_time += time()-T0
         return n
-
+        
+    def getL2NormAndCount(self, m):
+        self.L2Norm_calls += 1
+        return self.getL2Norm(m)
+        
     def grad2mxh(self, g):
         T0 = time()
         n = Linf_norm(g/(e.whereZero(self._external._meas)+self._external._meas))
         self.norm_time += time()-T0
         return n
         
-    def getL2NormAndCount(self, m):
+    def getInverseHessianApproximation(self, r, m, *args, initializeHessian=False):
         """
-        returns the norm of ``m``.
-
-        When calling this method the calling statistics is updated.
-
-        :type m: m-type
-        :rtype: ``float``
+        returns a vectore of an approximation of the Hessian inverse at m for vector r.
+        Hx = r
         """
-        self.L2Norm_calls += 1
-        return self.getL2Norm(m)
-        
+        if self.cgiter > 0:
+          m     = args[0]
+          gloc  = args[2]
+          x = r.copy()
+          return self.simplecg(m, gloc, x, r)
+        else:
+          return r
+          
     def resetStatistics(self):
         """
         resets all counters
@@ -124,10 +215,12 @@ class MumagFunc(CostFunction):
 class Minimize:
   def __init__(self,external,exani,hmag,min_params):
     self.cum_time = 0.
-    truncation, m_tol, grad_tol, verbose = min_params
-    self.F = MumagFunc(external,exani,hmag)    
-    self._solver = LBFGSM(self.F,logger=get_logger('min',verbose))
-    self._solver.setOptions(truncation=truncation,m_tol=m_tol,grad_tol=grad_tol,scaleSearchDirection=False)
+    truncation, m_tol, grad_tol, precond_iter, verbose = min_params
+    self.F = MumagFunc(external,exani,hmag,cgiter=precond_iter)
+    
+    logger = get_logger('min',verbose)   
+    self._solver = LBFGS(self.F,logger=logger)
+    self._solver.setOptions(truncation=truncation,m_tol=m_tol,grad_tol=grad_tol,scaleSearchDirection=False,restart=50)
     
   def solve(self,m):
     T0 = time()

@@ -67,12 +67,16 @@ The magnetostatic potential is set to zero at infinity. To treat this boundary c
 The air box has to be around 5 times larger than the extension of the magnet. See
 Chen, Qiushi, and Adalbert Konrad. "A review of finite element open boundary techniques for static and quasi-static electromagnetic field problems." IEEE Transactions on Magnetics 33.1 (1997): 663-676.
 
+The example in pymag/t uses an airbox.
+
 ### Spherical shell transformation
 
 Alternatively we can apply a transformation. A shell sourrounding the magnet is transformed to fill the space between the magnet and infinity. The most straight forward geometry is a spherical shell. See
 Imhoff, J. F., et al. "An original solution for unbounded electromagnetic 2D-and 3D-problems throughout the finite element method." IEEE Transactions on Magnetics 26.5 (1990): 1659-1661.  
 
 The two last groups defined in Salome are a sphere sourrounding the magnetic material and the spherical shell.
+
+The example in pymag/meshing uses the spherical shell transformation.
 
 ### Magnetostatic energy
 
@@ -82,11 +86,23 @@ To test the magnetostatic field computation you can calculate the magnetostatic 
 run-escript ../py/hmag.py cube
 ```
 
+### Solver parameters
+
+The minimizer section in the *.p2 file gives the paramters for the LBFGS algorithm. The algorithm uses the preconditioner described in
+Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micromagnetic energy minimization." Computer Physics Communications 235 (2019): 179-186.
+
+| parameter |  usage  | default value |
+| --------- | ------- | ------------- |
+| tol_fun | set the tolerance of the total energy | 1e-10 |
+| tol_hmag_factor | tol_fun\*tol_hmag_factor is the tolerance for the magnetostatic scalar potential | 1 |
+| truncation | number of history vectors stored | 5 | 
+| precond_iter | number of conjugate gradient iterations for inverse Hessian approximation | 10 |  
+| verbose  | verbosity level of output  | 1 |
 
 
-Please refer to `mumag/pymag/t` repository for an example of these configuration files.
 
-To run the docker image use:
+###  To run the docker image use:
+
 ```bash
 docker run --volume $(pwd):/io --user="$(id -u):$(id -g)" hystmag <system-name>
 ```
