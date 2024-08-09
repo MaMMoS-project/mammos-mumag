@@ -67,6 +67,7 @@ def read_params(name):
                                      'tol_fun': 1e-10,
                                      'tol_hmag_factor': 1.0,
                                      'precond_iter': 10,
+                                     'iter_max': 1000,
                                      })
   config.read(name+'.p2')
   intial_state = config['initial state']
@@ -81,11 +82,12 @@ def read_params(name):
   tol_fun = float(minimizer['tol_fun'])
   tol_hmag_factor = float(minimizer['tol_hmag_factor'])
   precond_iter = int(minimizer['precond_iter'])
+  iter_max = int(minimizer['iter_max'])  
   tol_u   = tol_fun*tol_hmag_factor
   tol_mxh = tol_fun**0.3333333333333333333333333
   verbose = int(minimizer['verbose'])
   print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}   mxh {tol_mxh}")
-  return (m, h, hstart, hfinal, hstep, mstep, mfinal, (hmag_on, truncation, tol_u, tol_mxh, precond_iter, verbose))
+  return (m, h, hstart, hfinal, hstep, mstep, mfinal, (hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose))
 
 def get_logger(name,verbose):
   mylogger = logging.getLogger('min')

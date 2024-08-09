@@ -1,7 +1,7 @@
 import sys
 
 from esys.escript import normalize
-from esys.escript.minimizer import AbstractMinimizer, EvalutedPhi, CostFunction1DEvaluationFactory, LineSearchTerminationError, MinimizerIterationIncurableBreakDown
+from esys.escript.minimizer import AbstractMinimizer, EvalutedPhi, CostFunction1DEvaluationFactory, LineSearchTerminationError, MinimizerIterationIncurableBreakDown# MinimizerMaxIterReached
 
 class LBFGS(AbstractMinimizer):
     def __init__(self,F=None, m_tol=1e-4, grad_tol=1e-8, iterMax=300, logger=None):
