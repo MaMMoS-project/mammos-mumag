@@ -38,16 +38,16 @@ class Loop:
       i = 0
       mh_old = 9.99e9
       while self._external.next():
-        m  = self._minimize.solve(m)
+        m, e  = self._minimize.solve(m)
         mh = self.compute_mh(m)
-        print("-dem->  ",self._external.value,mh,flush=True)
+        print("-dem->  ",self._external.value,mh,e,flush=True)
         if abs(mh - mh_old) >= self._mstep:
           mh_old = mh
           i = i+1
           saveVTK(name+f'.{i:04}',tags=self._materials.get_tags(),m=m)
-          f.write(f'{i:04} {self._external.value} {mh}\n')
+          f.write(f'{i:04} {self._external.value} {mh} {e}\n')
         else:
-          f.write(f'{0:04} {self._external.value} {mh}\n')
+          f.write(f'{0:04} {self._external.value} {mh} {e}\n')
         if mh < self._mfinal:
           break
 

@@ -28,11 +28,12 @@ class LBFGS(AbstractMinimizer):
         alpha = self._initialAlpha
         H_scale = None
 
-        self._result = m
         args_m = self.getCostFunction().getArgumentsAndCount(m)
         grad_Fm = self.getCostFunction().getGradientAndCount(m, *args_m)
         norm_m = self.getCostFunction().getNormAndCount(m)
         Fm = self.getCostFunction().getValueAndCount(m, *args_m)
+        self._result = (m,Fm)
+        
         Fm_old = Fm
         self.logger.info("Initialization completed.")
 
@@ -86,7 +87,7 @@ class LBFGS(AbstractMinimizer):
                 norm_m_new = self.getCostFunction().getNormAndCount(m_new)
                 norm_dm = self.getCostFunction().getNormAndCount(delta_m)
 
-                self._result = m_new
+                self._result = (m_new,Fm_new)
                 converged = False
 
                 '''

@@ -1,8 +1,20 @@
 import esys.escript as e
 import math
 
+def getVortex(mask):
+  domain = mask.getDomain()
+  m = e.Vector(0,e.Solution(domain))
+  x = domain.getX()
+  r = e.sqrt(x[1]*x[1]+x[2]*x[2])
+  m[0] = e.whereNegative(r-2.0)
+  m[2] = e.whereNonNegative(r-2.0)*(e.whereNegative(x[1])-e.whereNonNegative(x[1]))
+  return m 
+
 def getM(mask,v):
-  m = mask*e.Vector(v,e.Solution(mask.getDomain()))
+  if sum(v)==0.0:
+    m = mask*getVortex(mask)
+  else:    
+    m = mask*e.Vector(v,e.Solution(mask.getDomain()))
   return e.normalize(m)
 
 def xM(mask,scale):

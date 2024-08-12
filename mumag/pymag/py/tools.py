@@ -11,7 +11,10 @@ def normalize(v):
   b = v[1]
   c = v[2]
   l = math.sqrt(a*a+b*b+c*c)
-  return [a/l,b/l,c/l]
+  if l==0.0:
+    return [a,b,c]
+  else:
+    return [a/l,b/l,c/l]
 
 def dot(a,b):
   np_a = e.convertToNumpy(a)
