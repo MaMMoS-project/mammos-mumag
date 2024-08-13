@@ -19,15 +19,13 @@ To run the simulation, one needs to have following configuration files in the wo
 ## Create a finite element mesh for micromagnetic simulations
 
 We use Salome https://www.salome-platform.org/ for geometry and mesh generation.
-Please see `mumag/meshing` for an example.
+Please see `mumag/examples/standard_problem_3` for an example.
 
-
-
-To create a mesh file:
+To create the mesh file of a cube with an edge length of 40 nm and a mesh size of 2 nm
 ```bash
-cd mumag/meshing
-salome_install_path/SALOME-9.12.0/salome -t cube.py
-../py/tofly3 -e 1,2 cube.unv cube.fly
+cd mumag/examples/standard_problem_3
+salome_install_path/SALOME-9.12.0/salome -t cube.py args:40,2
+../../py/tofly3 -e 1,2 cube.unv cube.fly
 ```
 
 In order to define space dependent material properties, groups are created in the Salome geometry and the Salome mesh. Group names are 1, 2, 3, .....
@@ -55,8 +53,19 @@ The last two lines denote a sphere enclosing the magnetic region and a spherical
 
 To create a vtu file that shows the materials use   
 ```bash
-run-escript ../py/materials.py cube
+run-escript ../../py/materials.py cube
 ```
+
+## Run the standard problem 3
+
+for details see https://www.ctcms.nist.gov/~rdm/spec3.html
+
+```bash
+cd mumag/examples/standard_problem_3
+python mumag3.py
+```
+
+This creates a file results/energies.png which give the energy of the flower and the vortex state as function of cube size.
 
 ## Open boundary problem
 
@@ -83,7 +92,7 @@ The example in pymag/meshing uses the spherical shell transformation.
 To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
 
 ```bash
-run-escript ../py/hmag.py cube
+run-escript ../../py/hmag.py cube
 ```
 
 ### Solver parameters

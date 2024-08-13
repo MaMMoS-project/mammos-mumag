@@ -24,7 +24,7 @@ def write_krn(name,K1,Js,A):
     f.write( '0.0 0.0 0.0  0.0 0.0  0.0\n')    
     f.write( '0.0 0.0 0.0  0.0 0.0  0.0\n')    
 
-def write_p2(name,mz=1.0):
+def write_p2(name,state):
   with open(name+'.p2', 'w') as f:
     s = f'''[mesh]
 size = 1.e-9
@@ -33,7 +33,8 @@ scale = 0.0
 [initial state]
 mx = 0.
 my = 0.
-mz = {mz}
+mz = 1.
+state = {state}
 
 [field]
 hstart = 0.0
@@ -44,7 +45,7 @@ hy = 0.
 hz = 1.
 
 [minimizer]
-tol_fun = 1e-12
+tol_fun = 1e-10
 tol_hmag_factor = 1
 truncation = 5
 precond_iter = 4
@@ -63,12 +64,13 @@ def convert_energies(e):
   
 Path("results").mkdir(exist_ok=True)  
  
-lengths = np.linspace(8.4,8.7,5) 
+lengths = np.linspace(8.45,8.55,3) 
 energies_flower = []
+energies_twisted = []
 energies_vortex = []
 for s in lengths:
     
-  cmd = f'{salome} -t -w1 cube.py args:{s*lex*1e9:.2f},{lex*1e9/4:.2f}'
+  cmd = f'{salome} -t -w1 cube.py args:{s*lex*1e9:.2f},{0.5*lex*1e9:.2f}'
   print(cmd)
   os.system(cmd)
   
@@ -78,8 +80,8 @@ for s in lengths:
 
   write_krn('cube',Ku,Js,A)
   
-  print("FLOWER")
-  write_p2('cube')
+  print(f"\nflower : {s:.2f} lex\n")
+  write_p2('cube','flower')
   cmd = f'{escript} -t 2 ../../py/loop.py cube'
   print(cmd)
   os.system(cmd)
@@ -87,8 +89,17 @@ for s in lengths:
   os.rename('cube.dat',Path('results')/f'cube_flower_{s:.2f}.dat')
   os.rename('cube.0001.vtu',Path('results')/f'cube.0001_flower_{s:.2f}.vtu')
 
-  print("VORTEX")
-  write_p2('cube',mz=0.0)
+  #print(f"\ntwisted flower : {s:.2f} lex\n")
+  #write_p2('cube','twisted')
+  #cmd = f'{escript} -t 2 ../../py/loop.py cube'
+  #print(cmd)
+  #os.system(cmd)
+  #energies_twisted.append( read_last_float('cube.dat') )
+  #os.rename('cube.dat',Path('results')/f'cube_flower_{s:.2f}.dat')
+  #os.rename('cube.0001.vtu',Path('results')/f'cube.0001_flower_{s:.2f}.vtu')
+
+  print(f"\nvortex : {s:.2f} lex\n")
+  write_p2('cube','vortex')
   cmd = f'{escript} -t 2 ../../py/loop.py cube'
   print(cmd)
   os.system(cmd)
@@ -100,12 +111,15 @@ for s in lengths:
 # plot results
   
 energies_flower = np.array(energies_flower)
+#energies_twisted = np.array(energies_twisted)
 energies_vortex = np.array(energies_vortex)
 energies_flower = convert_energies(energies_flower)
+#energies_twisted = convert_energies(energies_twisted)
 energies_vortex = convert_energies(energies_vortex)
 
-plt.plot(lengths,energies_flower,marker='o',label='flower',c='b')
-plt.plot(lengths,energies_vortex,marker='s',label='vortex',c='g')
+plt.plot(lengths,energies_flower,marker='o',label='flower')
+#plt.plot(lengths,energies_twisted,marker='v',label='twisted')
+plt.plot(lengths,energies_vortex,marker='s',label='vortex')
 plt.xlabel(r'size (l$_\mathrm{ex}$)')
 plt.ylabel(r'energy density ($\mu_0 M_\mathrm{s}/2$)')
 plt.legend()
@@ -117,4 +131,5 @@ plt.savefig(Path('results')/'energies.png')
 os.remove('cube.unv')
 os.remove('cube.fly')
 os.remove('cube.krn')
+os.remove('cube.0000.vtu')
 os.remove('cube.p2')

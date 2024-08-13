@@ -63,6 +63,7 @@ def readAnisotropyEnergy(name,m):
   
 def read_params(name):
   config = configparser.ConfigParser({
+                                     'state': 'mxyz',
                                      'mstep': 0.01,
                                      'mfinal': -0.8,
                                      'hmag_on': 1,
@@ -77,6 +78,7 @@ def read_params(name):
   field = config['field']
   minimizer = config['minimizer']
   m = normalize([float(intial_state['mx']), float(intial_state['my']), float(intial_state['mz'])])
+  state = intial_state['state']
   h = normalize([float(       field['hx']),        float(field['hy']),        float(field['hz'])])  
   hstart, hfinal, hstep = float(field['hstart']), float(field['hfinal']), float(field['hstep'])
   mstep, mfinal = float(field['mstep']), float(field['mfinal'])
@@ -90,7 +92,7 @@ def read_params(name):
   tol_mxh = tol_fun**0.3333333333333333333333333
   verbose = int(minimizer['verbose'])
   print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}   mxh {tol_mxh}")
-  return (m, h, hstart, hfinal, hstep, mstep, mfinal, (hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose))
+  return (m, state, h, hstart, hfinal, hstep, mstep, mfinal, (hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose))
 
 def get_logger(name,verbose):
   mylogger = logging.getLogger('min')

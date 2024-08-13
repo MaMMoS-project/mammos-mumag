@@ -33,8 +33,8 @@ else:
 
 # parameters for spherical shell transformation: 
 # Imhoff et al., IEEE TRANSACTIONS ON MAGNETICS, VOL. 26, NO. 5, SEPTEMBER 1990, 1659 
-R    = (box_size/2.)*1.8333333  # radius of sphere enclosing cube
-Rinf = R*1.545454545            # out radius of spherical shell
+R    = (box_size/2.)*1.8  # radius of sphere enclosing cube
+Rinf = R*1.8              # out radius of spherical shell
 
 ###
 ### GEOM component

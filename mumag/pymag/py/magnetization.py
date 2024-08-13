@@ -1,19 +1,54 @@
 import esys.escript as e
+from esys.weipa import saveVTK
 import math
+import sys
+
+from materials import Materials
+from tools import read_params
 
 def getVortex(mask):
   domain = mask.getDomain()
   m = e.Vector(0,e.Solution(domain))
   x = domain.getX()
   r = e.sqrt(x[1]*x[1]+x[2]*x[2])
-  m[0] = e.whereNegative(r-2.0)
-  m[2] = e.whereNonNegative(r-2.0)*(e.whereNegative(x[1])-e.whereNonNegative(x[1]))
+  rc = 0.14*e.sup(r)
+  m[0] = e.exp(-2*(r/rc))
+  m[1] = -(x[2]/r)*e.sqrt(1-e.exp(-4*(r*r)/(rc*rc)))
+  m[2] = (x[1]/r)*e.sqrt(1-e.exp(-4*(r*r)/(rc*rc)))
   return m 
 
-def getM(mask,v):
-  if sum(v)==0.0:
+def getFlower(mask):
+  domain = mask.getDomain()
+  m = e.Vector(0,e.Solution(domain))
+  x = domain.getX()
+  s = e.sup(x)
+  a = 10
+  m[0] = (x[0]*x[2])/(a*s)
+  m[1] = (x[1]*x[2])/(a*s) 
+  m[2] = 1.0
+  return m 
+
+def getTwisted(mask):
+  domain = mask.getDomain()
+  m = e.Vector(0,e.Solution(domain))
+  x = domain.getX()
+  r = e.sqrt(x[1]*x[1]+x[0]*x[0])
+  s = e.sup(x)
+  a = 10
+  b = 4
+  m[0] = (x[0]*x[2])/(a*s) + 4*(e.wherePositive(x[2])*(-x[1]/r)*(x[2]/s) + e.whereNegative(x[2])*(x[1]/r)*(-x[2]/s))
+  m[1] = (x[1]*x[2])/(a*s) + 4*(e.wherePositive(x[2])*(x[0]/r)*(x[2]/s) + e.whereNegative(x[2])*(-x[0]/r)*(-x[2]/s))
+  m[2] = 1.0
+  return m 
+
+def getM(mask,v,state=None):
+  if state=='vortex':
     m = mask*getVortex(mask)
-  else:    
+  elif state=='flower':   
+    m = mask*getFlower(mask)
+  elif state=='twisted':   
+    m = mask*getTwisted(mask)
+  else:
     m = mask*e.Vector(v,e.Solution(mask.getDomain()))
   return e.normalize(m)
 
@@ -42,3 +77,15 @@ exchange energy:
   my,i my,i = k*k*sin2 + k*k*sin2 = 2 k*k *sin2
   eex = 2 A k^2
 '''
+
+if __name__ == '__main__':
+  try:
+    name = sys.argv[1]        
+  except IndexError:
+    sys.exit("usage run-escript magnetization.py modelname")
+    
+  params = read_params(name)    
+  materials = Materials(name)
+  m = getM(e.wherePositive(materials.meas),params[0],params[1])  
+  i = 0
+  saveVTK(name+f'.{i:04}',tags=materials.get_tags(),m=m)

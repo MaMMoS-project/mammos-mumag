@@ -15,7 +15,7 @@ class Loop:
   
   def __init__(self,params,materials):
     
-    m, h, start, final, step, self._mstep, self._mfinal, min_params = params    
+    m, state, h, start, final, step, self._mstep, self._mfinal, min_params = params    
     self._external = External(start, final, step, h, materials.meas, materials.volume)
     exani = ExAni(materials.A, materials.K, materials.u, materials.volume)
     hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose = min_params
@@ -65,7 +65,9 @@ if __name__ == '__main__':
 
   params = read_params(name)    
   materials = Materials(name)
-  m = getM(e.wherePositive(materials.meas),params[0])
+  m = getM(e.wherePositive(materials.meas),params[0],params[1])
+  i = 0
+  saveVTK(name+f'.{i:04}',tags=materials.get_tags(),m=m)
   
   loop = Loop(params,materials)
   loop.solve(m,name)
