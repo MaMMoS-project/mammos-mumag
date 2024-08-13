@@ -124,6 +124,7 @@ plt.xlabel(r'size (l$_\mathrm{ex}$)')
 plt.ylabel(r'energy density ($\mu_0 M_\mathrm{s}/2$)')
 plt.legend()
 plt.tight_layout()
+# plt.show()
 plt.savefig(Path('results')/'energies.png')
 
 # clean directory

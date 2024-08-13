@@ -65,7 +65,7 @@ cd mumag/examples/standard_problem_3
 python mumag3.py
 ```
 
-This creates a file results/energies.png which give the energy of the flower and the vortex state as function of cube size.
+This creates a file results/energies.png which give the energy of the flower and the vortex state as function of cube size. The critical lenght is 8.51 lex is close to that obtained by Hertel and Kronmüller https://www.ctcms.nist.gov/~rdm/results3.html#hertel .
 
 ## Open boundary problem
 
