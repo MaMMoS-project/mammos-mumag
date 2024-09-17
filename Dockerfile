@@ -20,14 +20,17 @@ COPY ./patches/dependencies.py ./site_scons/
 COPY ./patches/SConstruct ./
 COPY ./patches/hp_options.py scons/
 RUN conda install -y -n escript -c conda-forge cmake
-RUN conda run --no-capture-output -n escript scons -j8 options_file=scons/hp_options.py
+ARG BUILD_THREADS="8"
+RUN conda run --no-capture-output -n escript scons -j$BUILD_THREADS options_file=scons/hp_options.py
 
 # Create the final reduced image
 FROM base AS final
+ARG RUN_THREADS="8"
+ENV RUN_THREADS_ENV=$RUN_THREADS
 COPY --from=build /escript/lib/* /opt/conda/envs/escript/lib/
 COPY --from=build /escript/escript_trilinos/lib/* /opt/conda/envs/escript/lib/
 COPY --from=build /escript/bin/* /opt/conda/envs/escript/bin/
 COPY mumag/pymag/py /hystmag
 COPY --from=build /escript/esys /hystmag/esys
 WORKDIR /io
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n=escript", "run-escript", "-t 6", "/hystmag/loop.py"]
+ENTRYPOINT conda run --no-capture-output -n=escript run-escript -t $RUN_THREADS_ENV /hystmag/loop.py "$0" "$@"
