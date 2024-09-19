@@ -4,9 +4,11 @@ Repository contains a DockerFile to create a docker image for `hystmag`. `hystma
 # Build the docker image
 To build the image, clone and change directory (`cd`) to the repository. Once in the repository, run:
 ```bash
-docker build -t hystmag .
+docker build -t hystmag --build-arg BUILD_THREADS=20 --build-arg RUN_THREADS=1 .
 ```
-This will build a `hystmag:latest` docker image.
+This will build a `hystmag:latest` docker image. The argument `BUILD_THREADS` defines the number of threads used by `scons` to build `escript`, whereas the argument `RUN_THREADS` defines the number threads used by `escript` to run the simulation.
+
+>**_NOTE:_** Once the number of `escript` run threads are fixed at the compile time, they cannot be changed later.
 
 # Run the docker image
 To run the simulation, one needs to have following configuration files in the working directory:
