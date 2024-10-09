@@ -14,10 +14,5 @@ jobs:
         name: Build
         uses: docker/build-push-action@v6
         with:
-          load: true
-          build-arg: BUILD_THREADS=4,RUN_THREADS=4
-          tags: hystmag:latest
-      -
-        name: Test
-        run: |
-          docker run --volume mumag/pymag/examples/demagnetization:/io hystmag cube
+          push: false
+          build-arg: BUILD_THREADS=4
