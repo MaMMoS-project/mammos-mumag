@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-build:
-    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/test-build')
+    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/build')
     runs-on: ubuntu-latest
     steps:
       -
