@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Create a base image
-FROM continuumio/miniconda3 AS base
+FROM condaforge/miniforge3 AS base
 COPY ./patches/escript.yaml ./escript.yaml
 RUN conda env create -f ./escript.yaml
 
