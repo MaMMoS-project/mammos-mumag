@@ -1,0 +1,20 @@
+name: Build Hystmag docker
+
+on:
+  issue_comment:
+    type: [created, edited]
+
+jobs:
+  test-build:
+    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/test-build')
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Build
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          build-arg: BUILD_THREADS=4
