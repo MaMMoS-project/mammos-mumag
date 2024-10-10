@@ -1,12 +1,10 @@
 name: Build Hystmag docker
 
 on:
-  issue_comment:
-    type: [created, edited]
+  push:
 
 jobs:
   test-build:
-    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/test-build')
     runs-on: ubuntu-latest
     steps:
       -
