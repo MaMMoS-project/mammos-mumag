@@ -1,0 +1,34 @@
+BootStrap: docker
+From: condaforge/miniforge3
+
+%arguments
+  BUILD_THREADS=8
+  RUN_THREADS=1
+%files
+  ./patches
+  ./mumag/pymag/py /hystmag
+%post
+  conda env create -f /patches/escript.yaml
+  apt-get update -y
+  apt-get install build-essential -y
+  git clone https://github.com/LutzGross/esys-escript.github.io.git escript
+  cd escript/
+  git reset --hard 6d6f21f9b77078e186ab0bdc10b49a97c0688f3c
+  git clone https://github.com/trilinos/Trilinos.git
+  cd Trilinos/
+  git reset --hard ee6599d413f7ef5786a5ad1f719bbfe3a4d22300
+  cd ../
+  cp -f /patches/dependencies.py ./site_scons/
+  cp -R /patches/SConstruct ./
+  cp -f /patches/hp_options.py ./scons/
+  conda install -y -n escript -c conda-forge cmake
+  conda run --no-capture-output -n escript scons -j{{ BUILD_THREADS }} options_file=scons/hp_options.py
+  cp -R ./lib/* /opt/conda/envs/escript/lib/
+  cp -R ./escript_trilinos/lib/* /opt/conda/envs/escript/lib/
+  cp -R ./bin/* /opt/conda/envs/escript/bin/
+  cd ../
+  cp -R /escript/esys /hystmag/esys
+  mkdir /io
+%runscript
+  cd /io
+  conda run --no-capture-output -n=escript run-escript -t{{ RUN_THREADS }} /hystmag/loop.py "$0" "$@"
