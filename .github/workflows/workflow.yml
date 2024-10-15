@@ -16,3 +16,6 @@ jobs:
         with:
           push: false
           build-arg: BUILD_THREADS=4
+      -
+        name: Run docker
+        run: docker images
