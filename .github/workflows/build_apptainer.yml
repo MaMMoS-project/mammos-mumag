@@ -6,6 +6,9 @@ on:
 jobs:
   test-build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
       - name: Initialization
         uses: actions/checkout@v4
@@ -13,9 +16,9 @@ jobs:
       - name: Set up Miniforge
         uses: conda-incubator/setup-miniconda@v3
         with:
-          # activate-environment: apptainer-env
+          activate-environment: apptainer-env
           miniforge-version: latest
           environment-file: .github/environment.yml
 
       - name: Build
-        run: conda env list #apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
+        run: apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
