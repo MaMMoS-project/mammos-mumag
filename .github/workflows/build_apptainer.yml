@@ -10,6 +10,7 @@ jobs:
       - name: Set up Miniforge
         uses: conda-forge/setup-miniconda@v1
         with:
+          auto-update-conda: true
           activate-environment: apptainer-env
           environment-file: .github/environment.yml
 
