@@ -125,7 +125,7 @@ Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micro
 docker run --volume $(pwd):/io --user="$(id -u):$(id -g)" hystmag <system-name>
 ```
 
-###  To run the apptainer image use:
+###  To run the apptainer container use:
 
 ```bash
 apptainer run --bind $(pwd):/io hystmag.sif <system-name>
