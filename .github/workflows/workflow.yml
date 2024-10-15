@@ -17,7 +17,6 @@ jobs:
           push: false
           build-arg: BUILD_THREADS=4
 
-jobs:
   test-build:
     runs-on: ubuntu-latest
     steps:
