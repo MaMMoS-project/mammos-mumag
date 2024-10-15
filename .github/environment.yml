@@ -1,4 +1,4 @@
-name: apptainer-env
+# name: apptainer-env
 
 channels:
   - conda-forge
