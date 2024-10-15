@@ -17,7 +17,5 @@ jobs:
           environment-file: .github/environment.yml
           activate-environment: apptainer-env
 
-      - name: Build Apptainer image
-        run: conda list #apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
-        with:
-          activate-environment: apptainer-env
+      - name: Build
+        run: conda env list #apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
