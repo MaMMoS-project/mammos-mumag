@@ -28,6 +28,5 @@ From: condaforge/miniforge3
   cp -R ./bin/* /opt/conda/envs/escript/bin/
   cd ../
   cp -R /escript/esys /hystmag/esys
-  mkdir /io
 %runscript
-  cd /io && conda run --no-capture-output -n=escript run-escript -t{{ RUN_THREADS }} /hystmag/loop.py "$@"
+  conda run --no-capture-output -n=escript run-escript -t{{ RUN_THREADS }} /hystmag/loop.py "$@"
