@@ -1,0 +1,17 @@
+name: Build Apptainer image
+
+on:
+  push:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Miniforge
+        uses: conda-forge/setup-miniconda@v1
+        with:
+          activate-environment: apptainer-env
+          environment-file: .github/environment.yml
+
+      - name: Build Apptainer image
+        run: apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
