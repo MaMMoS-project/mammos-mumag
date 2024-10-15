@@ -12,8 +12,9 @@ jobs:
       - name: Set up Miniforge
         uses: conda-incubator/setup-miniconda@v3
         with:
-          environment-file: .github/environment.yml
           miniforge-version: latest
+          environment-file: .github/environment.yml
+          activate-environment: apptainer-env
 
       - name: Build Apptainer image
         run: apptainer build --build-arg BUILD_THREADS=2 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
