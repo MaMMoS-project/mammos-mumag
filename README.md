@@ -128,5 +128,11 @@ docker run --volume $(pwd):/io --user="$(id -u):$(id -g)" hystmag <system-name>
 ###  To run the apptainer container use:
 
 ```bash
-apptainer run --bind $(pwd):/io hystmag.sif <system-name>
+apptainer run hystmag.sif <system-name>
 ```
+Since `hystmag.sif` is also an executable, simply run:
+
+```bash
+hystmag.sif <system-name>
+```
+>**_NOTE:_** The configuration files must be in the current working directory.
