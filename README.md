@@ -16,6 +16,13 @@ To run the simulation, one needs to have following configuration files in the wo
 2. `<system-name>.krn` which defines material parameters of each grain in the magnetic material.
 3. `<system-name>.p2` which defines the simulation parameters, such as, external field range, step size of hysteresis, size of the geometry, initial magnetisation, etc.
 
+# Build Apptainer image
+In order to run `hystmag` on HPC, one needs to build an Apptainer `.sif` file from the provided `Apptainer.def` file. To do the same, run:
+```bash
+apptainer build --build-arg BUILD_THREADS=20 --build-arg RUN_THREADS=1 hystmag.sif Apptainer.def
+```
+>**_NOTE:_** Once the number of `escript` run threads are fixed at the compile time, they cannot be changed later.
+
 # Example
 
 ## Create a finite element mesh for micromagnetic simulations
@@ -116,4 +123,10 @@ Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micro
 
 ```bash
 docker run --volume $(pwd):/io --user="$(id -u):$(id -g)" hystmag <system-name>
+```
+
+###  To run the apptainer container use:
+
+```bash
+apptainer run --bind $(pwd):/io hystmag.sif <system-name>
 ```
