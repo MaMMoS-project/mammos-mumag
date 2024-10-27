@@ -25,12 +25,6 @@ RUN conda run --no-capture-output -n escript scons -j$BUILD_THREADS options_file
 
 # Create the final reduced image
 FROM base AS final
-ARG RUN_THREADS="8"
-ENV RUN_THREADS_ENV=$RUN_THREADS
-COPY --from=build /escript/lib/* /opt/conda/envs/escript/lib/
-COPY --from=build /escript/escript_trilinos/lib/* /opt/conda/envs/escript/lib/
-COPY --from=build /escript/bin/* /opt/conda/envs/escript/bin/
-COPY mumag/pymag/py /hystmag
-COPY --from=build /escript/esys /hystmag/esys
+COPY --from=build /escript /escript
 WORKDIR /io
-ENTRYPOINT conda run --no-capture-output -n=escript run-escript -t $RUN_THREADS_ENV /hystmag/loop.py "$0" "$@"
+ENTRYPOINT PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib run-escript "$0" "$@"

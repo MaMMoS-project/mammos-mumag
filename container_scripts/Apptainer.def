@@ -3,10 +3,8 @@ From: condaforge/miniforge3
 
 %arguments
   BUILD_THREADS=8
-  RUN_THREADS=1
 %files
   ./patches
-  ./mumag/pymag/py /hystmag
 %post
   conda env create -f /patches/escript.yaml
   apt-get update -y
@@ -23,10 +21,5 @@ From: condaforge/miniforge3
   cp -f /patches/hp_options.py ./scons/
   conda install -y -n escript -c conda-forge cmake
   conda run --no-capture-output -n escript scons -j{{ BUILD_THREADS }} options_file=scons/hp_options.py
-  cp -R ./lib/* /opt/conda/envs/escript/lib/
-  cp -R ./escript_trilinos/lib/* /opt/conda/envs/escript/lib/
-  cp -R ./bin/* /opt/conda/envs/escript/bin/
-  cd ../
-  cp -R /escript/esys /hystmag/esys
 %runscript
-  conda run --no-capture-output -n=escript run-escript -t{{ RUN_THREADS }} /hystmag/loop.py "$@"
+  PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$@"

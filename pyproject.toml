@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hystmag"
+version = "0.1.0"
+description = "Finite element micromagnetic simulation tool."
+authors = [{ name = "Thomas Schrefl" }]
+maintainers = [{ name = "Thomas Schrefl" }]
+license = { file = "LICENSE" }
+
+classifiers = [
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3',
+  'Intended Audience :: Science/Research',
+  'License :: OSI Approved :: BSD License',
+  'Operating System :: POSIX',
+  'Operating System :: Microsoft :: Windows',
+  "Topic :: Scientific/Engineering :: Physics",
+]
+
+requires-python = ">=3.6"
+
+[project.readme]
+'file' = "README.md"
+'content-type' = "text/markdown"
+
+[project.scripts]
+hystmag = "hystmag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

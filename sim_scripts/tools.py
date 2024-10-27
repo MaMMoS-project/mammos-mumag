@@ -6,107 +6,138 @@ import numpy as np
 import math
 import logging
 
-def normalize(v):
-  a = v[0]
-  b = v[1]
-  c = v[2]
-  l = math.sqrt(a*a+b*b+c*c)
-  if l==0.0:
-    return [a,b,c]
-  else:
-    return [a/l,b/l,c/l]
 
-def dot(a,b):
-  np_a = e.convertToNumpy(a)
-  np_b = e.convertToNumpy(b)
-  return np.dot(np_b.flatten(),np_a.flatten())
-  
+def normalize(v):
+    a = v[0]
+    b = v[1]
+    c = v[2]
+    l = math.sqrt(a * a + b * b + c * c)
+    if l == 0.0:
+        return [a, b, c]
+    else:
+        return [a / l, b / l, c / l]
+
+
+def dot(a, b):
+    np_a = e.convertToNumpy(a)
+    np_b = e.convertToNumpy(b)
+    return np.dot(np_b.flatten(), np_a.flatten())
+
+
 def Linf_norm(a):
-  np_a = e.convertToNumpy(a)
-  return np.linalg.norm(np_a, np.inf)
+    np_a = e.convertToNumpy(a)
+    return np.linalg.norm(np_a, np.inf)
+
 
 def L2_norm(a):
-  np_a = e.convertToNumpy(a)
-  return np.linalg.norm(np_a)
+    np_a = e.convertToNumpy(a)
+    return np.linalg.norm(np_a)
 
 
 def get_meas(Js):
-  domain = Js.getDomain()
-  pde = LinearSinglePDE(domain)
-  pde.setValue(Y=Js)
-  return pde.getRightHandSide()
-  
+    domain = Js.getDomain()
+    pde = LinearSinglePDE(domain)
+    pde.setValue(Y=Js)
+    return pde.getRightHandSide()
+
+
 def read_Js(name):
-  with open(name+'.krn') as f:
-    l = f.readline().split()
-    Js = float(l[4])
-  return Js
+    with open(name + ".krn") as f:
+        l = f.readline().split()
+        Js = float(l[4])
+    return Js
+
 
 def read_A(name):
-  with open(name+'.krn') as f:
-    l = f.readline().split()
-    A = float(l[5])
-  return A
-  
-def readAnisotropyEnergy(name,m):
-  m = normalize(m)
-  with open(name+'.krn') as f:
-    l = f.readline().split()
-    theta = float(l[0])
-    phi = float(l[1])
-    n0 = math.sin(theta)*math.cos(phi)
-    n1 = math.sin(theta)*math.sin(phi)
-    n2 = math.cos(theta)
-    K1 = float(l[2])
-  mu0 = 4.0e-7 * math.pi
-  return -mu0*K1*(m[0]*n0+m[1]*n1+m[2]*n2)**2.0
-  
-def read_params(name):
-  config = configparser.ConfigParser({
-                                     'state': 'mxyz',
-                                     'mstep': 0.01,
-                                     'mfinal': -0.8,
-                                     'hmag_on': 1,
-                                     'truncation': 5,
-                                     'tol_fun': 1e-10,
-                                     'tol_hmag_factor': 1.0,
-                                     'precond_iter': 10,
-                                     'iter_max': 1000,
-                                     })
-  config.read(name+'.p2')
-  intial_state = config['initial state']
-  field = config['field']
-  minimizer = config['minimizer']
-  m = normalize([float(intial_state['mx']), float(intial_state['my']), float(intial_state['mz'])])
-  state = intial_state['state']
-  h = normalize([float(       field['hx']),        float(field['hy']),        float(field['hz'])])  
-  hstart, hfinal, hstep = float(field['hstart']), float(field['hfinal']), float(field['hstep'])
-  mstep, mfinal = float(field['mstep']), float(field['mfinal'])
-  hmag_on = int(minimizer['hmag_on'])
-  truncation = int(minimizer['truncation'])
-  tol_fun = float(minimizer['tol_fun'])
-  tol_hmag_factor = float(minimizer['tol_hmag_factor'])
-  precond_iter = int(minimizer['precond_iter'])
-  iter_max = int(minimizer['iter_max'])  
-  tol_u   = tol_fun*tol_hmag_factor
-  tol_mxh = tol_fun**0.3333333333333333333333333
-  verbose = int(minimizer['verbose'])
-  print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}   mxh {tol_mxh}")
-  return (m, state, h, hstart, hfinal, hstep, mstep, mfinal, (hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose))
+    with open(name + ".krn") as f:
+        l = f.readline().split()
+        A = float(l[5])
+    return A
 
-def get_logger(name,verbose):
-  mylogger = logging.getLogger('min')
-  if verbose==0:
-    mylogger.setLevel(logging.ERROR)
-  if verbose==1:
-    mylogger.setLevel(logging.WARNING)
-  if verbose==2:
-    mylogger.setLevel(logging.INFO)
-  if verbose>=3:
-    mylogger.setLevel(logging.DEBUG)
-  return mylogger
-    
-  """
+
+def readAnisotropyEnergy(name, m):
+    m = normalize(m)
+    with open(name + ".krn") as f:
+        l = f.readline().split()
+        theta = float(l[0])
+        phi = float(l[1])
+        n0 = math.sin(theta) * math.cos(phi)
+        n1 = math.sin(theta) * math.sin(phi)
+        n2 = math.cos(theta)
+        K1 = float(l[2])
+    mu0 = 4.0e-7 * math.pi
+    return -mu0 * K1 * (m[0] * n0 + m[1] * n1 + m[2] * n2) ** 2.0
+
+
+def read_params(name):
+    config = configparser.ConfigParser(
+        {
+            "state": "mxyz",
+            "mstep": 0.01,
+            "mfinal": -0.8,
+            "hmag_on": 1,
+            "truncation": 5,
+            "tol_fun": 1e-10,
+            "tol_hmag_factor": 1.0,
+            "precond_iter": 10,
+            "iter_max": 1000,
+        }
+    )
+    config.read(name + ".p2")
+    intial_state = config["initial state"]
+    field = config["field"]
+    minimizer = config["minimizer"]
+    m = normalize(
+        [
+            float(intial_state["mx"]),
+            float(intial_state["my"]),
+            float(intial_state["mz"]),
+        ]
+    )
+    state = intial_state["state"]
+    h = normalize([float(field["hx"]), float(field["hy"]), float(field["hz"])])
+    hstart, hfinal, hstep = (
+        float(field["hstart"]),
+        float(field["hfinal"]),
+        float(field["hstep"]),
+    )
+    mstep, mfinal = float(field["mstep"]), float(field["mfinal"])
+    hmag_on = int(minimizer["hmag_on"])
+    truncation = int(minimizer["truncation"])
+    tol_fun = float(minimizer["tol_fun"])
+    tol_hmag_factor = float(minimizer["tol_hmag_factor"])
+    precond_iter = int(minimizer["precond_iter"])
+    iter_max = int(minimizer["iter_max"])
+    tol_u = tol_fun * tol_hmag_factor
+    tol_mxh = tol_fun**0.3333333333333333333333333
+    verbose = int(minimizer["verbose"])
+    print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}   mxh {tol_mxh}")
+    return (
+        m,
+        state,
+        h,
+        hstart,
+        hfinal,
+        hstep,
+        mstep,
+        mfinal,
+        (hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose),
+    )
+
+
+def get_logger(name, verbose):
+    mylogger = logging.getLogger("min")
+    if verbose == 0:
+        mylogger.setLevel(logging.ERROR)
+    if verbose == 1:
+        mylogger.setLevel(logging.WARNING)
+    if verbose == 2:
+        mylogger.setLevel(logging.INFO)
+    if verbose >= 3:
+        mylogger.setLevel(logging.DEBUG)
+    return mylogger
+
+    """
         setOptions for LBFGS.  use       solver.setOptions( key = value)
 
         :key m_tol: relative tolerance for solution `m` for termination of iteration
@@ -148,7 +179,7 @@ def get_logger(name,verbose):
               result=solver.getResult()
   """
 
-  """
+    """
         set options for the line search.
 
 
@@ -200,7 +231,7 @@ def get_logger(name,verbose):
   """
 
 
-'''
+"""
 Can I access local value in Data objects from python?
 
 Yes, but I don't recommend to do this!
@@ -216,9 +247,9 @@ This little script shows you how to do this:
           out.setValueOfDataPoint(i,out_loc)
 
 Notice that in_loc and out_loc are numarray objects with same ranks and shape like in and out. in and out both need to be defined on the same FunctionSpace.
-'''
+"""
 
-'''
+"""
 How do I use tagged Data ?
 
 A Here comes an example of tagged scalar data for a Domain mydom:
@@ -236,9 +267,9 @@ Function(mydom).setTags(1000,whereNegative(x0-0.5))
 Function(mydom).setTags(2000,whereNegative(0.5-x0))
 
 Note that although setTags is called for different instances of Function(mydom) is still changes the element tag as it effects the underlying mydom. It also important to point out that a tag sticks to the element even if the element coordinates are altered by a mydom.setX() call and is considered when the mesh is written to a file.
-'''
+"""
 
-'''
+"""
 How can I integrate a function over the boundary or parts of the boundary?
 
 To integrate a function f over the boundary use
@@ -250,9 +281,9 @@ Be aware that f must be defined on the boundary or must be interpolatable to the
 If you want to integrate over parts of the boundary you can use masks: For instance to integrate over the portion of the boundary where x_0==0 use
 
     integrate(f*whereZero(FunctionOnBoundary(f.getDomain()).getX()[0])))
-'''
+"""
 
-'''
+"""
 When performing a binary operation such as a+b where a is a numarray.NumArray object and b is an escript.Data object I get the error message
 
 TypeError: UFunc arguments must be numarray, scalars or numeric sequences
@@ -260,4 +291,4 @@ TypeError: UFunc arguments must be numarray, scalars or numeric sequences
 What does it mean?
 
 Unfortunatley there is a bug in numarray as binary operations in numarray don't handle non-numarray arguments properly. This stops python from calling an appropriate escript function to handle the problem namely by calling the corresponding add opertaor of the non-numarray argument. The only solution is to avoid any expression starting with a numarray object. Alternatively you can use the add, mult, div, power functions provided by escript. (Remark: python list objects handle type mismatches properly. You can write [1.,1.]+Vector(...) but not numarray.ones((2,))+Vector(...). Nevertheless, add([1.,1.],Vector(...)) and add(numarray.ones((2,)),Vector(...)) will do the job but don't look nice.).
-'''
+"""

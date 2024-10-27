@@ -1,0 +1,11 @@
+LICENSE
+README.md
+pyproject.toml
+src/hystmag/__init__.py
+src/hystmag/cli.py
+src/hystmag/tofly.py
+src/hystmag.egg-info/PKG-INFO
+src/hystmag.egg-info/SOURCES.txt
+src/hystmag.egg-info/dependency_links.txt
+src/hystmag.egg-info/entry_points.txt
+src/hystmag.egg-info/top_level.txt
