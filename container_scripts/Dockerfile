@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Create a base image
-FROM condaforge/miniforge3 AS base
+FROM docker.io/condaforge/miniforge3 AS base
 COPY ./patches/escript.yaml ./escript.yaml
 RUN conda env create -f ./escript.yaml
 
@@ -20,11 +20,11 @@ COPY ./patches/dependencies.py ./site_scons/
 COPY ./patches/SConstruct ./
 COPY ./patches/hp_options.py scons/
 RUN conda install -y -n escript -c conda-forge cmake
-ARG BUILD_THREADS="8"
+ARG BUILD_THREADS
 RUN conda run --no-capture-output -n escript scons -j$BUILD_THREADS options_file=scons/hp_options.py
 
 # Create the final reduced image
 FROM base AS final
 COPY --from=build /escript /escript
 WORKDIR /io
-ENTRYPOINT PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib run-escript "$0" "$@"
+ENTRYPOINT PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$0" "$@"
