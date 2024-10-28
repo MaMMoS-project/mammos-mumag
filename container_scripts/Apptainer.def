@@ -22,4 +22,4 @@ From: condaforge/miniforge3
   conda install -y -n escript -c conda-forge cmake
   conda run --no-capture-output -n escript scons -j{{ BUILD_THREADS }} options_file=scons/hp_options.py
 %runscript
-  PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$@"
+  OMP_PROC_BIND=spread OMP_PLACES=threads PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$@"

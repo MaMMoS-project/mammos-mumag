@@ -27,4 +27,4 @@ RUN conda run --no-capture-output -n escript scons -j$BUILD_THREADS options_file
 FROM base AS final
 COPY --from=build /escript /escript
 WORKDIR /io
-ENTRYPOINT PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$0" "$@"
+ENTRYPOINT OMP_PROC_BIND=spread OMP_PLACES=threads PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$0" "$@"
