@@ -4,7 +4,7 @@ From: condaforge/miniforge3
 %arguments
   BUILD_THREADS=8
 %files
-  ./patches
+  {{ PATCH_DIR }} /patches
 %post
   conda env create -f /patches/escript.yaml
   apt-get update -y
