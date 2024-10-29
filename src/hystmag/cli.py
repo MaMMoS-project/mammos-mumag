@@ -1,9 +1,8 @@
 import argparse
-
 import sys
 
 import hystmag
-from hystmag import tofly, cli_helpers
+from hystmag import cli_helpers, tofly
 
 
 def main():
@@ -106,6 +105,16 @@ def main():
     )
 
     run_parser.add_argument(
+        "-p",
+        "--program",
+        type=str,
+        default="apptainer",
+        required=False,
+        choices=("apptainer", "podman"),
+        help=("Choose the container program to use for running esys-escript."),
+    )
+
+    run_parser.add_argument(
         "-s",
         "--script",
         type=str,
@@ -129,7 +138,15 @@ def main():
     args = parser.parse_args()
 
     if args.sub_parser == "build-escript":
-        exec(f"cli_helpers.install_escript_{args.program}(args.threads)")
+        cli_helpers.install_escript(args.program, args.threads)
+
+    if args.sub_parser == "unvtofly":
+        nodes, index, groups, contact = tofly.scanUnv(args.infile, args.exclude)
+        tofly.writeFly(
+            nodes, groups, index, contact, args.infile, args.outfile, args.exclude
+        )
+        args.infile.close()
+        args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_hystmag(args.threads, args.script, args.system)
+        cli_helpers.run_hystmag(args.threads, args.program, args.script, args.system)
