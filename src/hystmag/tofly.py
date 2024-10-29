@@ -368,30 +368,6 @@ def parseElem(t, file):
     return eId, data
 
 
-# def parseArgs():
-#     parser = argparse.ArgumentParser(
-#         description="Convert unv files to the fly format. Elements that"
-#         " belong to a group called 'contact' will be converted to their"
-#         " contact counterparts. First and secound order meshes are supported.")
-#     parser.add_argument(
-#         'infile', nargs='?', type=argparse.FileType('r', 1000),
-#         default=sys.stdin, metavar="UNV", help="Path to the input file"
-#         " or '-' for stdin. It must already exist and be stored in the"
-#         " unv format. If ommited stdin will be used instead.")
-#     parser.add_argument(
-#         'outfile', nargs='?', type=argparse.FileType('w', 1000),
-#         default=sys.stdout, metavar="FLY", help="Path to the output file"
-#         " or '-' for stdout. Overridden if it already exists. If ommited"
-#         " stdout will be used instead.")
-#     parser.add_argument(
-#         '-e', '--exclude', type=dimension, default=set(),
-#         metavar="DIMENSIONS", help="Comma separated list of dimensions"
-#         " that shall be ignored while converting (e.g. '-e 1,2' only "
-#         "converts 3D elements).")
-#     args = parser.parse_args()
-#     return args.infile, args.outfile, args.exclude
-
-
 def dimension(text):
     exclude = set()
     for opt in text.split(","):
@@ -405,12 +381,3 @@ def dimension(text):
             msg = "Invalid dimension: %s" % opt
             raise TypeError(msg)
     return exclude
-
-
-# if __name__ == "__main__":
-#     unv, fly, exclude = parseArgs()
-#     nodes, index, groups, contact = scanUnv(unv, exclude)
-#     #writeFly(nodes, groups, index, contact, unv, fly)
-#     writeFly(nodes, groups, index, contact, unv, fly, exclude)
-#     unv.close()
-#     fly.close()
