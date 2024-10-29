@@ -1,0 +1,3 @@
+recursive-include sim_scripts *
+recursive-include container_scripts *
+recursive-include container_scripts/patches *
