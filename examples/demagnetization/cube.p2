@@ -10,7 +10,7 @@ mz = 1.
 [field]
 hstart = 1.0
 hfinal = -1.0
-hstep = -0.02
+hstep = -0.2
 hx = 0.01745
 hy = 0
 hz = 0.99984
