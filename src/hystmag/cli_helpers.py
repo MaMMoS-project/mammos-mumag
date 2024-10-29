@@ -40,9 +40,12 @@ def install_escript(program, threads):
             posix=is_posix,
         )
     else:
+        temp_dir = hystmag._cache_dir / "temp"
+        temp_dir.mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(
             (
                 "apptainer build -F "
+                f"--tmpdir {temp_dir} "  # NOTE: needed when temp is mounted with nodev
                 f"--build-arg BUILD_THREADS={threads} "
                 f"--build-arg PATCH_DIR={hystmag._container_scripts/"patches"} "
                 f"{hystmag._cache_dir/"escript.sif"} "
@@ -59,7 +62,7 @@ def install_escript(program, threads):
             json.dump(config_dict, handle)
     else:
         raise RuntimeError(
-            f"Unable to install the program container. Exit with error:\n"
+            f"Unable to install the {program} container. Exit with error:\n"
             f"{res.stderr.decode("utf-8")}"
         )
 
