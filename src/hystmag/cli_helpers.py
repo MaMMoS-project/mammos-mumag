@@ -47,9 +47,9 @@ def install_escript(program, threads):
                 "apptainer build -F "
                 f"--tmpdir {temp_dir} "  # NOTE: needed when temp is mounted with nodev
                 f"--build-arg BUILD_THREADS={threads} "
-                f"--build-arg PATCH_DIR={hystmag._container_scripts/"patches"} "
-                f"{hystmag._cache_dir/"escript.sif"} "
-                f"{hystmag._container_scripts/"Apptainer.def"}"
+                f"--build-arg PATCH_DIR={hystmag._container_scripts/'patches'} "
+                f"{hystmag._cache_dir/'escript.sif'} "
+                f"{hystmag._container_scripts/'Apptainer.def'}"
             ),
             posix=is_posix,
         )
@@ -63,7 +63,7 @@ def install_escript(program, threads):
     else:
         raise RuntimeError(
             f"Unable to install the {program} container. Exit with error:\n"
-            f"{res.stderr.decode("utf-8")}"
+            f"{res.stderr.decode('utf-8')}"
         )
 
 
@@ -93,7 +93,7 @@ def run_hystmag(threads, program, script, system):
             (
                 "apptainer run "
                 f"{hystmag._cache_dir/"escript.sif"} -t{threads} "
-                f"{hystmag._sim_scripts/(script+".py")} {system}"
+                f"{hystmag._sim_scripts/(script+'.py')} {system}"
             ),
             posix=is_posix,
         )
@@ -113,5 +113,5 @@ def run_hystmag(threads, program, script, system):
         raise RuntimeError(
             f"Hystmag {script} execution for {system} failed "
             f"using {program} escript container with error:\n"
-            f"{res.stderr.decode("utf-8")}"
+            f"{res.stderr.decode('utf-8')}"
         )
