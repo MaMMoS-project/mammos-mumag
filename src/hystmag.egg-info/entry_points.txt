@@ -1,2 +1,0 @@
-[console_scripts]
-hystmag = hystmag.cli:main
