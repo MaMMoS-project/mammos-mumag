@@ -92,7 +92,7 @@ def run_hystmag(threads, program, script, system):
         cmd = shlex.split(
             (
                 "apptainer run "
-                f"{hystmag._cache_dir/"escript.sif"} -t{threads} "
+                f"{hystmag._cache_dir/'escript.sif'} -t{threads} "
                 f"{hystmag._sim_scripts/(script+'.py')} {system}"
             ),
             posix=is_posix,
