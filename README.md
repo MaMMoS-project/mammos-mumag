@@ -109,7 +109,7 @@ To create the mesh file of a cube with an edge length of 40 nm and a mesh size o
 ```bash
 cd examples/standard_problem_3
 salome_install_path/SALOME-9.12.0/salome -t cube.py args:40,2
-hystmag tofly3 -e 1,2 cube.unv cube.fly
+hystmag unvtofly -e 1,2 cube.unv cube.fly
 ```
 
 In order to define space dependent material properties, groups are created in the Salome geometry and the Salome mesh. Group names are 1, 2, 3, .....
