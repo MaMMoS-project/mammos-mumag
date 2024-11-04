@@ -89,9 +89,11 @@ def run_hystmag(threads, program, script, system):
     is_posix = os.name == "posix"
 
     if program == "apptainer":
+        temp_dir = hystmag._cache_dir / "temp"
+        temp_dir.mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(
             (
-                "apptainer run "
+                f"apptainer run --workdir {temp_dir} "
                 f"{hystmag._cache_dir/'escript.sif'} -t{threads} "
                 f"{hystmag._sim_scripts/(script+'.py')} {system}"
             ),
