@@ -7,8 +7,7 @@ From: condaforge/miniforge3
   {{ PATCH_DIR }} /patches
 %post
   conda env create -f /patches/escript.yaml
-  apt-get update -y
-  apt-get install build-essential -y
+  conda install -y -n escript -c conda-forge cxx-compiler make cmake
   git clone https://github.com/LutzGross/esys-escript.github.io.git escript
   cd escript/
   git reset --hard 6d6f21f9b77078e186ab0bdc10b49a97c0688f3c
@@ -19,7 +18,6 @@ From: condaforge/miniforge3
   cp -f /patches/dependencies.py ./site_scons/
   cp -R /patches/SConstruct ./
   cp -f /patches/hp_options.py ./scons/
-  conda install -y -n escript -c conda-forge cmake
   conda run --no-capture-output -n escript scons -j{{ BUILD_THREADS }} options_file=scons/hp_options.py
 %runscript
   OMP_PROC_BIND=spread OMP_PLACES=threads PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$@"
