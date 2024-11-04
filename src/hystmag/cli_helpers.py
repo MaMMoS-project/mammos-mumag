@@ -44,11 +44,11 @@ def install_escript(program, threads):
         temp_dir.mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(
             (
-                "apptainer build -F "
+                "apptainer build -Fs --ignore-fakeroot-command "
                 f"--tmpdir {temp_dir} "  # NOTE: needed when temp is mounted with nodev
                 f"--build-arg BUILD_THREADS={threads} "
                 f"--build-arg PATCH_DIR={hystmag._container_scripts/'patches'} "
-                f"{hystmag._cache_dir/'escript.sif'} "
+                f"{hystmag._cache_dir/'escript'} "
                 f"{hystmag._container_scripts/'Apptainer.def'}"
             ),
             posix=is_posix,
@@ -89,12 +89,10 @@ def run_hystmag(threads, program, script, system):
     is_posix = os.name == "posix"
 
     if program == "apptainer":
-        temp_dir = hystmag._cache_dir / "temp"
-        temp_dir.mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(
             (
-                f"apptainer run --workdir {temp_dir} "
-                f"{hystmag._cache_dir/'escript.sif'} -t{threads} "
+                f"apptainer run "
+                f"{hystmag._cache_dir/'escript'} -t{threads} "
                 f"{hystmag._sim_scripts/(script+'.py')} {system}"
             ),
             posix=is_posix,
