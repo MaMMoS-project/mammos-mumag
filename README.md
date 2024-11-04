@@ -9,6 +9,8 @@ pip install .
 
 This will install `hystmag` as a command line executable.
 
+> **_NOTE:_**  Make sure to install `fuse-overlayfs` from conda-forge or any other package manager to run hystmag on HPCs.
+
 # Usage
 To get a quick summary of all the options available with `hystmag`, run:
 ```bash
