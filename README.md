@@ -115,9 +115,9 @@ Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micro
 | tol_hmag_factor | tol_fun\*tol_hmag_factor is the tolerance for the magnetostatic scalar potential | 1 |
 | truncation | number of history vectors stored | 5 | 
 | precond_iter | number of conjugate gradient iterations for inverse Hessian approximation | 10 |  
-| itermax | | 1000 |
-| alphaMax | | 1e6 |
-| iterMax_linesearch | | 1000 |
+| itermax | Maximum number of iterations for the LGFBS solver | 1000 |
+| alphaMax | Maximum alpha for the linesearch | 1e6 |
+| iterMax_linesearch | Maximum number of iterations for the linesearch | 1000 |
 | verbose  | verbosity level of output  | 1 |
 
 
