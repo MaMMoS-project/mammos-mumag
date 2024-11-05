@@ -215,12 +215,13 @@ class MumagFunc(CostFunction):
 class Minimize:
   def __init__(self,external,exani,hmag,min_params):
     self.cum_time = 0.
-    truncation, m_tol, grad_tol, precond_iter, iter_max, verbose = min_params
+    truncation, m_tol, grad_tol, precond_iter, itermax, alphaMax, itermax_linesearch, verbose = min_params
     self.F = MumagFunc(external,exani,hmag,cgiter=precond_iter)
     
     logger = get_logger('min',verbose)   
     self._solver = LBFGS(self.F,logger=logger)
-    self._solver.setOptions(truncation=truncation,m_tol=m_tol,grad_tol=grad_tol,iterMax=iter_max,scaleSearchDirection=False,restart=50)
+    self._solver.setOptions(truncation=truncation,m_tol=m_tol,grad_tol=grad_tol,iterMax=itermax,scaleSearchDirection=False,restart=50)
+    self._solver.getLineSearch().setOptions(alphaMax=alphaMax, iterMax=itermax_linesearch)
     
   def solve(self,m):
     T0 = time()
