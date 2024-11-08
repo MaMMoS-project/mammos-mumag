@@ -19,9 +19,12 @@ usage: mammosmag [-h] [-v] {build-escript,unvtofly,run} ...
 
 positional arguments:
   {build-escript,unvtofly,run}
-    build-escript       Option to build esys-escript container using apptainer or podman. mammosmag depends on esys-escript for the simulations. The definition files to build the container are provided with 
-                        the package.
-    unvtofly            Convert unv files to the fly format. Elements that belong to a group called 'contact' will be converted to their contact counterparts. First and secound order meshes are supported.
+    build-escript       Option to build esys-escript container using apptainer or podman.
+                        mammosmag depends on esys-escript for the simulations.
+                        The definition files to build the container are provided with the package.
+    unvtofly            Convert unv files to the fly format. Elements that belong to a group called
+                        'contact' will be converted to their contact counterparts. First and secound
+                        order meshes are supported.
     run                 Run the mammosmag simulation based on the pre-defined scripts.
 
 options:
@@ -47,7 +50,7 @@ options:
   -c, --container {apptainer,podman}
                         Specify the container program to use. It can be either apptainer or podman.
   -t, --threads THREADS
-                        Specify the number of build threads.
+                        Specify the number of build threads. (Defaults to 4)
 ```
 
 ## sub-command `unvtofly`
@@ -62,13 +65,18 @@ $ mammosmag unvtofly --help
 usage: mammosmag unvtofly [-h] [-e DIMENSIONS] [UNV] [FLY]
 
 positional arguments:
-  UNV                   Path to the input file or '-' for stdin. It must already exist and be stored in the unv format. If ommited stdin will be used instead.
-  FLY                   Path to the output file or '-' for stdout. Overridden if it already exists. If ommited stdout will be used instead.
+  UNV                   Path to the input file or '-' for stdin.
+                        It must already exist and be stored in the unv format.
+                        If ommited stdin will be used instead.
+  FLY                   Path to the output file or '-' for stdout.
+                        Overridden if it already exists.
+                        If ommited stdout will be used instead.
 
 options:
   -h, --help            show this help message and exit
   -e, --exclude DIMENSIONS
-                        Comma separated list of DIMENSIONS that shall be ignored while converting (e.g. '-e 1,2' only converts 3D elements).
+                        Comma separated list of DIMENSIONS that shall be ignored
+                        while converting (e.g. '-e 1,2' only converts 3D elements).
 ```
 
 ## sub-command `run`
@@ -97,7 +105,8 @@ options:
   -p, --program {apptainer,podman}
                         Choose the container program to use for running esys-escript.
   -s, --script {loop,exani,external,hmag,magnetisation,materials}
-                        Name the pre-defined simulation script to use. The name must be one of loop, exani, external, hmag, magnetisation, or materials.
+                        Name the pre-defined simulation script to use.
+                        The name must be one of loop, exani, external, hmag, magnetisation, or materials.
 ```
 
 # Example
