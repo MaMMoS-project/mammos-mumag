@@ -62,7 +62,7 @@ def install_escript(program, threads):
             json.dump(config_dict, handle)
     else:
         raise RuntimeError(
-            f"Unable to install the {program} container. Exit with error:\n"
+            f"Unable to build and install the {program} container. Exit with error:\n"
             f"{res.stderr.decode('utf-8')}"
         )
 
