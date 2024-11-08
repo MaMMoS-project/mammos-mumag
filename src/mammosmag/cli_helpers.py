@@ -79,13 +79,13 @@ def run_mammosmag(threads, program, script, system):
             raise RuntimeError(
                 f"{program} escript container not configured. "
                 "Make sure to build and install escript container, for example: "
-                f"mammosmag build-escript --threads 8 --program {program}"
+                f"mammosmag build-escript --threads 8 --container {program}"
             )
     else:
         raise RuntimeError(
             f"Cannot find a configuration file in {mammosmag._conf_dir}. "
             "Make sure to build and install escript container, for example: "
-            f"mammosmag build-escript --threads 8 --program {program}"
+            f"mammosmag build-escript --threads 8 --container {program}"
         )
 
     is_posix = os.name == "posix"
