@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import warnings
 
-import hystmag
+import mammosmag
 
 
 def install_escript(program, threads):
@@ -13,7 +13,7 @@ def install_escript(program, threads):
     if not program_path:
         raise FileNotFoundError(f"{program} cannot be accessed through PATH variable.")
 
-    config_path = hystmag._conf_dir.joinpath("conf.json")
+    config_path = mammosmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)
@@ -35,21 +35,21 @@ def install_escript(program, threads):
             (
                 "podman build -t escript "
                 f"--build-arg BUILD_THREADS={threads} "
-                f"{hystmag._container_scripts}"
+                f"{mammosmag._container_scripts}"
             ),
             posix=is_posix,
         )
     else:
-        temp_dir = hystmag._cache_dir / "temp"
+        temp_dir = mammosmag._cache_dir / "temp"
         temp_dir.mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(
             (
                 "apptainer build -Fs --ignore-fakeroot-command "
                 f"--tmpdir {temp_dir} "  # NOTE: needed when temp is mounted with nodev
                 f"--build-arg BUILD_THREADS={threads} "
-                f"--build-arg PATCH_DIR={hystmag._container_scripts/'patches'} "
-                f"{hystmag._cache_dir/'escript'} "
-                f"{hystmag._container_scripts/'Apptainer.def'}"
+                f"--build-arg PATCH_DIR={mammosmag._container_scripts/'patches'} "
+                f"{mammosmag._cache_dir/'escript'} "
+                f"{mammosmag._container_scripts/'Apptainer.def'}"
             ),
             posix=is_posix,
         )
@@ -57,7 +57,7 @@ def install_escript(program, threads):
     res = subprocess.run(cmd, stderr=subprocess.PIPE)
 
     if res.returncode == 0:
-        hystmag._conf_dir.mkdir(parents=True, exist_ok=True)
+        mammosmag._conf_dir.mkdir(parents=True, exist_ok=True)
         with open(config_path, "w") as handle:
             json.dump(config_dict, handle)
     else:
@@ -67,8 +67,8 @@ def install_escript(program, threads):
         )
 
 
-def run_hystmag(threads, program, script, system):
-    config_path = hystmag._conf_dir.joinpath("conf.json")
+def run_mammosmag(threads, program, script, system):
+    config_path = mammosmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)
@@ -77,13 +77,13 @@ def run_hystmag(threads, program, script, system):
             raise RuntimeError(
                 f"{program} escript container not configured. "
                 "Make sure to build and install escript container, for example: "
-                f"hystmag build-escript --threads 8 --program {program}"
+                f"mammosmag build-escript --threads 8 --program {program}"
             )
     else:
         raise RuntimeError(
-            f"Cannot find a configuration file in {hystmag._conf_dir}. "
+            f"Cannot find a configuration file in {mammosmag._conf_dir}. "
             "Make sure to build and install escript container, for example: "
-            f"hystmag build-escript --threads 8 --program {program}"
+            f"mammosmag build-escript --threads 8 --program {program}"
         )
 
     is_posix = os.name == "posix"
@@ -92,8 +92,8 @@ def run_hystmag(threads, program, script, system):
         cmd = shlex.split(
             (
                 f"apptainer run "
-                f"{hystmag._cache_dir/'escript'} -t{threads} "
-                f"{hystmag._sim_scripts/(script+'.py')} {system}"
+                f"{mammosmag._cache_dir/'escript'} -t{threads} "
+                f"{mammosmag._sim_scripts/(script+'.py')} {system}"
             ),
             posix=is_posix,
         )
@@ -101,7 +101,7 @@ def run_hystmag(threads, program, script, system):
     elif program == "podman":
         cmd = shlex.split(
             (
-                f"podman run -v .:/io -v {hystmag._sim_scripts}:/sim_scripts "
+                f"podman run -v .:/io -v {mammosmag._sim_scripts}:/sim_scripts "
                 f"escript -t{threads} /sim_scripts/{script}.py {system}"
             ),
             posix=is_posix,
@@ -111,7 +111,7 @@ def run_hystmag(threads, program, script, system):
 
     if res.returncode != 0:
         raise RuntimeError(
-            f"Hystmag {script} execution for {system} failed "
+            f"mammosmag {script} execution for {system} failed "
             f"using {program} escript container with error:\n"
             f"{res.stderr.decode('utf-8')}"
         )

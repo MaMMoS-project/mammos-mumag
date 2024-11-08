@@ -1,23 +1,26 @@
 import argparse
 import sys
 
-import hystmag
-from hystmag import cli_helpers, tofly
+import mammosmag
+from mammosmag import cli_helpers, tofly
 
 
 def main():
     parser = argparse.ArgumentParser()
     sub_parsers = parser.add_subparsers(dest="sub_parser")
     parser.add_argument(
-        "-v", "--version", action="version", version=f"hystmag {hystmag.__version__}"
+        "-v",
+        "--version",
+        action="version",
+        version=f"mammosmag {mammosmag.__version__}",
     )
 
     escript_build_parser = sub_parsers.add_parser(
         name="build-escript",
         help=(
-            "Option to build esys-escript container using apptainer or podman. Hystmag "
-            "depends on esys-escript for the simulations. The definition files to "
-            "build the container are provided with the package."
+            "Option to build esys-escript container using apptainer or podman. "
+            "mammosmag depends on esys-escript for the simulations. "
+            "The definition files to build the container are provided with the package."
         ),
     )
 
@@ -92,7 +95,7 @@ def main():
 
     run_parser = sub_parsers.add_parser(
         name="run",
-        help=("Run the hystmag simulation based on the pre-defined scripts."),
+        help=("Run the mammosmag simulation based on the pre-defined scripts."),
     )
 
     run_parser.add_argument(
@@ -101,7 +104,7 @@ def main():
         type=int,
         default=4,
         required=False,
-        help=("Specify the number of runtime threads for esys-escript (hystmag)."),
+        help=("Specify the number of runtime threads for esys-escript (mammosmag)."),
     )
 
     run_parser.add_argument(
@@ -149,4 +152,4 @@ def main():
         args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_hystmag(args.threads, args.program, args.script, args.system)
+        cli_helpers.run_mammosmag(args.threads, args.program, args.script, args.system)
