@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hystmag"
+name = "mammosmag"
 version = "0.1.0"
 description = "Finite element micromagnetic simulation tool."
 authors = [{ name = "Thomas Schrefl" }]
@@ -17,7 +17,7 @@ classifiers = [
   'License :: OSI Approved :: BSD License',
   'Operating System :: POSIX',
   'Operating System :: Microsoft :: Windows',
-  "Topic :: Scientific/Engineering :: Physics",
+  'Topic :: Scientific/Engineering :: Physics',
 ]
 
 requires-python = ">=3.6"
@@ -27,7 +27,7 @@ requires-python = ">=3.6"
 'content-type' = "text/markdown"
 
 [project.scripts]
-hystmag = "hystmag.cli:main"
+mammosmag = "mammosmag.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
