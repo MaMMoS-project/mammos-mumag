@@ -25,8 +25,8 @@ def main():
     )
 
     escript_build_parser.add_argument(
-        "-p",
-        "--program",
+        "-c",
+        "--container",
         type=str,
         required=True,
         choices=("apptainer", "podman"),
@@ -141,7 +141,7 @@ def main():
     args = parser.parse_args()
 
     if args.sub_parser == "build-escript":
-        cli_helpers.install_escript(args.program, args.threads)
+        cli_helpers.install_escript(args.container, args.threads)
 
     if args.sub_parser == "unvtofly":
         nodes, index, groups, contact = tofly.scanUnv(args.infile, args.exclude)

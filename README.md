@@ -34,7 +34,7 @@ options:
 ## sub-command `build-escript`
 `mammosmag`'s simulation scripts depend on `esys-escript` for the FEM simulation. The repository comes with `esys-escript` container definition files for [apptainer](https://apptainer.org/) and [podman](https://podman.io/) and the building is handled by `build-escript` sub-command. To build the container, run:
 ```bash
-mammosmag build-escript --threads 10 --program <apptainer or podman>
+mammosmag build-escript --threads 10 --container <apptainer or podman>
 ```
 
 This will build the `esys-escript` container for the selected program and configure `mammosmag` to use it. Please use help for further options:
@@ -44,7 +44,7 @@ usage: mammosmag build-escript [-h] -p {apptainer,podman} [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
-  -p, --program {apptainer,podman}
+  -c, --container {apptainer,podman}
                         Specify the container program to use. It can be either apptainer or podman.
   -t, --threads THREADS
                         Specify the number of build threads.
