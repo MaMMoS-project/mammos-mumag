@@ -73,7 +73,9 @@ def run_mammosmag(threads, program, script, system):
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)
             container_list = config_dict["escript_container_programs"]
-        if program not in container_list:
+        if program is None:
+            program = container_list[0]
+        elif program not in container_list:
             raise RuntimeError(
                 f"{program} escript container not configured. "
                 "Make sure to build and install escript container, for example: "

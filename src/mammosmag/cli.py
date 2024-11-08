@@ -111,7 +111,7 @@ def main():
         "-p",
         "--program",
         type=str,
-        default="apptainer",
+        default=None,
         required=False,
         choices=("apptainer", "podman"),
         help=("Choose the container program to use for running esys-escript."),
