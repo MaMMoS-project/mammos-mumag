@@ -1,8 +1,0 @@
-name: apptainer-env
-
-channels:
-  - conda-forge
-  - nodefaults
-
-dependencies:
-  - apptainer 
