@@ -1,0 +1,32 @@
+name: Run and test mammosmag with podman escript
+
+on:
+  push:
+
+jobs:
+  test-build-podman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup podman
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install podman
+
+      - name: Checkout directory
+        uses: actions/checkout@v4
+
+      - name: Set up mamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-name: escript-podman
+          init-shell: bash
+          create-args: >-
+            python
+
+      - name: Install mammosmag
+        run: python -m pip install .
+        shell: micromamba-shell {0}
+
+      - name: Build podman escript
+        run: mammosmag build-escript -c podman -t 2
+        shell: micromamba-shell {0}

@@ -1,0 +1,28 @@
+name: Run and test mammosmag with apptainer escript
+
+on:
+  push:
+
+jobs:
+  test-build-apptainer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout directory
+        uses: actions/checkout@v4
+
+      - name: Set up mamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-name: escript-apptainer
+          init-shell: bash
+          create-args: >-
+            python
+            apptainer
+
+      - name: Install mammosmag
+        run: python -m pip install .
+        shell: micromamba-shell {0}
+
+      - name: Build podman escript
+        run: mammosmag build-escript -c apptainer -t 2
+        shell: micromamba-shell {0}
