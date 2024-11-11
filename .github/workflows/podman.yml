@@ -5,7 +5,7 @@ on:
 
 jobs:
   test-build-podman:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, ARM64]
     steps:
       - name: Setup podman
         run: |
