@@ -5,7 +5,7 @@ on:
 
 jobs:
   test-build-apptainer:
-    runs-on: [self-hosted, linux, ARM64]
+    runs-on: [self-hosted, linux, X64]
     steps:
       - name: Checkout directory
         uses: actions/checkout@v4
