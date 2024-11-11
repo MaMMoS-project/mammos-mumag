@@ -6,8 +6,14 @@ build-backend = "setuptools.build_meta"
 name = "mammosmag"
 version = "0.1.0"
 description = "Finite element micromagnetic simulation tool."
-authors = [{ name = "Thomas Schrefl" }]
-maintainers = [{ name = "Thomas Schrefl" }]
+authors = [
+  { name = "Thomas Schrefl" },
+  { name = "Swapneel Amit Pathak" },
+  { name = "Andrea Petrocchi" },
+  { name = "Samuel Holt" },
+  { name = "Martin Lang" },
+  { name = "Hans Fangohr" },
+]
 license = { file = "LICENSE" }
 
 classifiers = [
