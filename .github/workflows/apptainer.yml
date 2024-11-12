@@ -2,6 +2,9 @@ name: Run and test mammosmag with apptainer escript
 
 on:
   push:
+    paths:
+      - src/**
+      - .github/workflows/**
 
 jobs:
   test-build-run-apptainer:
