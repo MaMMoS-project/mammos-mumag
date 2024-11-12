@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "mammosmag"
 version = "0.1.0"
 description = "Finite element micromagnetic simulation tool."
+readme = "README.md"
 authors = [
   { name = "Thomas Schrefl" },
   { name = "Swapneel Amit Pathak" },
@@ -27,10 +28,6 @@ classifiers = [
 ]
 
 requires-python = ">=3.6"
-
-[project.readme]
-'file' = "README.md"
-'content-type' = "text/markdown"
 
 [project.scripts]
 mammosmag = "mammosmag.cli:main"
