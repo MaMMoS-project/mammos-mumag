@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  test-build-podman:
+  test-build-run-podman:
     runs-on: [self-hosted, linux, X64]
     steps:
       - name: Checkout directory
@@ -27,4 +27,10 @@ jobs:
 
       - name: Build podman escript
         run: mammosmag build-escript -c podman -t 5
+        shell: micromamba-shell {0}
+
+      - name: Run demag mammosmag simulation
+        run: |
+          cd examples/demagnetization
+          mammosmag run -p podman -t 5 -s loop cube
         shell: micromamba-shell {0}
