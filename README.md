@@ -54,7 +54,7 @@ options:
 ```
 
 ## sub-command `unvtofly`
-`mammosmag` uses `fly` mesh file format. Thus, a tool is provided to convert standard `unv` mesh files to `fly` format.
+`mammosmag` uses `fly` mesh file format; `mamossmag unvtofly` convert standard `unv` mesh files to `fly` format.
 ```bash
 mammosmag unvtofly <unv-flile-name> <fly-file-name>
 ```
