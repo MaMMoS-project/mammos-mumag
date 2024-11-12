@@ -17,7 +17,7 @@ jobs:
           init-shell: bash
           create-args: >-
             python
-            podman
+            podman==4.1.0
 
       - name: Install mammosmag
         run: python -m pip install .
