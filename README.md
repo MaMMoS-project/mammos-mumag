@@ -3,7 +3,7 @@
 
 # Install package
 To install the package, run:
-```bash
+```console
 pip install .
 ```
 
@@ -13,7 +13,7 @@ This will install `mammosmag` as a command line executable.
 
 # Usage
 To get a quick summary of all the options available with `mammosmag`, run:
-```bash
+```console
 $ mammosmag --help
 usage: mammosmag [-h] [-v] {build-escript,unvtofly,run} ...
 
@@ -36,12 +36,12 @@ options:
 
 ## sub-command `build-escript`
 `mammosmag`'s simulation scripts depend on `esys-escript` for the FEM simulation. The repository comes with `esys-escript` container definition files for [apptainer](https://apptainer.org/) and [podman](https://podman.io/) and the building is handled by `build-escript` sub-command. To build the container, run:
-```bash
+```console
 mammosmag build-escript --threads 10 --container <apptainer or podman>
 ```
 
 This will build the `esys-escript` container for the selected program and configure `mammosmag` to use it. Please use help for further options:
-```bash
+```console
 $ mammosmag build-escript --help
 usage: mammosmag build-escript [-h] -p {apptainer,podman} [-t THREADS]
 
@@ -55,12 +55,12 @@ options:
 
 ## sub-command `unvtofly`
 `mammosmag` uses `fly` mesh file format; `mamossmag unvtofly` convert standard `unv` mesh files to `fly` format.
-```bash
+```console
 mammosmag unvtofly <unv-flile-name> <fly-file-name>
 ```
 
 Further options are:
-```bash
+```console
 $ mammosmag unvtofly --help
 usage: mammosmag unvtofly [-h] [-e DIMENSIONS] [UNV] [FLY]
 
@@ -81,7 +81,7 @@ options:
 
 ## sub-command `run`
 This sub-command is used to actually run `mammosmag` simulations based on pre-defined simulation scripts, for example:
-```bash
+```console
 mammosmag run -p apptainer -t 5 -s loop <system-name>
 ```
 
@@ -91,7 +91,7 @@ To run the simulation, one needs to have following configuration files in the wo
 3. `<system-name>.p2` which defines the simulation parameters, such as, external field range, step size of hysteresis, size of the geometry, initial magnetisation, etc.
 
 For all the options, run:
-```bash
+```console
 $ mammosmag run --help
 usage: mammosmag run [-h] [-t THREADS] [-p {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
 
@@ -117,7 +117,7 @@ We use Salome https://www.salome-platform.org/ for geometry and mesh generation.
 Please see `mumag/examples/standard_problem_3` for an example.
 
 To create the mesh file of a cube with an edge length of 40 nm and a mesh size of 2 nm
-```bash
+```console
 cd examples/standard_problem_3
 salome_install_path/SALOME-9.12.0/salome -t cube.py args:40,2
 mammosmag unvtofly -e 1,2 cube.unv cube.fly
@@ -147,7 +147,7 @@ where
 The last two lines denote a sphere enclosing the magnetic region and a spherical shell. 
 
 To create a vtu file that shows the materials use   
-```bash
+```console
 mammosmag run -p apptainer -t 5 -s materials cube
 ```
 
@@ -155,7 +155,7 @@ mammosmag run -p apptainer -t 5 -s materials cube
 
 for details see https://www.ctcms.nist.gov/~rdm/spec3.html
 
-```bash
+```console
 cd mumag/examples/standard_problem_3
 python mumag3.py
 ```
@@ -186,7 +186,7 @@ The example in pymag/meshing uses the spherical shell transformation.
 
 To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
 
-```bash
+```console
 mammosmag run -p apptainer -t 5 -s hmag cube
 ```
 
