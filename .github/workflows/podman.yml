@@ -15,6 +15,7 @@ jobs:
         with:
           environment-name: escript-podman
           init-shell: bash
+          post-cleanup: all
           create-args: >-
             python
             podman==4.1.0
