@@ -7,9 +7,9 @@ To install the package, run:
 pip install .
 ```
 
-This will install `mammosmag` as a command line executable.
+This will install `mammosmag` as a command line executable. It requires either `apptainer` or `podman` Installed on the system in order to build `esys-escript` container which a dependency of `mammosmag`.
 
-> **_NOTE:_**  Make sure to install `fuse-overlayfs` from conda-forge or any other package manager to run mammosmag on HPCs.
+> **_NOTE:_**  Make sure to install `fuse-overlayfs` from conda-forge or any other package manager if the Linux kernel version is below 5.11.
 
 # Usage
 To get a quick summary of all the options available with `mammosmag`, run:
