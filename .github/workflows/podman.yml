@@ -15,7 +15,8 @@ jobs:
         with:
           environment-name: escript-podman
           init-shell: bash
-          post-cleanup: all
+          post-cleanup: environment
+          micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
           create-args: >-
             python
             podman==4.1.0

@@ -15,7 +15,8 @@ jobs:
         with:
           environment-name: escript-apptainer
           init-shell: bash
-          post-cleanup: all
+          post-cleanup: environment
+          micromamba-binary-path: ${{ runner.temp }}/bin/micromamba
           create-args: >-
             python
             apptainer
