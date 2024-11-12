@@ -26,5 +26,5 @@ jobs:
         shell: micromamba-shell {0}
 
       - name: Build podman escript
-        run: mammosmag build-escript -c podman -t 2
+        run: mammosmag build-escript -c podman -t 5
         shell: micromamba-shell {0}

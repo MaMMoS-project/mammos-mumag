@@ -26,5 +26,5 @@ jobs:
         shell: micromamba-shell {0}
 
       - name: Build apptainer escript
-        run: mammosmag build-escript -c apptainer -t 2
+        run: mammosmag build-escript -c apptainer -t 5
         shell: micromamba-shell {0}
