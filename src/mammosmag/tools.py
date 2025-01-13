@@ -11,11 +11,11 @@ def normalize(v):
     a = v[0]
     b = v[1]
     c = v[2]
-    l = math.sqrt(a * a + b * b + c * c)
-    if l == 0.0:
+    ll = math.sqrt(a * a + b * b + c * c)
+    if ll == 0.0:
         return [a, b, c]
     else:
-        return [a / l, b / l, c / l]
+        return [a / ll, b / ll, c / ll]
 
 
 def dot(a, b):
@@ -40,36 +40,7 @@ def get_meas(Js):
     pde.setValue(Y=Js)
     return pde.getRightHandSide()
 
-
-def read_Js(name):
-    with open(name + ".krn") as f:
-        l = f.readline().split()
-        Js = float(l[4])
-    return Js
-
-
-def read_A(name):
-    with open(name + ".krn") as f:
-        l = f.readline().split()
-        A = float(l[5])
-    return A
-
-
-def readAnisotropyEnergy(name, m):
-    m = normalize(m)
-    with open(name + ".krn") as f:
-        l = f.readline().split()
-        theta = float(l[0])
-        phi = float(l[1])
-        n0 = math.sin(theta) * math.cos(phi)
-        n1 = math.sin(theta) * math.sin(phi)
-        n2 = math.cos(theta)
-        K1 = float(l[2])
-    mu0 = 4.0e-7 * math.pi
-    return -mu0 * K1 * (m[0] * n0 + m[1] * n1 + m[2] * n2) ** 2.0
-
-
-def read_params(name):
+def read_params(params_fname):
     config = configparser.ConfigParser(
         {
             "state": "mxyz",
@@ -83,7 +54,7 @@ def read_params(name):
             "iter_max": 1000,
         }
     )
-    config.read(name + ".p2")
+    config.read(params_fname)
     intial_state = config["initial state"]
     field = config["field"]
     minimizer = config["minimizer"]

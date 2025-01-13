@@ -5,7 +5,8 @@ from esys.escript.minimizer import (
     CostFunction1DEvaluationFactory,
     LineSearchTerminationError,
     MinimizerIterationIncurableBreakDown,
-)  # MinimizerMaxIterReached
+    MinimizerMaxIterReached,
+)
 
 
 class LBFGS(AbstractMinimizer):
@@ -41,7 +42,7 @@ class LBFGS(AbstractMinimizer):
         Fm = self.getCostFunction().getValueAndCount(m, *args_m)
         self._result = (m, Fm)
 
-        Fm_old = Fm
+        # Fm_old = Fm
         self.logger.info("Initialization completed.")
 
         self.doCallback(
@@ -275,7 +276,8 @@ class LBFGS(AbstractMinimizer):
         self.__initializeHessian = False
         norm_p = self.getCostFunction().getNormAndCount(p)
         if not norm_p > 0:
-            raise MinimizerException("Approximate Hessian inverse returns zero.")
+            # raise MinimizerException("Approximate Hessian inverse returns zero.")
+            raise Exception("Approximate Hessian inverse returns zero.")
         # this is if one wants
         if H_scale is not None and self._scaleSearchDirection:
             p_dot_q = self.getCostFunction().getDualProductAndCount(p, q)

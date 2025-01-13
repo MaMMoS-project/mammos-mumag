@@ -43,7 +43,7 @@ mammosmag build-escript --threads 10 --container <apptainer or podman>
 This will build the `esys-escript` container for the selected program and configure `mammosmag` to use it. Please use help for further options:
 ```console
 $ mammosmag build-escript --help
-usage: mammosmag build-escript [-h] -p {apptainer,podman} [-t THREADS]
+usage: mammosmag build-escript [-h] -c {apptainer,podman} [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
@@ -80,34 +80,69 @@ options:
 ```
 
 ## sub-command `run`
-This sub-command is used to actually run `mammosmag` simulations based on pre-defined simulation scripts, for example:
+This sub-command is used to actually run `mammosmag` simulations with a user-defined python script or with pre-defined simulation scripts, for example:
 ```console
-mammosmag run -p apptainer -t 5 -s loop <system-name>
+mammosmag run -c apptainer -t 5 examples/demagnetization/cube_simulation.py
 ```
+runs the script `cube_simulation.py` in `examples/demagnetization/`, and
+```console
+mammosmag run -c apptainer -t 5 loop -n <name-system>
+```
+runs the `loop` script with the specified `name-system`.
 
-To run the simulation, one needs to have following configuration files in the working directory:
-1. `<system-name>.fly` which is the mesh file.
-2. `<system-name>.krn` which defines material parameters of each grain in the magnetic material.
-3. `<system-name>.p2` which defines the simulation parameters, such as, external field range, step size of hysteresis, size of the geometry, initial magnetisation, etc.
+The possible pre-defined scripts are `exani`, `external`, `hmag`, `loop`, `magnetisation`, and `materials`.
+Some user-defined scripts require one or more of the following configuration files in the working directory:
+1. `<name-system>.fly`: the mesh file.
+2. `<name-system>.krn`: defines material parameters of each grain in the magnetic material.
+3. `<name-system>.p2`: simulation parameters, such as, external field range, step size of hysteresis, size of the geometry, initial magnetisation, etc.
 
 For all the options, run:
 ```console
 $ mammosmag run --help
-usage: mammosmag run [-h] [-t THREADS] [-p {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
+usage: mammosmag run [-h] [-t THREADS] [-c {apptainer,podman}] [-n NAME_SYSTEM] script
 
 positional arguments:
-  system                The name given to the simulation configuration files in the present working directory.
+  script                Python file or pre-defined simulation script to execute.
+                        The name must be one of loop, exani,
+                        external, hmag, magnetisation, or materials.
 
 options:
   -h, --help            show this help message and exit
   -t, --threads THREADS
                         Specify the number of runtime threads for esys-escript (mammosmag).
-  -p, --program {apptainer,podman}
+  -c, --container {apptainer,podman}
                         Choose the container program to use for running esys-escript.
-  -s, --script {loop,exani,external,hmag,magnetisation,materials}
-                        Name the pre-defined simulation script to use.
-                        The name must be one of loop, exani, external, hmag, magnetisation, or materials.
+  -n, --name-system NAME_SYSTEM
+                        The name given to the simulation configuration files in the present working directory.
 ```
+
+# Python API
+
+`mammosmag` is also a Python package.
+For its use consider `examples/demagnetization/cube_simulation.py`:
+```python
+from pathlib import Path
+from mammosmag.loop import Loop
+
+here = Path(__file__).absolute().parent
+loop = Loop('cube', outdir=here/'out')
+loop.read_mesh(here/'cube.fly')
+loop.read_params(here/'cube.p2')
+loop.read_materials(here/'cube.krn')
+loop.run()
+```
+
+So, one can run
+```console
+mammosmag run examples/demagnetization/cube_simulation.py
+```
+and the input files do not need to be in the same folder, as the command
+```console
+mammosmag run loop -n cube
+```
+would require. In particular, using the simulation script `loop` requires:
+- Files `cube.fly`, `cube.krn`, `cube.p2` are already in the same folder
+- I expect the output file to be `cube.dat` in the same folder.
 
 # Example
 
@@ -148,7 +183,7 @@ The last two lines denote a sphere enclosing the magnetic region and a spherical
 
 To create a vtu file that shows the materials use   
 ```console
-mammosmag run -p apptainer -t 5 -s materials cube
+mammosmag run -c apptainer -t 5 materials -n cube
 ```
 
 ## Run the standard problem 3
@@ -187,7 +222,7 @@ The example in pymag/meshing uses the spherical shell transformation.
 To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
 
 ```console
-mammosmag run -p apptainer -t 5 -s hmag cube
+mammosmag run -c apptainer -t 5 hmag -n cube
 ```
 
 ### Solver parameters

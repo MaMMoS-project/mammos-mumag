@@ -2,9 +2,9 @@ import esys.escript as e
 from esys.escript.minimizer import CostFunction
 
 # from lbfgsm import LBFGSM
-from lbfgs import LBFGS
+from .lbfgs import LBFGS
 
-from tools import dot, Linf_norm, L2_norm, get_logger
+from .tools import dot, Linf_norm, L2_norm, get_logger
 
 from time import time
 
@@ -68,7 +68,7 @@ class MumagFunc(CostFunction):
     def hessianVector(self, m, gloc, p):
         hp = self._exani.solve_g(p)  # self._fun.gLocalNoProj(p)
         php = projection(m, hp)
-        ph = inner3(p, gloc)
+        # ph = inner3(p, gloc)
         hm = inner3(m, gloc)
         Hp = php - (hm * p)  # - ph*m  # omitting this term makes the hessian symmetric
         return Hp

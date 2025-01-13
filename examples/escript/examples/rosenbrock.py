@@ -9,6 +9,12 @@
 #
 ##############################################################################
 from __future__ import division, print_function
+from esys.escript.minimizer import MinimizerLBFGS, CostFunction
+import numpy as np
+from scipy.optimize import rosen, rosen_der, rosen_hess
+import logging
+import matplotlib
+import matplotlib.pyplot as plt
 
 __copyright__ = """Copyright (c) 2003-2018 by The University of Queensland
 http://www.uq.edu.au
@@ -26,15 +32,10 @@ for optimization.
 """
 
 
-from esys.escript.minimizer import MinimizerLBFGS, CostFunction
-import numpy as np
-from scipy.optimize import rosen, rosen_der, rosen_hess
-import logging
-import matplotlib
 # For interactive use, you can comment out this line
-matplotlib.use('agg')
+matplotlib.use("agg")
 
-mylogger = logging.getLogger('esys')
+mylogger = logging.getLogger("esys")
 mylogger.setLevel(logging.DEBUG)
 
 
@@ -44,7 +45,7 @@ class RosenFunc(CostFunction):
         super().__init__()
         self.N = N
 
-    def getDualProduct(self,  m, g):
+    def getDualProduct(self, m, g):
         """
         returns the dot product of gradient g with solution vector m:
         """
@@ -54,7 +55,7 @@ class RosenFunc(CostFunction):
         """
         return precalculated values for current approximation m. Here nothing is returned:
         """
-        return None,
+        return (None,)
 
     def getValue(self, m, *args):
         """
@@ -75,7 +76,7 @@ class RosenFunc(CostFunction):
         # here the Hessian is updated when at the first iteration step and when
         # the BFGS is restarted.
         if initializeHessian:
-          self.invH = np.linalg.inv(rosen_hess(m))
+            self.invH = np.linalg.inv(rosen_hess(m))
         return self.invH.dot(r)
 
     def getNorm(self, m):
@@ -84,35 +85,38 @@ class RosenFunc(CostFunction):
         """
         return np.linalg.norm(m, np.inf)
 
+
 # ... callback function is used to collect the table of iteration count vs. value of the cost function
 TABLE = []
 
+
 def myCallback(iterCount, m, dm, Fm, grad_Fm, norm_m, norm_gradFm, args_m, failed):
     if not failed:
-        TABLE.append( [ iterCount, Fm ] )
+        TABLE.append([iterCount, Fm])
+
 
 #
 # Create an instance of the cost function
 #
 F = RosenFunc(N=20)
 
-#... Create an instance of the solver
+# ... Create an instance of the solver
 #
 solve = MinimizerLBFGS(F, iterMax=300, logger=mylogger)
 solve.setTolerance(m_tol=1e-7)
 solve.setCallback(myCallback)
-#... run the solver:
+# ... run the solver:
 m0 = np.zeros((F.N,))
 solve.run(m0)
 m = solve.getResult()
 print("m = ", m)
-print("close to true solution? ", np.allclose(m, np.ones( (F.N, )) ) )
+print("close to true solution? ", np.allclose(m, np.ones((F.N,))))
 
 # plotting the convergency history:
 
-import matplotlib.pyplot as plt
-plt.plot([t[0] for t in TABLE], [t[1] for t in TABLE], '-')
-plt.ylabel('F(m)')
-plt.xlabel('iteration count')
-plt.yscale('log')
+
+plt.plot([t[0] for t in TABLE], [t[1] for t in TABLE], "-")
+plt.ylabel("F(m)")
+plt.xlabel("iteration count")
+plt.yscale("log")
 plt.savefig("rosenhistory.png")

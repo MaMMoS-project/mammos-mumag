@@ -5,6 +5,7 @@ From: condaforge/miniforge3
   BUILD_THREADS=8
 %files
   {{ PATCH_DIR }} /patches
+  {{ MAMMOSMAG_DIR }} /mammosmag
 %post
   conda env create -f /patches/escript.yaml
   conda install -y -n escript -c conda-forge cxx-compiler make cmake
@@ -19,5 +20,6 @@ From: condaforge/miniforge3
   cp -R /patches/SConstruct ./
   cp -f /patches/hp_options.py ./scons/
   conda run --no-capture-output -n escript scons -j{{ BUILD_THREADS }} options_file=scons/hp_options.py
+  conda run -n escript pip install /mammosmag
 %runscript
   OMP_PROC_BIND=spread OMP_PLACES=threads PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$@"

@@ -345,8 +345,8 @@ def writeBuffer(f, b, t, m=None, i=1):
     if m is not None:
         t = m[t]
     f.write("%s %d\n" % (t, len(b)))
-    for l in b:
-        f.write(str(i) + " " + l)
+    for c in b:
+        f.write(str(i) + " " + c)
         i += 1
     return i
 
