@@ -108,8 +108,8 @@ def main():
     )
 
     run_parser.add_argument(
-        "-p",
-        "--program",
+        "-c",
+        "--container",
         type=str,
         default=None,
         required=False,
@@ -152,4 +152,6 @@ def main():
         args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_mammosmag(args.threads, args.program, args.script, args.system)
+        cli_helpers.run_mammosmag(
+            args.threads, args.container, args.script, args.system
+        )
