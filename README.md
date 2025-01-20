@@ -43,14 +43,14 @@ mammosmag build-escript --threads 10 --container <apptainer or podman>
 This will build the `esys-escript` container for the selected program and configure `mammosmag` to use it. Please use help for further options:
 ```console
 $ mammosmag build-escript --help
-usage: mammosmag build-escript [-h] -p {apptainer,podman} [-t THREADS]
+usage: mammosmag build-escript [-h] -c {apptainer,podman} [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
   -c, --container {apptainer,podman}
                         Specify the container program to use. It can be either apptainer or podman.
   -t, --threads THREADS
-                        Specify the number of build threads. (Defaults to 4)
+                        Specify the number of build threads (Defaults to 4)
 ```
 
 ## sub-command `unvtofly`
@@ -93,7 +93,7 @@ To run the simulation, one needs to have following configuration files in the wo
 For all the options, run:
 ```console
 $ mammosmag run --help
-usage: mammosmag run [-h] [-t THREADS] [-p {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
+usage: mammosmag run [-h] [-t THREADS] [-c {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
 
 positional arguments:
   system                The name given to the simulation configuration files in the present working directory.
@@ -102,7 +102,7 @@ options:
   -h, --help            show this help message and exit
   -t, --threads THREADS
                         Specify the number of runtime threads for esys-escript (mammosmag).
-  -p, --program {apptainer,podman}
+  -c, --container {apptainer,podman}
                         Choose the container program to use for running esys-escript.
   -s, --script {loop,exani,external,hmag,magnetisation,materials}
                         Name the pre-defined simulation script to use.
