@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Convert unv mesh files to the fly format.
 
 usage: tofly.py [-h] [-e DIMENSIONS] [UNV] [FLY]
@@ -24,13 +22,9 @@ optional arguments:
                         3D elements).
 """
 
-import sys
-import argparse
-
-
 CONTACT_GRP = "contact"
 
-UNV_DELIM = '    -1'
+UNV_DELIM = "    -1"
 
 UNV_NODES = "2411"
 UNV_ELEMS = "2412"
@@ -65,10 +59,21 @@ FLY_REC4_CONTACT = "Rec4_Contact"
 FLY_REC8_CONTACT = "Rec8_Contact"
 
 MNORMAL = {
-    "11": FLY_LINE2, "21": FLY_LINE2, "22": FLY_LINE3, "24": FLY_LINE3,
-    "41": FLY_TRI3, "81": FLY_TRI3, "91": FLY_TRI3, "42": FLY_TRI6,
-    "82": FLY_TRI6, "92": FLY_TRI6, "44": FLY_REC4, "115": FLY_HEX8,
-    "116": FLY_HEX20, "111": FLY_TET4, "118": FLY_TET10,
+    "11": FLY_LINE2,
+    "21": FLY_LINE2,
+    "22": FLY_LINE3,
+    "24": FLY_LINE3,
+    "41": FLY_TRI3,
+    "81": FLY_TRI3,
+    "91": FLY_TRI3,
+    "42": FLY_TRI6,
+    "82": FLY_TRI6,
+    "92": FLY_TRI6,
+    "44": FLY_REC4,
+    "115": FLY_HEX8,
+    "116": FLY_HEX20,
+    "111": FLY_TET4,
+    "118": FLY_TET10,
 }
 
 MCONTACT = {
@@ -152,6 +157,7 @@ def static_vars(**kwargs):
         for k in kwargs:
             setattr(func, k, kwargs[k])
         return func
+
     return decorate
 
 
@@ -172,7 +178,7 @@ def parse(f, num, pattern):
         wCnt += len(words)
     diff = wCnt - num
     if diff > 0:
-        parse.rem = words[len(words) - diff:]
+        parse.rem = words[len(words) - diff :]
     if cache and wCnt < num:
         raise EndOfSectionError()
     return cache
@@ -246,12 +252,12 @@ def parseGroups(groups, contact, file):
         data = parse(file, 9, 0b110000000)
 
 
-#def writeFly(nodes, groups, index, contact, unvFile, flyFile):
+# def writeFly(nodes, groups, index, contact, unvFile, flyFile):
 def writeFly(nodes, groups, index, contact, unvFile, flyFile, exclude):
     writeHeader(flyFile)
     convertNodes(nodes, unvFile, flyFile)
     convertElemsContact(index, groups, contact, unvFile, flyFile)
-    #writeFooter(flyFile)
+    # writeFooter(flyFile)
     if UNV_2D.issubset(exclude):
         writeFooter(flyFile)
     else:
@@ -272,8 +278,8 @@ def convertNodes(nodes, unvFile, flyFile):
         while num > 0:
             nId, x, y, z = parseNode(unvFile)
             flyFile.write(
-                nId + " " + nId + " 0 " + str(x) + " " +
-                str(y) + " " + str(z) + "\n")
+                nId + " " + nId + " 0 " + str(x) + " " + str(y) + " " + str(z) + "\n"
+            )
             num -= 1
 
 
@@ -283,6 +289,7 @@ Tri3_Contact 0
 Point1 0
 Tags
 """)
+
 
 def writeFooter2(fly):
     fly.write("""Tri3_Contact 0
@@ -361,30 +368,6 @@ def parseElem(t, file):
     return eId, data
 
 
-def parseArgs():
-    parser = argparse.ArgumentParser(
-        description="Convert unv files to the fly format. Elements that"
-        " belong to a group called 'contact' will be converted to their"
-        " contact counterparts. First and secound order meshes are supported.")
-    parser.add_argument(
-        'infile', nargs='?', type=argparse.FileType('r', 1000),
-        default=sys.stdin, metavar="UNV", help="Path to the input file"
-        " or '-' for stdin. It must already exist and be stored in the"
-        " unv format. If ommited stdin will be used instead.")
-    parser.add_argument(
-        'outfile', nargs='?', type=argparse.FileType('w', 1000),
-        default=sys.stdout, metavar="FLY", help="Path to the output file"
-        " or '-' for stdout. Overridden if it already exists. If ommited"
-        " stdout will be used instead.")
-    parser.add_argument(
-        '-e', '--exclude', type=dimension, default=set(),
-        metavar="DIMENSIONS", help="Comma separated list of dimensions"
-        " that shall be ignored while converting (e.g. '-e 1,2' only "
-        "converts 3D elements).")
-    args = parser.parse_args()
-    return args.infile, args.outfile, args.exclude
-
-
 def dimension(text):
     exclude = set()
     for opt in text.split(","):
@@ -396,14 +379,5 @@ def dimension(text):
             exclude |= UNV_3D
         else:
             msg = "Invalid dimension: %s" % opt
-            raise argparse.ArgumentTypeError(msg)
+            raise TypeError(msg)
     return exclude
-
-
-if __name__ == "__main__":
-    unv, fly, exclude = parseArgs()
-    nodes, index, groups, contact = scanUnv(unv, exclude)
-    #writeFly(nodes, groups, index, contact, unv, fly)
-    writeFly(nodes, groups, index, contact, unv, fly, exclude)
-    unv.close()
-    fly.close()

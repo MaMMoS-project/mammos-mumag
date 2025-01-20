@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Create a base image
-FROM condaforge/miniforge3 AS base
+FROM docker.io/condaforge/miniforge3 AS base
 COPY ./patches/escript.yaml ./escript.yaml
 RUN conda env create -f ./escript.yaml
 
@@ -20,17 +20,11 @@ COPY ./patches/dependencies.py ./site_scons/
 COPY ./patches/SConstruct ./
 COPY ./patches/hp_options.py scons/
 RUN conda install -y -n escript -c conda-forge cmake
-ARG BUILD_THREADS="8"
+ARG BUILD_THREADS
 RUN conda run --no-capture-output -n escript scons -j$BUILD_THREADS options_file=scons/hp_options.py
 
 # Create the final reduced image
 FROM base AS final
-ARG RUN_THREADS="8"
-ENV RUN_THREADS_ENV=$RUN_THREADS
-COPY --from=build /escript/lib/* /opt/conda/envs/escript/lib/
-COPY --from=build /escript/escript_trilinos/lib/* /opt/conda/envs/escript/lib/
-COPY --from=build /escript/bin/* /opt/conda/envs/escript/bin/
-COPY mumag/pymag/py /hystmag
-COPY --from=build /escript/esys /hystmag/esys
+COPY --from=build /escript /escript
 WORKDIR /io
-ENTRYPOINT conda run --no-capture-output -n=escript run-escript -t $RUN_THREADS_ENV /hystmag/loop.py "$0" "$@"
+ENTRYPOINT OMP_PROC_BIND=spread OMP_PLACES=threads PYTHONPATH=$PYTHONPATH:/escript/escript LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/escript/lib:/escript/escript_trilinos/lib /escript/bin/run-escript "$0" "$@"

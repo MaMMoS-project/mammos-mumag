@@ -1,0 +1,3 @@
+recursive-include src/mammosmag/sim_scripts *
+recursive-include src/mammosmag/container_scripts *
+recursive-include src/mammosmag/container_scripts/patches *
