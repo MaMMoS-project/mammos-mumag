@@ -1,5 +1,5 @@
 # Info
-`mammosmag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
+`mmag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
 
 # Install package
 To install the package, run:
@@ -7,43 +7,43 @@ To install the package, run:
 pip install .
 ```
 
-This will install `mammosmag` as a command line executable. It requires either `apptainer` or `podman` Installed on the system in order to build `esys-escript` container which a dependency of `mammosmag`.
+This will install `mmag` as a command line executable. It requires either `apptainer` or `podman` Installed on the system in order to build `esys-escript` container which a dependency of `mmag`.
 
 > **_NOTE:_**  Make sure to install `fuse-overlayfs` from conda-forge or any other package manager if the Linux kernel version is below 5.11.
 
 # Usage
-To get a quick summary of all the options available with `mammosmag`, run:
+To get a quick summary of all the options available with `mmag`, run:
 ```console
-$ mammosmag --help
-usage: mammosmag [-h] [-v] {build-escript,unvtofly,run} ...
+$ mmag --help
+usage: mmag [-h] [-v] {build-escript,unvtofly,run} ...
 
 positional arguments:
   {build-escript,unvtofly,run}
     build-escript       Option to build esys-escript container using apptainer or podman.
-                        mammosmag depends on esys-escript for the simulations.
+                        mmag depends on esys-escript for the simulations.
                         The definition files to build the container are provided with the package.
     unvtofly            Convert unv files to the fly format. Elements that belong to a group called
                         'contact' will be converted to their contact counterparts. First and secound
                         order meshes are supported.
-    run                 Run the mammosmag simulation based on the pre-defined scripts.
+    run                 Run the mmag simulation based on the pre-defined scripts.
 
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
 ```
 
-`mammosmag` takes three sub-commands: `build-escript`, `unvtofly`, and `run`.
+`mmag` takes three sub-commands: `build-escript`, `unvtofly`, and `run`.
 
 ## sub-command `build-escript`
-`mammosmag`'s simulation scripts depend on `esys-escript` for the FEM simulation. The repository comes with `esys-escript` container definition files for [apptainer](https://apptainer.org/) and [podman](https://podman.io/) and the building is handled by `build-escript` sub-command. To build the container, run:
+`mmag`'s simulation scripts depend on `esys-escript` for the FEM simulation. The repository comes with `esys-escript` container definition files for [apptainer](https://apptainer.org/) and [podman](https://podman.io/) and the building is handled by `build-escript` sub-command. To build the container, run:
 ```console
-mammosmag build-escript --threads 10 --container <apptainer or podman>
+mmag build-escript --threads 10 --container <apptainer or podman>
 ```
 
-This will build the `esys-escript` container for the selected program and configure `mammosmag` to use it. Please use help for further options:
+This will build the `esys-escript` container for the selected program and configure `mmag` to use it. Please use help for further options:
 ```console
-$ mammosmag build-escript --help
-usage: mammosmag build-escript [-h] -c {apptainer,podman} [-t THREADS]
+$ mmag build-escript --help
+usage: mmag build-escript [-h] -c {apptainer,podman} [-t THREADS]
 
 options:
   -h, --help            show this help message and exit
@@ -54,15 +54,15 @@ options:
 ```
 
 ## sub-command `unvtofly`
-`mammosmag` uses `fly` mesh file format; `mamossmag unvtofly` convert standard `unv` mesh files to `fly` format.
+`mmag` uses `fly` mesh file format; `mamossmag unvtofly` convert standard `unv` mesh files to `fly` format.
 ```console
-mammosmag unvtofly <unv-flile-name> <fly-file-name>
+mmag unvtofly <unv-flile-name> <fly-file-name>
 ```
 
 Further options are:
 ```console
-$ mammosmag unvtofly --help
-usage: mammosmag unvtofly [-h] [-e DIMENSIONS] [UNV] [FLY]
+$ mmag unvtofly --help
+usage: mmag unvtofly [-h] [-e DIMENSIONS] [UNV] [FLY]
 
 positional arguments:
   UNV                   Path to the input file or '-' for stdin.
@@ -80,9 +80,9 @@ options:
 ```
 
 ## sub-command `run`
-This sub-command is used to actually run `mammosmag` simulations based on pre-defined simulation scripts, for example:
+This sub-command is used to actually run `mmag` simulations based on pre-defined simulation scripts, for example:
 ```console
-mammosmag run -p apptainer -t 5 -s loop <system-name>
+mmag run -p apptainer -t 5 -s loop <system-name>
 ```
 
 To run the simulation, one needs to have following configuration files in the working directory:
@@ -92,8 +92,8 @@ To run the simulation, one needs to have following configuration files in the wo
 
 For all the options, run:
 ```console
-$ mammosmag run --help
-usage: mammosmag run [-h] [-t THREADS] [-c {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
+$ mmag run --help
+usage: mmag run [-h] [-t THREADS] [-c {apptainer,podman}] -s {loop,exani,external,hmag,magnetisation,materials} system
 
 positional arguments:
   system                The name given to the simulation configuration files in the present working directory.
@@ -101,7 +101,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -t, --threads THREADS
-                        Specify the number of runtime threads for esys-escript (mammosmag).
+                        Specify the number of runtime threads for esys-escript (mmag).
   -c, --container {apptainer,podman}
                         Choose the container program to use for running esys-escript.
   -s, --script {loop,exani,external,hmag,magnetisation,materials}
@@ -120,7 +120,7 @@ To create the mesh file of a cube with an edge length of 40 nm and a mesh size o
 ```console
 cd examples/standard_problem_3
 salome_install_path/SALOME-9.12.0/salome -t cube.py args:40,2
-mammosmag unvtofly -e 1,2 cube.unv cube.fly
+mmag unvtofly -e 1,2 cube.unv cube.fly
 ```
 
 In order to define space dependent material properties, groups are created in the Salome geometry and the Salome mesh. Group names are 1, 2, 3, .....
@@ -148,7 +148,7 @@ The last two lines denote a sphere enclosing the magnetic region and a spherical
 
 To create a vtu file that shows the materials use   
 ```console
-mammosmag run -p apptainer -t 5 -s materials cube
+mmag run -p apptainer -t 5 -s materials cube
 ```
 
 ## Run the standard problem 3
@@ -187,7 +187,7 @@ The example in pymag/meshing uses the spherical shell transformation.
 To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
 
 ```console
-mammosmag run -p apptainer -t 5 -s hmag cube
+mmag run -p apptainer -t 5 -s hmag cube
 ```
 
 ### Solver parameters
