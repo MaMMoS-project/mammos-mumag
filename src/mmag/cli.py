@@ -1,8 +1,8 @@
 import argparse
 import sys
 
-import mammosmag
-from mammosmag import cli_helpers, tofly
+import mmag
+from mmag import cli_helpers, tofly
 
 
 def main():
@@ -12,14 +12,14 @@ def main():
         "-v",
         "--version",
         action="version",
-        version=f"mammosmag {mammosmag.__version__}",
+        version=f"mmag {mmag.__version__}",
     )
 
     escript_build_parser = sub_parsers.add_parser(
         name="build-escript",
         help=(
             "Option to build esys-escript container using apptainer or podman. "
-            "mammosmag depends on esys-escript for the simulations. "
+            "mmag depends on esys-escript for the simulations. "
             "The definition files to build the container are provided with the package."
         ),
     )
@@ -95,7 +95,7 @@ def main():
 
     run_parser = sub_parsers.add_parser(
         name="run",
-        help=("Run the mammosmag simulation based on the pre-defined scripts."),
+        help=("Run the mmag simulation based on the pre-defined scripts."),
     )
 
     run_parser.add_argument(
@@ -104,7 +104,7 @@ def main():
         type=int,
         default=4,
         required=False,
-        help=("Specify the number of runtime threads for esys-escript (mammosmag)."),
+        help=("Specify the number of runtime threads for esys-escript (mmag)."),
     )
 
     run_parser.add_argument(
@@ -152,6 +152,4 @@ def main():
         args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_mammosmag(
-            args.threads, args.container, args.script, args.system
-        )
+        cli_helpers.run_mmag(args.threads, args.container, args.script, args.system)
