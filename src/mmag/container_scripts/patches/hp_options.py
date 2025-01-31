@@ -1,4 +1,3 @@
-
 ##############################################################################
 #
 # Copyright (c) 2003-2020 by The University of Queensland
@@ -21,10 +20,10 @@
 escript_opts_version = 203
 openmp = True
 build_trilinos = True
-domains = ['finley']
+domains = ["finley"]
 longindices = False
 lapack = False
 werror = False
 verbose = True
-boost_prefix = '/opt/conda/envs/escript'
-boost_libs = ['boost_python311']
+boost_prefix = "/opt/conda/envs/escript"
+boost_libs = ["boost_python311"]
