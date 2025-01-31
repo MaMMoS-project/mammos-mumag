@@ -34,3 +34,52 @@ mmag = "mmag.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.optional-dependencies]
+format = [
+  "ruff==0.8",
+]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+indent-width = 4
+respect-gitignore = true
+
+[tool.ruff.lint]
+# Ruff default rules, pydocstyle, and pycodestyle warnings
+select = ["D", "E4", "E7", "E9", "F", "W"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+  "D104", # undocumented-public-package
+]
+"src/mmag/sim_scripts/*.py" = [
+  "D1", # undocumented-*
+  "W505", # Doc line too long
+]
+"src/mmag/container_scripts/patches/*.py" = [
+  "D1", # uncodumented-*
+  "E722", # bare-except
+  "W505", # Doc line too long
+]
+"src/mmag/tofly.py" = [
+  "D101", # undocumented-public-class
+  "D103", # undocumented-public-function
+]
+"examples/*.py" = [
+  "D1", # undocumented-*
+  "E402", # module-import-not-at-top-of-file
+  "E722", # bare-except
+  "W505", # Doc line too long
+]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 88
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.format]
+quote-style = "double"
