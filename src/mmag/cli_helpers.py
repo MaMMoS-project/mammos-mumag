@@ -1,3 +1,5 @@
+"""CLI Helper functions."""
+
 import json
 import os
 import shlex
@@ -9,9 +11,20 @@ import mmag
 
 
 def install_escript(container, threads):
+    """Install mmag software.
+
+    :param threads: Number of building threads
+    :type threads: int
+    :param container: Container name
+    :type container: str
+    :raises FileNotFoundError: Container not found
+    :raises RuntimeError: Build failed
+    """
     container_path = shutil.which(container)
     if not container_path:
-        raise FileNotFoundError(f"{container} cannot be accessed through PATH variable.")
+        raise FileNotFoundError(
+            f"{container} cannot be accessed through PATH variable."
+        )
 
     config_path = mmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
@@ -68,6 +81,20 @@ def install_escript(container, threads):
 
 
 def run_mmag(threads, container, script, system):
+    """Run mmag software.
+
+    :param threads: Number of running threads
+    :type threads: int
+    :param container: Container name
+    :type container: str
+    :param script: Name of pre-defined script to execute
+    :type script: str
+    :param system: Name of simulation system
+    :type system: str
+    :raises RuntimeError: Container not configured
+    :raises RuntimeError: Configuration file not found
+    :raises RuntimeError: Execution failed
+    """
     config_path = mmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
         with open(config_path, "r") as handle:
