@@ -38,7 +38,7 @@ def getTwisted(mask):
     r = e.sqrt(x[1] * x[1] + x[0] * x[0])
     s = e.sup(x)
     a = 10
-    b = 4
+    # b = 4
     m[0] = (x[0] * x[2]) / (a * s) + 4 * (
         e.wherePositive(x[2]) * (-x[1] / r) * (x[2] / s)
         + e.whereNegative(x[2]) * (x[1] / r) * (-x[2] / s)

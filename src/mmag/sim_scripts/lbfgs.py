@@ -4,8 +4,10 @@ from esys.escript.minimizer import (
     EvalutedPhi,
     CostFunction1DEvaluationFactory,
     LineSearchTerminationError,
+    MinimizerException,
     MinimizerIterationIncurableBreakDown,
-)  # MinimizerMaxIterReached
+    MinimizerMaxIterReached,
+)
 
 
 class LBFGS(AbstractMinimizer):
@@ -16,7 +18,8 @@ class LBFGS(AbstractMinimizer):
         )
 
     def run(self, m):
-        """
+        """Execute algorithm.
+
         :param m: initial guess
         :type m: m-type
         :return: solution
@@ -41,7 +44,7 @@ class LBFGS(AbstractMinimizer):
         Fm = self.getCostFunction().getValueAndCount(m, *args_m)
         self._result = (m, Fm)
 
-        Fm_old = Fm
+        # Fm_old = Fm
         self.logger.info("Initialization completed.")
 
         self.doCallback(
@@ -256,8 +259,8 @@ class LBFGS(AbstractMinimizer):
         return self._result
 
     def _twoLoop(self, H_scale, grad_Fm, s_and_y, m, args_m):
-        """
-        Helper for the L-BFGS method.
+        """Define helper function for the L-BFGS method.
+
         See 'Numerical Optimization' by J. Nocedal for an explanation.
         """
         q = grad_Fm

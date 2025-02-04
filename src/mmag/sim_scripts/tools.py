@@ -11,11 +11,11 @@ def normalize(v):
     a = v[0]
     b = v[1]
     c = v[2]
-    l = math.sqrt(a * a + b * b + c * c)
-    if l == 0.0:
+    s = math.sqrt(a * a + b * b + c * c)
+    if s == 0.0:
         return [a, b, c]
     else:
-        return [a / l, b / l, c / l]
+        return [a / s, b / s, c / s]
 
 
 def dot(a, b):
@@ -43,28 +43,28 @@ def get_meas(Js):
 
 def read_Js(name):
     with open(name + ".krn") as f:
-        l = f.readline().split()
-        Js = float(l[4])
+        ll = f.readline().split()
+        Js = float(ll[4])
     return Js
 
 
 def read_A(name):
     with open(name + ".krn") as f:
-        l = f.readline().split()
-        A = float(l[5])
+        ll = f.readline().split()
+        A = float(ll[5])
     return A
 
 
 def readAnisotropyEnergy(name, m):
     m = normalize(m)
     with open(name + ".krn") as f:
-        l = f.readline().split()
-        theta = float(l[0])
-        phi = float(l[1])
+        ll = f.readline().split()
+        theta = float(ll[0])
+        phi = float(ll[1])
         n0 = math.sin(theta) * math.cos(phi)
         n1 = math.sin(theta) * math.sin(phi)
         n2 = math.cos(theta)
-        K1 = float(l[2])
+        K1 = float(ll[2])
     mu0 = 4.0e-7 * math.pi
     return -mu0 * K1 * (m[0] * n0 + m[1] * n1 + m[2] * n2) ** 2.0
 
@@ -143,7 +143,8 @@ def get_logger(name, verbose):
         :key m_tol: relative tolerance for solution `m` for termination of iteration
         :type m_tol: `float`
         :default m_tol: 1e-4
-        :key grad_tol: tolerance for gradient relative to initial costfunction value for termination of iteration
+        :key grad_tol: tolerance for gradient relative to initial costfunction value
+                       for termination of iteration
         :type grad_tol: `float`
         :default grad_tol: 1e-8
         :key truncation: sets the number of previous LBFGS iterations to keep
@@ -157,19 +158,22 @@ def get_logger(name, verbose):
         :default iterMax: 300
         :key relAlphaMin: minimal step size relative to serach direction.
                           The value should be chosen such that
-                          At any iteration step `F(m + alpha * p)` is just discriminable from
-                          `F(m)` for any `alpha > relAlphaMin * |m|/|p|'.
+                          At any iteration step `F(m + alpha * p)` is just
+                          discriminable from `F(m)` for any
+                          `alpha > relAlphaMin * |m|/|p|'.
         :type relAlphaMin: ``float``
         :default relAlphaMin: 1e-8
-        :key initialAlpha: initial step size alpha in line serach. Typically alpha=1 is a good initial value
-                            but a larger or smaller initial value may help to get the iteration started
-                            when only an approximation of the Hessian is available.
+        :key initialAlpha: initial step size alpha in line serach. Typically alpha=1
+                           is a good initial value but a larger or smaller initial
+                           value may help to get the iteration started when only an
+                           approximation of the Hessian is available.
         :type initialAlpha: ``float``
         :default initialAlpha: 1.
-        :key scaleSearchDirection: if set the search direction is rescaled using an estimation of the norm of the Hessian
+        :key scaleSearchDirection: if set the search direction is rescaled using an
+                                   estimation of the norm of the Hessian
         :type scaleSearchDirection: ``bool``
         :default scaleSearchDirection: True
-        
+
             Example of usage::
               cf=DerivedCostFunction()
               solver=MinimizerLBFGS(J=cf, m_tol = 1e-5, grad_tol = 1e-5, iterMax=300)
@@ -204,7 +208,8 @@ def get_logger(name, verbose):
         :key inter_order: order of the interpolation used for line search
         :type inter_order: 1,2,3
         :default inter_order: 3
-        :key inter_iterMax: maximum number of iteration steps to when minimizing interploted cost function
+        :key inter_iterMax: maximum number of iteration steps to when minimizing
+                            interploted cost function
         :type inter_iterMax: int
         :default inter_iterMax: 100
         :key inter_tol: tolerance to when minimizing interploted cost function
@@ -225,7 +230,8 @@ def get_logger(name, verbose):
         :key alphaWidthMin : minimal relative distance of new alpha from boundaries
         :type alphaWidthMin: float
         :default alphaWidthMin: ``np.sqrt(EPSILON)``
-        :key zoom_reductionMin: minimal reduction search interval length between zoom steps
+        :key zoom_reductionMin: minimal reduction search interval length between zoom
+                                steps
         :type zoom_reductionMin : float
         :default zoom_reductionMin :0.66
   """
@@ -246,7 +252,8 @@ This little script shows you how to do this:
           out_loc=< some operations on in_loc>
           out.setValueOfDataPoint(i,out_loc)
 
-Notice that in_loc and out_loc are numarray objects with same ranks and shape like in and out. in and out both need to be defined on the same FunctionSpace.
+Notice that in_loc and out_loc are numarray objects with same ranks and shape
+like in and out. in and out both need to be defined on the same FunctionSpace.
 """
 
 """
@@ -258,15 +265,24 @@ A Here comes an example of tagged scalar data for a Domain mydom:
     s.setTaggedValue(1000,1.)
     s.setTaggedValue(2000,2.)
 
-In this case the Data object s uses 1. for all samples which have been tagged with the value 1000 and the value 2. for samples tagged with 2000. All other samples use the dafault value 0. set tn the Scalar() call. In case of finley, the FunctionSpace Function is represented by elements so the tag refer to the tags assigned to the elements, typically during mesh generation.
+In this case the Data object s uses 1. for all samples which have been tagged with the
+value 1000 and the value 2. for samples tagged with 2000. All other samples use the
+dafault value 0. set tn the Scalar() call. In case of finley, the FunctionSpace
+Function is represented by elements so the tag refer to the tags assigned to the
+elements, typically during mesh generation.
 
-There is a way to modify the tags after the mesh as been generated: If you want to set tag 1000 for element left from x0=0.5 and tag 2000 for element right from x0=0.5 you can use:
+There is a way to modify the tags after the mesh as been generated: If you want to set
+tag 1000 for element left from x0=0.5 and tag 2000 for element right from x0=0.5 you
+can use:
 
 x0=Function(mydom).getX()[0]
 Function(mydom).setTags(1000,whereNegative(x0-0.5))
 Function(mydom).setTags(2000,whereNegative(0.5-x0))
 
-Note that although setTags is called for different instances of Function(mydom) is still changes the element tag as it effects the underlying mydom. It also important to point out that a tag sticks to the element even if the element coordinates are altered by a mydom.setX() call and is considered when the mesh is written to a file.
+Note that although setTags is called for different instances of Function(mydom) is
+still changes the element tag as it effects the underlying mydom. It also important
+to point out that a tag sticks to the element even if the element coordinates are
+altered by a mydom.setX() call and is considered when the mesh is written to a file.
 """
 
 """
@@ -276,19 +292,30 @@ To integrate a function f over the boundary use
 
    integrate(f,where=FunctionOnBoundary(f.getDomain()))
 
-Be aware that f must be defined on the boundary or must be interpolatable to the boundary (WARNING: In the case of finley, the boundary is defined by the face elements!!) .
+Be aware that f must be defined on the boundary or must be interpolatable to the
+boundary (WARNING: In the case of finley, the boundary is defined by the face elements)
 
-If you want to integrate over parts of the boundary you can use masks: For instance to integrate over the portion of the boundary where x_0==0 use
+If you want to integrate over parts of the boundary you can use masks: For instance to
+integrate over the portion of the boundary where x_0==0 use
 
     integrate(f*whereZero(FunctionOnBoundary(f.getDomain()).getX()[0])))
 """
 
 """
-When performing a binary operation such as a+b where a is a numarray.NumArray object and b is an escript.Data object I get the error message
+When performing a binary operation such as a+b where a is a numarray.NumArray object
+and b is an escript.Data object I get the error message
 
 TypeError: UFunc arguments must be numarray, scalars or numeric sequences
 
 What does it mean?
 
-Unfortunatley there is a bug in numarray as binary operations in numarray don't handle non-numarray arguments properly. This stops python from calling an appropriate escript function to handle the problem namely by calling the corresponding add opertaor of the non-numarray argument. The only solution is to avoid any expression starting with a numarray object. Alternatively you can use the add, mult, div, power functions provided by escript. (Remark: python list objects handle type mismatches properly. You can write [1.,1.]+Vector(...) but not numarray.ones((2,))+Vector(...). Nevertheless, add([1.,1.],Vector(...)) and add(numarray.ones((2,)),Vector(...)) will do the job but don't look nice.).
+Unfortunatley there is a bug in numarray as binary operations in numarray don't handle
+non-numarray arguments properly. This stops python from calling an appropriate escript
+function to handle the problem namely by calling the corresponding add opertaor of the
+non-numarray argument. The only solution is to avoid any expression starting with a
+numarray object. Alternatively you can use the add, mult, div, power functions provided
+by escript. (Remark: python list objects handle type mismatches properly. You can write
+[1.,1.]+Vector(...) but not numarray.ones((2,))+Vector(...). Nevertheless,
+add([1.,1.],Vector(...)) and add(numarray.ones((2,)),Vector(...)) will do the job
+but don't look nice).
 """

@@ -30,9 +30,9 @@ def cg(self,m,gNoProj, x,b,k, itmax):
     normB = self._fun.norm(b)
     tau   = self.computeTau(normB,k)
     r     = b-self.hessianVector(m,gNoProj,x)
-    p     = r.copy()                                                  
+    p     = r.copy()
     rr0   = self._fun.dot(r,r)
-    for j in range(itmax):           
+    for j in range(itmax):
       Ap = self.hessianVector(m,gNoProj,p)
       rho = self._fun.dot(Ap,p)
       if rho < 0:
@@ -68,7 +68,7 @@ class MumagFunc(CostFunction):
     def hessianVector(self, m, gloc, p):
         hp = self._exani.solve_g(p)  # self._fun.gLocalNoProj(p)
         php = projection(m, hp)
-        ph = inner3(p, gloc)
+        # ph = inner3(p, gloc)
         hm = inner3(m, gloc)
         Hp = php - (hm * p)  # - ph*m  # omitting this term makes the hessian symmetric
         return Hp
@@ -172,8 +172,10 @@ class MumagFunc(CostFunction):
         return n
 
     def getInverseHessianApproximation(self, r, m, *args, initializeHessian=False):
-        """
-        returns a vectore of an approximation of the Hessian inverse at m for vector r.
+        """Approximate inverse of Hessian.
+
+        This function returns an approximation of the
+        Hessian inverse at m for vector r.
         Hx = r
         """
         if self.cgiter > 0:
@@ -185,9 +187,7 @@ class MumagFunc(CostFunction):
             return r
 
     def resetStatistics(self):
-        """
-        resets all counters
-        """
+        """Reset all counters."""
         self.DualProduct_calls = 0
         self.Value_calls = 0
         self.Gradient_calls = 0
@@ -197,9 +197,7 @@ class MumagFunc(CostFunction):
         self.L2Norm_calls = 0
 
     def getStatistics(self, minimizer_iter, minimizer_time):
-        """
-        return the call statistics as a string:
-        """
+        """Return the call statistics as a string."""
         out = "\n"
         out += f"lbfgs iterations                    : {minimizer_iter}\n"
         out += "number of inner product evaluations : %d\n" % self.DualProduct_calls

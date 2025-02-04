@@ -1,3 +1,5 @@
+"""CLI functions."""
+
 import argparse
 import sys
 
@@ -6,6 +8,7 @@ from mmag import cli_helpers, tofly
 
 
 def main():
+    """Execute CLI commands."""
     parser = argparse.ArgumentParser()
     sub_parsers = parser.add_subparsers(dest="sub_parser")
     parser.add_argument(

@@ -1,3 +1,5 @@
+"""CLI Helper functions."""
+
 import json
 import os
 import shlex
@@ -8,29 +10,40 @@ import warnings
 import mmag
 
 
-def install_escript(program, threads):
-    program_path = shutil.which(program)
-    if not program_path:
-        raise FileNotFoundError(f"{program} cannot be accessed through PATH variable.")
+def install_escript(container, threads):
+    """Install mmag software.
+
+    :param threads: Number of building threads
+    :type threads: int
+    :param container: Container name
+    :type container: str
+    :raises FileNotFoundError: Container not found
+    :raises RuntimeError: Build failed
+    """
+    container_path = shutil.which(container)
+    if not container_path:
+        raise FileNotFoundError(
+            f"{container} cannot be accessed through PATH variable."
+        )
 
     config_path = mmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)
-        container_list = config_dict["escript_container_programs"]
-        if program in container_list:
+        container_list = config_dict["escript_containers"]
+        if container in container_list:
             warnings.warn(
-                (f"The {program} escript container is already installed. "),
+                (f"The escript {container} container is already installed."),
                 stacklevel=2,
             )
         else:
-            container_list.append(program)
+            container_list.append(container)
     else:
-        config_dict = {"escript_container_programs": [program]}
+        config_dict = {"escript_containers": [container]}
 
     is_posix = os.name == "posix"
 
-    if program == "podman":
+    if container == "podman":
         cmd = shlex.split(
             (
                 "podman build -t escript "
@@ -62,35 +75,49 @@ def install_escript(program, threads):
             json.dump(config_dict, handle)
     else:
         raise RuntimeError(
-            f"Unable to build and install the {program} container. Exit with error:\n"
+            f"Unable to install the {container} container. Exit with error:\n"
             f"{res.stderr.decode('utf-8')}"
         )
 
 
-def run_mmag(threads, program, script, system):
+def run_mmag(threads, container, script, system):
+    """Run mmag software.
+
+    :param threads: Number of running threads
+    :type threads: int
+    :param container: Container name
+    :type container: str
+    :param script: Name of pre-defined script to execute
+    :type script: str
+    :param system: Name of simulation system
+    :type system: str
+    :raises RuntimeError: Container not configured
+    :raises RuntimeError: Configuration file not found
+    :raises RuntimeError: Execution failed
+    """
     config_path = mmag._conf_dir.joinpath("conf.json")
     if config_path.exists():
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)
-            container_list = config_dict["escript_container_programs"]
-        if program is None:
-            program = container_list[0]
-        elif program not in container_list:
+            container_list = config_dict["escript_containers"]
+        if container is None:
+            container = container_list[0]
+        elif container not in container_list:
             raise RuntimeError(
-                f"{program} escript container not configured. "
+                f"{container} escript container not configured. "
                 "Make sure to build and install escript container, for example: "
-                f"mmag build-escript --threads 8 --container {program}"
+                f"mmag build-escript --threads 8 --container {container}"
             )
     else:
         raise RuntimeError(
             f"Cannot find a configuration file in {mmag._conf_dir}. "
             "Make sure to build and install escript container, for example: "
-            f"mmag build-escript --threads 8 --container {program}"
+            f"mmag build-escript --threads 8 --container {container}"
         )
 
     is_posix = os.name == "posix"
 
-    if program == "apptainer":
+    if container == "apptainer":
         cmd = shlex.split(
             (
                 f"apptainer run "
@@ -100,7 +127,7 @@ def run_mmag(threads, program, script, system):
             posix=is_posix,
         )
 
-    elif program == "podman":
+    elif container == "podman":
         cmd = shlex.split(
             (
                 f"podman run -v .:/io -v {mmag._sim_scripts}:/sim_scripts "
@@ -114,6 +141,6 @@ def run_mmag(threads, program, script, system):
     if res.returncode != 0:
         raise RuntimeError(
             f"mmag {script} execution for {system} failed "
-            f"using {program} escript container with error:\n"
+            f"using {container} escript container with error:\n"
             f"{res.stderr.decode('utf-8')}"
         )
