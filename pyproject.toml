@@ -70,7 +70,6 @@ ignore = []
 ]
 "examples/*.py" = [
   "D1", # undocumented-*
-  "E402", # module-import-not-at-top-of-file
   "E722", # bare-except
   "W505", # Doc line too long
 ]

@@ -1,24 +1,16 @@
-#!/usr/bin/env python
-
-###
-### This file is generated automatically by SALOME v9.12.0 with dump python functionality
-###
+"""Standard problem on cubic geometry."""
 
 import sys
 import salome
+from salome.geom import geomBuilder
+import salome_notebook
+import SMESH
+from salome.smesh import smeshBuilder
 
 salome.salome_init()
-import salome_notebook
-
 notebook = salome_notebook.NoteBook()
-# sys.path.insert(0, r'C:/Users/tschr/home/W2/mammos/suite/meshing')
-# sys.path.insert(0, r'/home/tom/home/W2/mammos/suite/meshing')
 
-
-###
 ### Material parameters
-###
-
 args = sys.argv[1:]
 if len(args) == 0:
     print("usage:")
@@ -37,15 +29,8 @@ else:
 R = (box_size / 2.0) * 1.8  # radius of sphere enclosing cube
 Rinf = R * 1.8  # out radius of spherical shell
 
-###
 ### GEOM component
-###
-
-from salome.geom import geomBuilder
-
-
 geompy = geomBuilder.New()
-
 OO = geompy.MakeVertex(0, 0, 0)
 OX = geompy.MakeVectorDXDYDZ(1, 0, 0)
 OY = geompy.MakeVectorDXDYDZ(0, 1, 0)
@@ -102,17 +87,8 @@ geompy.addToStudyInFather(a1, Edge_10, "Edge_10")
 geompy.addToStudyInFather(a1, Edge_11, "Edge_11")
 geompy.addToStudyInFather(a1, Edge_12, "Edge_12")
 
-###
 ### SMESH component
-###
-
-import SMESH
-from salome.smesh import smeshBuilder
-
 smesh = smeshBuilder.New()
-# smesh.SetEnablePublish( False ) # Set to False to avoid publish in study if not needed or in some particular situations:
-# multiples meshes built in parallel, complex and numerous mesh edition (performance)
-
 Mesh_1 = smesh.Mesh(Partition_1, "Mesh_1")
 NETGEN_1D_2D_3D = Mesh_1.Tetrahedron(algo=smeshBuilder.NETGEN_1D2D3D)
 NETGEN_3D_Parameters_1 = NETGEN_1D_2D_3D.Parameters()
@@ -140,22 +116,20 @@ a2_1 = Mesh_1.GroupOnGeom(a2, "2", SMESH.VOLUME)
 a3_1 = Mesh_1.GroupOnGeom(a3, "3", SMESH.VOLUME)
 isDone = Mesh_1.Compute()
 [a1_1, a2_1, a3_1] = Mesh_1.GetGroups()
+
+# Exporting
 try:
-    # Mesh_1.ExportUNV( r'C:/Users/tschr/home/W2/mammos/suite/meshing/cube.unv', 0 )
     Mesh_1.ExportUNV(r"cube.unv", 0)
-    pass
 except:
     print("ExportUNV() failed. Invalid file name?")
 
-
-## Set names of Mesh objects
+# Set names of Mesh objects
 smesh.SetName(NETGEN_1D_2D_3D.GetAlgorithm(), "NETGEN 1D-2D-3D")
 smesh.SetName(NETGEN_3D_Parameters_1, "NETGEN 3D Parameters_1")
 smesh.SetName(Mesh_1.GetMesh(), "Mesh_1")
 smesh.SetName(a3_1, "3")
 smesh.SetName(a2_1, "2")
 smesh.SetName(a1_1, "1")
-
 
 if salome.sg.hasDesktop():
     salome.sg.updateObjBrowser()

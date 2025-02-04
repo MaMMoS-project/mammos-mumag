@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 matplotlib.rcParams.update({"font.size": 14})
 
-
 salome = "/home/tom/pd/SALOME-9.12.0/salome"
 tofly = "/home/tom/home/W2/mammos/suite/hystmag-docker-file/mumag/pymag/py/tofly3"
 escript = "/home/tom/pd/escript/bin/run-escript"

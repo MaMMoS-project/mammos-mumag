@@ -9,6 +9,12 @@
 #
 ##############################################################################
 from __future__ import division, print_function
+from esys.escript.minimizer import MinimizerLBFGS, CostFunction
+import numpy as np
+from scipy.optimize import rosen, rosen_der, rosen_hess
+import logging
+import matplotlib
+import matplotlib.pyplot as plt
 
 __copyright__ = """Copyright (c) 2003-2018 by The University of Queensland
 http://www.uq.edu.au
@@ -18,19 +24,10 @@ http://www.apache.org/licenses/LICENSE-2.0"""
 __url__ = "https://launchpad.net/escript-finley"
 
 """
-
 This example illustrates the use of the esys.escript.minimizers. The example
 is minimization of the Rosenbrock function which is commonly used test problem
 for optimization.
-
 """
-
-
-from esys.escript.minimizer import MinimizerLBFGS, CostFunction
-import numpy as np
-from scipy.optimize import rosen, rosen_der, rosen_hess
-import logging
-import matplotlib
 
 # For interactive use, you can comment out this line
 matplotlib.use("agg")
@@ -108,8 +105,6 @@ print("m = ", m)
 print("close to true solution? ", np.allclose(m, np.ones((F.N,))))
 
 # plotting the convergency history:
-
-import matplotlib.pyplot as plt
 
 plt.plot([t[0] for t in TABLE], [t[1] for t in TABLE], "-")
 plt.ylabel("F(m)")
