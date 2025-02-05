@@ -19,5 +19,5 @@ if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
-        sys.exit("usage run-escript magnetization.py modelname")
+        sys.exit("usage mmag run magnetisation -n name_system")
     main(name)

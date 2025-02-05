@@ -15,5 +15,5 @@ if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
-        sys.exit("usage run-escript materials.py modelname")
+        sys.exit("mmag run materials -n name_system")
     main(name)

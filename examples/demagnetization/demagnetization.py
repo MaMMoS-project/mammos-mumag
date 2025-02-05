@@ -1,5 +1,5 @@
 from pathlib import Path
-from mammosmag.loop import Loop
+from mmag.loop import Loop
 
 here = Path(__file__).absolute().parent
 loop = Loop("cube", outdir=here / "out")

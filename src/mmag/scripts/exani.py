@@ -37,5 +37,5 @@ if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
-        sys.exit("usage mammosmag run exani -n <name_system>")
+        sys.exit("usage mmag run exani -n <name_system>")
     main(name)
