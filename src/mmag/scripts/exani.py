@@ -5,7 +5,7 @@ import esys.escript as e
 
 from mmag.exani import ExAni
 from mmag.materials import Materials, read_A, readAnisotropyEnergy
-from mmag.magnetization import getM, xM
+from mmag.magnetisation import getM, xM
 
 
 def main(name):

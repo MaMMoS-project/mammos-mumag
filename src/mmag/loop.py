@@ -4,12 +4,12 @@ import esys.escript as e
 from esys.weipa import saveVTK
 
 from .tools import read_params, dot
-from .magnetization import getM
+from .magnetisation import getM
 from .materials import Materials
 from .hmag import Hmag
 from .exani import ExAni
 from .external import External
-from .minimize import Minimize
+from .minimise import Minimize
 
 
 class Loop:

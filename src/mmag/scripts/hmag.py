@@ -5,7 +5,7 @@ from esys.weipa import saveVTK
 
 from mmag.hmag import Hmag
 from mmag.materials import Materials, read_Js
-from mmag.magnetization import getM
+from mmag.magnetisation import getM
 
 
 def main(name):

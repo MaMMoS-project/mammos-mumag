@@ -4,7 +4,7 @@ import esys.escript as e
 
 from mmag.external import External
 from mmag.materials import Materials, read_Js
-from mmag.magnetization import getM
+from mmag.magnetisation import getM
 from mmag.tools import read_params
 
 

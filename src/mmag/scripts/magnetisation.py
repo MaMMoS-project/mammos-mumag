@@ -2,7 +2,7 @@ import esys.escript as e
 from esys.weipa import saveVTK
 import sys
 
-from mmag.magnetization import getM
+from mmag.magnetisation import getM
 from mmag.materials import Materials
 from mmag.tools import read_params
 
