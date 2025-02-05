@@ -2,9 +2,11 @@ import sys
 
 import esys.escript as e
 
-from mammosmag.materials import Materials, read_Js
-from mammosmag.magnetization import getM
-from mammosmag.tools import read_params
+from mmag.external import External
+from mmag.materials import Materials, read_Js
+from mmag.magnetization import getM
+from mmag.tools import read_params
+
 
 def main(name):
     m, h, start, final, step, _, _, _ = read_params(name)

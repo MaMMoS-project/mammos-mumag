@@ -1,6 +1,6 @@
 import sys
 
-from mammosmag.materials import Materials
+from mmag.materials import Materials
 
 def main(name):
     materials = Materials(name)

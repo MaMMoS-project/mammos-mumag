@@ -1,10 +1,12 @@
 import sys
+import math
 
 import esys.escript as e
 
-from mammosmag.exani import ExAni
-from mammosmag.materials import Materials, read_A, read_AnisotropyEnergy
-from mammosmag.magnetization import getM, xM
+from mmag.exani import ExAni
+from mmag.materials import Materials, read_A, readAnisotropyEnergy
+from mmag.magnetization import getM, xM
+
 
 def main(name):
     materials = Materials(name)

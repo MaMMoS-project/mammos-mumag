@@ -148,9 +148,7 @@ def run_mmag(threads, container, script, name_system):
         )
 
     if script in SIMULATION_SCRIPTS:
-        cmd.append(
-            f"{mammosmag._sim_scripts / (script+'.py')} {name_system}"
-        )
+        cmd.append(f"{mmag._sim_scripts / (script+'.py')} {name_system}")
     else:
         cmd.append(
             f"{script}"

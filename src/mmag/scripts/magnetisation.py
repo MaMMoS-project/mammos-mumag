@@ -2,8 +2,9 @@ import esys.escript as e
 from esys.weipa import saveVTK
 import sys
 
-from mammosmag.materials import Materials
-from mammosmag.tools import read_params
+from mmag.magnetization import getM
+from mmag.materials import Materials
+from mmag.tools import read_params
 
 
 def main(name):

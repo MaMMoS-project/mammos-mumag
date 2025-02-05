@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 import os
 
-from mammosmag.loop import Loop
+from mmag.loop import Loop
 
 def check_input_files(name):
     pp = Path(name)

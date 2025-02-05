@@ -1,11 +1,11 @@
 import sys
-from math import sin, cos, pi
+import math
 
 import esys.escript as e
 from esys.finley import ReadMesh
 from esys.weipa import saveVTK
 
-from .tools import get_meas
+from .tools import get_meas, normalize
 
 
 class Materials:
@@ -24,7 +24,7 @@ class Materials:
         self.u = e.Vector(0, e.Function(self.mesh))
         self.Js = e.Scalar(0, e.Function(self.mesh))
         self.A = e.Scalar(0, e.Function(self.mesh))
-        self.mu0 = 4e-7 * pi
+        self.mu0 = 4e-7 * math.pi
         tags = e.Function(self.mesh).getListOfTags()
         krn = open(materials_fname, "r")
         for tag in tags:
@@ -33,7 +33,12 @@ class Materials:
             Js = float(line[4])
             if Js > 0:
                 self.u.setTaggedValue(
-                    tag, [sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)]
+                    tag,
+                    [
+                        math.sin(theta) * math.cos(phi),
+                        math.sin(theta) * math.sin(phi),
+                        math.cos(theta),
+                    ],
                 )
                 self.K.setTaggedValue(tag, self.mu0 * float(line[2]))
                 self.Js.setTaggedValue(tag, Js)

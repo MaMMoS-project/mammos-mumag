@@ -1,8 +1,11 @@
+import sys
+
 import esys.escript as e
 from esys.weipa import saveVTK
 
-from mammosmag.materials import Materials, read_Js
-from mammosmag.magnetization import getM
+from mmag.hmag import Hmag
+from mmag.materials import Materials, read_Js
+from mmag.magnetization import getM
 
 
 def main(name):
