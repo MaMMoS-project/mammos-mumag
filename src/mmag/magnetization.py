@@ -1,10 +1,6 @@
 import esys.escript as e
-from esys.weipa import saveVTK
 import math
 import sys
-
-from materials import Materials
-from tools import read_params
 
 
 def getVortex(mask):
@@ -38,12 +34,12 @@ def getTwisted(mask):
     r = e.sqrt(x[1] * x[1] + x[0] * x[0])
     s = e.sup(x)
     a = 10
-    # b = 4
-    m[0] = (x[0] * x[2]) / (a * s) + 4 * (
+    b = 4
+    m[0] = (x[0] * x[2]) / (a * s) + b * (
         e.wherePositive(x[2]) * (-x[1] / r) * (x[2] / s)
         + e.whereNegative(x[2]) * (x[1] / r) * (-x[2] / s)
     )
-    m[1] = (x[1] * x[2]) / (a * s) + 4 * (
+    m[1] = (x[1] * x[2]) / (a * s) + b * (
         e.wherePositive(x[2]) * (x[0] / r) * (x[2] / s)
         + e.whereNegative(x[2]) * (-x[0] / r) * (-x[2] / s)
     )
@@ -96,8 +92,5 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript magnetization.py modelname")
 
-    params = read_params(name)
-    materials = Materials(name)
-    m = getM(e.wherePositive(materials.meas), params[0], params[1])
-    i = 0
-    saveVTK(name + f".{i:04}", tags=materials.get_tags(), m=m)
+    from .scripts.magnetisation import main as magnetisation_script
+    magnetisation_script(name)

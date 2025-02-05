@@ -4,7 +4,7 @@ import argparse
 import sys
 
 import mmag
-from mmag import cli_helpers, tofly
+from . import cli_helpers, tofly
 
 
 def main():
@@ -121,20 +121,21 @@ def main():
     )
 
     run_parser.add_argument(
-        "-s",
-        "--script",
+        "script",
         type=str,
-        required=True,
-        choices=("loop", "exani", "external", "hmag", "magnetisation", "materials"),
         help=(
-            "Name the pre-defined simulation script to use. The name must be one of "
-            "loop, exani, external, hmag, magnetisation, or materials."
+            "Python file or pre-defined simulation script to execute. "
+            "The name must be one of loop, exani, "
+            "external, hmag, magnetisation, or materials."
         ),
     )
 
     run_parser.add_argument(
-        "system",
+        "-n",
+        "--name-system",
         type=str,
+        default=None,
+        required=False,
         help=(
             "The name given to the simulation configuration files in the present "
             "working directory."
@@ -155,4 +156,4 @@ def main():
         args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_mmag(args.threads, args.container, args.script, args.system)
+        cli_helpers.run_mmag(args.threads, args.container, args.script, args.name_system)

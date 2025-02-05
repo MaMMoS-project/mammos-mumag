@@ -9,6 +9,15 @@ import warnings
 
 import mmag
 
+SIMULATION_SCRIPTS = [
+    "loop",
+    "exani",
+    "external",
+    "hmag",
+    "magnetisation",
+    "materials",
+]
+
 
 def install_escript(container, threads):
     """Install mmag software.
@@ -81,17 +90,17 @@ def install_escript(container, threads):
         )
 
 
-def run_mmag(threads, container, script, system):
+def run_mmag(threads, container, script, name_system):
     """Run mmag software.
 
     :param threads: Number of running threads
     :type threads: int
     :param container: Container name
     :type container: str
-    :param script: Name of pre-defined script to execute
+    :param script: Python file or pre-defined script name to execute
     :type script: str
-    :param system: Name of simulation system
-    :type system: str
+    :param name_system: Name of simulation system
+    :type name_system: str
     :raises RuntimeError: Container not configured
     :raises RuntimeError: Configuration file not found
     :raises RuntimeError: Execution failed
@@ -123,7 +132,6 @@ def run_mmag(threads, container, script, system):
             (
                 f"apptainer run "
                 f"{mmag._cache_dir/'escript'} -t{threads} "
-                f"{mmag._sim_scripts/(script+'.py')} {system}"
             ),
             posix=is_posix,
         )
@@ -131,17 +139,28 @@ def run_mmag(threads, container, script, system):
     elif container == "podman":
         cmd = shlex.split(
             (
-                f"podman run -v .:/io -v {mmag._sim_scripts}:/sim_scripts "
-                f"escript -t{threads} /sim_scripts/{script}.py {system}"
+                f"podman run "
+                "-v .:/io "
+                "-v $PWD:/sim_scripts "
+                f"escript -t{threads}"
             ),
             posix=is_posix,
+        )
+
+    if script in SIMULATION_SCRIPTS:
+        cmd.append(
+            f"{mammosmag._sim_scripts / (script+'.py')} {name_system}"
+        )
+    else:
+        cmd.append(
+            f"{script}"
         )
 
     res = subprocess.run(cmd, stderr=subprocess.PIPE)
 
     if res.returncode != 0:
         raise RuntimeError(
-            f"mmag {script} execution for {system} failed "
+            f"mmag {script} execution for {name_system} failed "
             f"using {container} escript container with error:\n"
             f"{res.stderr.decode('utf-8')}"
         )

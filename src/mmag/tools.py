@@ -41,35 +41,7 @@ def get_meas(Js):
     return pde.getRightHandSide()
 
 
-def read_Js(name):
-    with open(name + ".krn") as f:
-        ll = f.readline().split()
-        Js = float(ll[4])
-    return Js
-
-
-def read_A(name):
-    with open(name + ".krn") as f:
-        ll = f.readline().split()
-        A = float(ll[5])
-    return A
-
-
-def readAnisotropyEnergy(name, m):
-    m = normalize(m)
-    with open(name + ".krn") as f:
-        ll = f.readline().split()
-        theta = float(ll[0])
-        phi = float(ll[1])
-        n0 = math.sin(theta) * math.cos(phi)
-        n1 = math.sin(theta) * math.sin(phi)
-        n2 = math.cos(theta)
-        K1 = float(ll[2])
-    mu0 = 4.0e-7 * math.pi
-    return -mu0 * K1 * (m[0] * n0 + m[1] * n1 + m[2] * n2) ** 2.0
-
-
-def read_params(name):
+def read_params(params_fname):
     config = configparser.ConfigParser(
         {
             "state": "mxyz",
@@ -83,7 +55,7 @@ def read_params(name):
             "iter_max": 1000,
         }
     )
-    config.read(name + ".p2")
+    config.read(params_fname)
     intial_state = config["initial state"]
     field = config["field"]
     minimizer = config["minimizer"]

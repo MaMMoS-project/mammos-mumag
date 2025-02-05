@@ -2,9 +2,9 @@ import esys.escript as e
 from esys.escript.minimizer import CostFunction
 
 # from lbfgsm import LBFGSM
-from lbfgs import LBFGS
+from .lbfgs import LBFGS
 
-from tools import dot, Linf_norm, L2_norm, get_logger
+from .tools import dot, Linf_norm, L2_norm, get_logger
 
 from time import time
 
