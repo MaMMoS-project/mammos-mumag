@@ -61,6 +61,7 @@ def install_escript(container, threads):
                 f"--tmpdir {temp_dir} "  # NOTE: needed when temp is mounted with nodev
                 f"--build-arg BUILD_THREADS={threads} "
                 f"--build-arg PATCH_DIR={mmag._container_scripts/'patches'} "
+                f"--build-arg MMAG_DIR={mmag._base_directory} "
                 f"{mmag._cache_dir/'escript'} "
                 f"{mmag._container_scripts/'Apptainer.def'}"
             ),
