@@ -71,6 +71,7 @@ class Materials:
             A=self.A * (self.size * self.size),
         )
 
+
 def read_Js(materials_fname):
     with open(materials_fname) as f:
         ll = f.readline().split()
@@ -107,4 +108,5 @@ if __name__ == "__main__":
         sys.exit("usage run-escript materials.py modelname")
 
     from .scripts.materials import main as materials_script
+
     materials_script(name)

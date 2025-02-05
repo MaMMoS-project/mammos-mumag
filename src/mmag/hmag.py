@@ -181,4 +181,5 @@ if __name__ == "__main__":
         sys.exit("usage run-escript hmag.py modelname")
 
     from .scripts.hmag import main as hmag_script
+
     hmag_script(name)

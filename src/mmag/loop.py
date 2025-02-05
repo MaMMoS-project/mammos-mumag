@@ -1,5 +1,4 @@
 import sys
-import os
 
 import esys.escript as e
 from esys.weipa import saveVTK
@@ -13,7 +12,6 @@ from .external import External
 from .minimize import Minimize
 
 
-
 class Loop:
     def __init__(self, name, outdir=None):
         self.name = name
@@ -21,7 +19,7 @@ class Loop:
             self.outname = name
         else:
             outdir.mkdir(exist_ok=True)
-            self.outname = str(outdir/name)
+            self.outname = str(outdir / name)
 
     def read_mesh(self, mesh_fname):
         self.mesh_fname = mesh_fname if type(mesh_fname) is str else str(mesh_fname)
@@ -29,11 +27,15 @@ class Loop:
         self.materials.read_mesh(self.mesh_fname)
 
     def read_params(self, params_fname):
-        self.params_fname = params_fname if type(params_fname) is str else str(params_fname)
+        self.params_fname = (
+            params_fname if type(params_fname) is str else str(params_fname)
+        )
         self.params = read_params(self.params_fname)
 
     def read_materials(self, materials_fname):
-        self.materials_fname = materials_fname if type(materials_fname) is str else str(materials_fname)
+        self.materials_fname = (
+            materials_fname if type(materials_fname) is str else str(materials_fname)
+        )
         self.materials.read_materials(self.materials_fname)
 
     def compute_mh(self, m):
@@ -60,7 +62,9 @@ class Loop:
                 if abs(mh - mh_old) >= self._mstep:
                     mh_old = mh
                     i = i + 1
-                    saveVTK(self.outname + f".{i:04}", tags=self.materials.get_tags(), m=m)
+                    saveVTK(
+                        self.outname + f".{i:04}", tags=self.materials.get_tags(), m=m
+                    )
                     f.write(f"{i:04} {self._external.value} {mh} {e}\n")
                 else:
                     f.write(f"{0:04} {self._external.value} {mh} {e}\n")
@@ -111,4 +115,5 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage mammosmag run loop -n <name_system>")
     from .scripts.loop import main as loop_script
+
     loop_script(name)

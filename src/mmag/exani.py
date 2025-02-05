@@ -1,5 +1,4 @@
 import sys
-import math
 from time import time
 
 import esys.escript as e
@@ -46,4 +45,5 @@ if __name__ == "__main__":
         sys.exit("usage run-escript hmag.py modelname")
 
     from .scripts.exani import main as exani_script
+
     exani_script(name)

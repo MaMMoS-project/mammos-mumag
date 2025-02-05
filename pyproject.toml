@@ -55,11 +55,11 @@ ignore = []
 "__init__.py" = [
   "D104", # undocumented-public-package
 ]
-"src/mmag/sim_scripts/*.py" = [
+"src/mmag/*.py" = [
   "D1", # undocumented-*
   "W505", # Doc line too long
 ]
-"src/mmag/container_scripts/patches/*.py" = [
+"container_scripts/patches/*.py" = [
   "D1", # uncodumented-*
   "E722", # bare-except
   "W505", # Doc line too long

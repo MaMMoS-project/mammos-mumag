@@ -129,30 +129,20 @@ def run_mmag(threads, container, script, name_system):
 
     if container == "apptainer":
         cmd = shlex.split(
-            (
-                f"apptainer run "
-                f"{mmag._cache_dir/'escript'} -t{threads} "
-            ),
+            (f"apptainer run " f"{mmag._cache_dir/'escript'} -t{threads} "),
             posix=is_posix,
         )
 
     elif container == "podman":
         cmd = shlex.split(
-            (
-                f"podman run "
-                "-v .:/io "
-                "-v $PWD:/sim_scripts "
-                f"escript -t{threads}"
-            ),
+            (f"podman run " "-v .:/io " "-v $PWD:/sim_scripts " f"escript -t{threads}"),
             posix=is_posix,
         )
 
     if script in SIMULATION_SCRIPTS:
         cmd.append(f"{mmag._sim_scripts / (script+'.py')} {name_system}")
     else:
-        cmd.append(
-            f"{script}"
-        )
+        cmd.append(f"{script}")
 
     res = subprocess.run(cmd, stderr=subprocess.PIPE)
 

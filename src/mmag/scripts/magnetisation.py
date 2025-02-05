@@ -14,6 +14,7 @@ def main(name):
     i = 0
     saveVTK(name + f".{i:04}", tags=materials.get_tags(), m=m)
 
+
 if __name__ == "__main__":
     try:
         name = sys.argv[1]

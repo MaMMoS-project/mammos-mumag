@@ -20,6 +20,7 @@ def main(name):
     print("energy from gradient", external.solve_e(m))
     print("       analytic     ", ezee)
 
+
 if __name__ == "__main__":
     try:
         name = sys.argv[1]

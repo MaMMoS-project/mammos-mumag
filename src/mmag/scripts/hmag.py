@@ -38,6 +38,7 @@ def main(name):
         name + ".hmag", tags=materials.get_tags(), m=m, U=u, h=h, h_nodes=h_at_nodes
     )
 
+
 if __name__ == "__main__":
     try:
         name = sys.argv[1]

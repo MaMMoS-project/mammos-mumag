@@ -2,11 +2,13 @@ import sys
 
 from mmag.materials import Materials
 
+
 def main(name):
     materials = Materials(name)
     materials.read_mesh(name + ".fly")
     materials.read_materials(name + ".krn")
     materials.write_vtk()
+
 
 if __name__ == "__main__":
     print("materials:")

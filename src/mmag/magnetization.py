@@ -93,4 +93,5 @@ if __name__ == "__main__":
         sys.exit("usage run-escript magnetization.py modelname")
 
     from .scripts.magnetisation import main as magnetisation_script
+
     magnetisation_script(name)

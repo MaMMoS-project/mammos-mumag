@@ -156,4 +156,6 @@ def main():
         args.outfile.close()
 
     if args.sub_parser == "run":
-        cli_helpers.run_mmag(args.threads, args.container, args.script, args.name_system)
+        cli_helpers.run_mmag(
+            args.threads, args.container, args.script, args.name_system
+        )

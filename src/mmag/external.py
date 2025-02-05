@@ -48,4 +48,5 @@ if __name__ == "__main__":
         sys.exit("usage run-escript external.py modelname")
 
     from .scripts.external import main as external_script
+
     external_script(name)
