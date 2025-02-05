@@ -82,7 +82,7 @@ options:
 ## sub-command `run`
 This sub-command is used to actually run `mmag` simulations based on pre-defined simulation scripts, for example:
 ```console
-mmag run -p apptainer -t 5 -s loop <system-name>
+mmag run -c apptainer -t 5 -s loop <system-name>
 ```
 
 To run the simulation, one needs to have following configuration files in the working directory:
@@ -148,7 +148,7 @@ The last two lines denote a sphere enclosing the magnetic region and a spherical
 
 To create a vtu file that shows the materials use   
 ```console
-mmag run -p apptainer -t 5 -s materials cube
+mmag run -c apptainer -t 5 -s materials cube
 ```
 
 ## Run the standard problem 3
@@ -187,7 +187,7 @@ The example in pymag/meshing uses the spherical shell transformation.
 To test the magnetostatic field computation you can calculate the magnetostatic energy density and the field of a uniformly magnetized cube.
 
 ```console
-mmag run -p apptainer -t 5 -s hmag cube
+mmag run -c apptainer -t 5 -s hmag cube
 ```
 
 ### Solver parameters
