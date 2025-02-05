@@ -15,17 +15,16 @@ class Materials:
     def read_mesh(self, mesh_fname):
         print(f"read mesh from {mesh_fname}")
         self.mesh = ReadMesh(mesh_fname)
-
-    def read_materials(self, materials_fname, size=1.0e-9, scale=0.0):
-        if not hasattr(self, "mesh"):
-            raise AttributeError("Mesh file needs to be read first.")
-
         self.K = e.Scalar(0, e.Function(self.mesh))
         self.u = e.Vector(0, e.Function(self.mesh))
         self.Js = e.Scalar(0, e.Function(self.mesh))
         self.A = e.Scalar(0, e.Function(self.mesh))
         self.mu0 = 4e-7 * math.pi
         tags = e.Function(self.mesh).getListOfTags()
+
+    def read_materials(self, materials_fname, size=1.0e-9, scale=0.0):
+        if not hasattr(self, "mesh"):
+            raise AttributeError("Mesh file needs to be read first.")
         krn = open(materials_fname, "r")
         for tag in tags:
             line = krn.readline().split()

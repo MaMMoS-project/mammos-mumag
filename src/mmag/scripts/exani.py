@@ -10,6 +10,8 @@ from mmag.magnetisation import getM, xM
 
 def main(name):
     materials = Materials(name)
+    materials.read_mesh(name + ".fly")
+    materials.read_materials(name + ".krn")
 
     exani = ExAni(materials.A, materials.K, materials.u, materials.volume)
 

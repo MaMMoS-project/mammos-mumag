@@ -4,6 +4,7 @@ import sys
 
 
 def getVortex(mask):
+    # I also do not know what mask is
     domain = mask.getDomain()
     m = e.Vector(0, e.Solution(domain))
     x = domain.getX()
