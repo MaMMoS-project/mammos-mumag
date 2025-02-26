@@ -1,0 +1,183 @@
+"""Parameters class."""
+
+import math
+import configparser
+import yaml
+
+from .tools import check_path
+
+from jinja2 import Environment, PackageLoader, select_autoescape
+
+
+class Parameters:
+    """Parameters class."""
+
+    def __init__(self):
+        """Initialize Parameters class."""
+        # size and scale
+        self.size = 1.0e-9
+        self.scale = 0.0
+
+        # initial state
+        self.state = "mxyz"
+        self.mx = 0.0
+        self.my = 0.0
+        self.mz = 0.0
+
+        # h field
+        self.hmag_on = 1
+        self.hstart = 0.0
+        self.hfinal = 0.0
+        self.hstep = 0.0
+        self.hx = 0.0
+        self.hy = 0.0
+        self.hz = 0.0
+
+        # minimizer
+        self.iter_max = 1000
+        self.precond_iter = 10
+        self.tol_fun = 1e-10
+        self.tol_hmag_factor = 1.0
+        self.tol_u = 1e-10
+        self.truncation = 5
+        self.verbose = 0
+
+    @property
+    def m(self):
+        """Return list m given the components mx, my, mz."""
+        return normalize([self.mx, self.my, self.mz])
+
+    @m.setter
+    def m(self, value):
+        """Assign mx, my, mz given m."""
+        self.mx = value[0]
+        self.my = value[1]
+        self.mz = value[2]
+
+    @property
+    def h(self):
+        """Return list h given the components hx, hy, hz."""
+        return normalize([self.hx, self.hy, self.hz])
+
+    @h.setter
+    def h(self, value):
+        """Assign hx, hy, hz given h."""
+        self.hx = value[0]
+        self.hy = value[1]
+        self.hz = value[2]
+
+    def read_p2(self, fname):
+        """Read parameter `p2` file.
+
+        Simulation parameters are read and stored.
+
+        :param fname: File path
+        :type fname: str or pathlib.Path
+        :raises FileNotFoundError: Parameters file not found
+        """
+        check_path(fname)
+        config = configparser.ConfigParser()
+        config.read(fname)
+
+        mesh = config["mesh"]
+        if "size" in mesh:
+            self.size = float(mesh["size"])
+        if "scale" in mesh:
+            self.scale = float(mesh["scale"])
+
+        initial_state = config["initial state"]
+        if "state" in initial_state:
+            self.state = str(initial_state["state"])
+        self.mx = float(initial_state["mx"])
+        self.my = float(initial_state["my"])
+        self.mz = float(initial_state["mz"])
+
+        field = config["field"]
+        if "hmag_on" in field:
+            self.hmag_on = int(field["hmag_on"])
+        self.hstart = float(field["hstart"])
+        self.hfinal = float(field["hfinal"])
+        self.hstep = float(field["hstep"])
+        self.hx = float(field["hx"])
+        self.hy = float(field["hy"])
+        self.hz = float(field["hz"])
+
+        minimizer = config["minimizer"]
+        if "iter_max" in minimizer:
+            self.iter_max = int(minimizer["iter_max"])
+        if "precond_iter" in minimizer:
+            self.precond_iter = int(minimizer["precond_iter"])
+        if "tol_fun" in minimizer:
+            self.tol_fun = float(minimizer["tol_fun"])
+        if "tol_hmag_factor" in minimizer:
+            self.tol_hmag_factor = float(minimizer["tol_hmag_factor"])
+        self.tol_u = self.tol_fun * self.tol_hmag_factor
+        if "truncation" in minimizer:
+            self.truncation = int(minimizer["truncation"])
+        if "verbose" in minimizer:
+            self.verbose = int(minimizer["verbose"])
+
+    def write_p2(self, fname):
+        """Write parameter `p2` file.
+
+        :param fname: File path
+        :type fname: str or pathlib.Path
+        """
+        env = Environment(
+            loader=PackageLoader("mmag"),
+            autoescape=select_autoescape(),
+        )
+        template = env.get_template("p2.jinja")
+        with open(fname, "w") as file:
+            file.write(template.render(self.__dict__))
+
+    def write_yaml(self, fname):
+        """Write parameter `yaml` file.
+
+        :param fname: File path
+        :type fname: str or pathlib.Path
+        """
+        parameters_dict = {
+            "mesh": {
+                "size": self.size,
+                "scale": self.scale,
+            },
+            "initial_state": {
+                "state": self.state,
+                "mx": self.mx,
+                "my": self.my,
+                "mz": self.mz,
+            },
+            "field": {
+                "hmag_on": self.hmag_on,
+                "hstart": self.hstart,
+                "hfinal": self.hfinal,
+                "hstep": self.hstep,
+                "hx": self.hx,
+                "hy": self.hy,
+                "hz": self.hz,
+            },
+            "minimizer": {
+                "iter_max": self.iter_max,
+                "tol_fun": self.tol_fun,
+                "tol_hmag_factor": self.tol_hmag_factor,
+                "truncation": self.truncation,
+                "precond_iter": self.precond_iter,
+                "verbose": self.verbose,
+            },
+        }
+        with open(fname, "w") as file:
+            yaml.dump(parameters_dict, file)
+
+
+def normalize(v):
+    """Normalize list.
+
+    :param v: list to normalize
+    :type v: list
+    """
+    s = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
+    if s <= 1.0e-13:
+        return v
+    else:
+        return [v[0] / s, v[1] / s, v[2] / s]
