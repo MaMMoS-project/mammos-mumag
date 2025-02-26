@@ -1,9 +1,23 @@
+"""mmag.
+
+MaMMoS micromagnetic simulation software.
+"""
+
 import importlib.metadata
 import pathlib
 
+from .materials import Materials
+from .parameters import Parameters
+from .simulation import Simulation
+
+
 _base_directory = pathlib.Path(__file__).absolute().parent
-_container_scripts = _base_directory.joinpath("container_scripts")
-_sim_scripts = _base_directory.joinpath("sim_scripts")
 _cache_dir = pathlib.Path.home() / ".cache" / "mammos" / "mmag"
 _conf_dir = pathlib.Path.home() / ".config" / "mammos" / "mmag"
 __version__ = importlib.metadata.version(__package__)
+
+__all__ = [
+    "Materials",
+    "Parameters",
+    "Simulation",
+]
