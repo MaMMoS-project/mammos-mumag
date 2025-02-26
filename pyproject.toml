@@ -39,10 +39,26 @@ mmag = "mmag.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[project.optional-dependencies]
-format = [
-  "ruff==0.8",
-]
+# pixi
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+mmag = { path = ".", editable = true }
+PyYAML = "*"
+
+[tool.pixi.feature.format.dependencies]
+ruff = "==0.8"
+
+[tool.pixi.environments]
+format = {features = ["format"]}
+
+[tool.pixi.feature.format.tasks]
+lint = "ruff check"
+format = "ruff format"
+clean = "ruff clean && py3clean ."
+
 
 [tool.ruff]
 target-version = "py39"
