@@ -5,6 +5,7 @@ From: condaforge/miniforge3
   BUILD_THREADS=8
 %files
   {{ PATCH_DIR }} /patches
+  {{ SCRIPTS_DIR }} /scripts
 %post
   conda env create -f /patches/escript.yaml
   conda install -y -n escript -c conda-forge cxx-compiler make cmake

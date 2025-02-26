@@ -49,7 +49,7 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript external.py modelname")
 
-    m, h, start, final, step, _, _, _ = read_params(name)
+    m, state, h, start, final, step, _, _, _ = read_params(name)
     Js = read_Js(name)
     ezee = -Js * (start - step) * (m[0] * h[0] + m[1] * h[1] + m[2] * h[2])
 
