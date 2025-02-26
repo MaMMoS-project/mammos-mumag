@@ -54,10 +54,16 @@ ruff = "==0.8"
 sphinx = "==8.1.3"
 sphinx-rtd-theme = "==3.0.1"
 numpy = ">=2"
+[tool.pixi.feature.test.dependencies]
+pytest = "*"
 
 [tool.pixi.environments]
 format = {features = ["format"]}
 docs = {features = ["docs"]}
+test = {features = ["test"]}
+
+[tool.pixi.feature.test.tasks]
+test = "pytest -v"
 
 [tool.pixi.feature.docs.tasks]
 docs = "cd docs && make html"

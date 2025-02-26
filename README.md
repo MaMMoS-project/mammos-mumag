@@ -202,3 +202,9 @@ Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micro
 | truncation | number of history vectors stored | 5 | 
 | precond_iter | number of conjugate gradient iterations for inverse Hessian approximation | 10 |  
 | verbose  | verbosity level of output  | 1 |
+
+
+## Tests
+There are six tests available, one for every script.
+At the moment, two of them fail, `hmag` and `loop`.
+I do not know why the numbers are different.
