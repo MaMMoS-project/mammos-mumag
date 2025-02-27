@@ -22,6 +22,8 @@ optional arguments:
                         3D elements).
 """
 
+import pathlib
+
 CONTACT_GRP = "contact"
 
 UNV_DELIM = "    -1"
@@ -364,3 +366,22 @@ def dimension(text):
             msg = "Invalid dimension: %s" % opt
             raise TypeError(msg)
     return exclude
+
+
+def convert(unv_path, fly_path, exclude_list):
+    """Convert mesh file from `unv` to `fly`.
+
+    :param unv_path: Input `unv` file path.
+    :type unv_path: str or pathlib.Path
+    :param fly_path: Output `fly` file path.
+    :type fly_path: str or pathlib.Path
+    :param exclude: List of dimensions to be excluded
+    :type exclude: list
+    """
+    infile = open(unv_path, "r")
+    pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
+    outfile = open(fly_path, "w")
+    nodes, index, groups, contact = scanUnv(infile, exclude_list)
+    writeFly(nodes, groups, index, contact, infile, outfile, exclude_list)
+    infile.close()
+    outfile.close()
