@@ -3,7 +3,6 @@
 import json
 import os
 import pathlib
-import shlex
 import shutil
 import subprocess
 
@@ -35,14 +34,7 @@ class Simulation:
         :type threads: int, optional
         """
         is_posix = os.name == "posix"
-        cmd = shlex.split(
-            (
-                f"{self._escript_bin} "
-                f"-t{threads} "
-                f"{file}"
-            ),
-            posix=is_posix,
-        )
+        cmd = f"{self._escript_bin} -t{threads} {file}"
         run_subprocess(cmd, cwd=outdir)
 
     def run_script(self, script, outdir, name, threads):
@@ -58,15 +50,7 @@ class Simulation:
         :type threads: int
         """
         is_posix = os.name == "posix"
-        cmd = shlex.split(
-            (
-                f"{self._escript_bin} "
-                f"-t{threads} "
-                f"/scripts/{script}.py "
-                f"{name}"
-            ),
-            posix=is_posix,
-        )
+        cmd = f"{self._escript_bin} -t{threads} /scripts/{script}.py {name}"
         run_subprocess(cmd, cwd=outdir)
 
     def run_exani(self, threads=4, outdir="exani", name="out"):
