@@ -24,6 +24,27 @@ class Simulation:
             conf_dict = json.load(handle)
         self._escript_bin = list(conf_dict["run_escript"].values())[0]
 
+    def run_file(self, file, outdir="out", threads=4):
+        """Run file using `esys.escript`.
+
+        :param script: path of file.
+        :type script: str or pathlib.Path
+        :param outdir: Working directory. Defaults to "out"
+        :type outdir: str or pathlib.Path, optional
+        :param threads: Number of execution threads. Defaults to 4.
+        :type threads: int, optional
+        """
+        is_posix = os.name == "posix"
+        cmd = shlex.split(
+            (
+                f"{self._escript_bin} "
+                f"-t{threads} "
+                f"{file}"
+            ),
+            posix=is_posix,
+        )
+        run_subprocess(cmd, cwd=outdir)
+
     def run_script(self, script, outdir, name, threads):
         """Run pre-defined script.
 
@@ -35,7 +56,6 @@ class Simulation:
         :type name: str
         :param threads: Number of execution threads
         :type threads: int
-        :raises RuntimeError: Simulation has failed.
         """
         is_posix = os.name == "posix"
         cmd = shlex.split(
@@ -47,19 +67,7 @@ class Simulation:
             ),
             posix=is_posix,
         )
-        res = subprocess.run(
-            cmd,
-            cwd=outdir,
-            stderr=subprocess.PIPE,
-        )
-        return_code = res.returncode
-
-        if return_code:
-            raise RuntimeError(
-                "Simulation has failed. "
-                "Exit with error: \n"
-                f"{res.stderr.decode('utf-8')}"
-            )
+        run_subprocess(cmd, cwd=outdir)
 
     def run_exani(self, threads=4, outdir="exani", name="out"):
         """Run "exani" script.
@@ -206,4 +214,27 @@ class Simulation:
             outdir=outdir,
             name=name,
             threads=threads,
+        )
+
+def run_subprocess(cmd, cwd):
+    """Run command using `subprocess`.
+
+    :param cmd: command to execute
+    :type cmd: list
+    :param cwd: working directory
+    :type cwd: str or pathlib.Path
+    :raises RuntimeError: Simulation has failed.
+    """
+    res = subprocess.run(
+        cmd,
+        cwd=cwd,
+        stderr=subprocess.PIPE,
+    )
+    return_code = res.returncode
+
+    if return_code:
+        raise RuntimeError(
+            "Simulation has failed. "
+            "Exit with error: \n"
+            f"{res.stderr.decode('utf-8')}"
         )
