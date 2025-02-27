@@ -81,6 +81,7 @@ clean = "ruff clean && py3clean ."
 example-materials = "jupyter-lab examples/materials_io.ipynb"
 example-parameters = "jupyter-lab examples/parameters_io.ipynb"
 example-loop = "jupyter-lab examples/hysteresis_loop.ipynb"
+example-python-files = "jupyter-lab examples/run_python_files.ipynb"
 
 [tool.ruff]
 target-version = "py39"
