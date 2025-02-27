@@ -252,7 +252,6 @@ def parseGroups(groups, contact, file):
         data = parse(file, 9, 0b110000000)
 
 
-# def writeFly(nodes, groups, index, contact, unvFile, flyFile):
 def writeFly(nodes, groups, index, contact, unvFile, flyFile, exclude):
     writeHeader(flyFile)
     convertNodes(nodes, unvFile, flyFile)
@@ -300,22 +299,6 @@ Tags
 
 def parseNode(file):
     return parse(file, 7, 0b1110001)
-
-
-# def convertElems(index, groups, contact, unvFile, flyFile):
-#     for t, data in index.items():
-#         sum = 0
-#         for pos, num in data:
-#             sum += num
-#         flyFile.write("\n%s %d\n" % (MNORMAL[t], num))
-#         for pos, numb in data:
-#             unvFile.seek(pos)
-#             while num > 0:
-#                 eId, nodes = parseElem(t, unvFile)
-#                 group = groups.get(eId, "-1")
-#                 flyFile.write(
-#                     eId + " " + group + " " + " ".join(nodes) + "\n")
-#                 num -= 1
 
 
 def convertElemsContact(index, groups, contact, unv, fly):
