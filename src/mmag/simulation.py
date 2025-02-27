@@ -216,6 +216,7 @@ class Simulation:
             threads=threads,
         )
 
+
 def run_subprocess(cmd, cwd):
     """Run command using `subprocess`.
 
