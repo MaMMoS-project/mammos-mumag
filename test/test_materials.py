@@ -3,7 +3,7 @@
 import pathlib
 import filecmp
 import shutil
-from mmag import Simulation
+from mammos_mmag import Simulation
 
 HERE = pathlib.Path(__file__).resolve().parent
 

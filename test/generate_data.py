@@ -1,7 +1,7 @@
 """Generate test data."""
 
 import pathlib
-from mmag import Simulation
+from mammos_mmag import Simulation
 
 DATA = pathlib.Path(__file__).resolve().parent / "data"
 
