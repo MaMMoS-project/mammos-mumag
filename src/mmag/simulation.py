@@ -113,7 +113,8 @@ class Simulation:
     def run_hmag(self, threads=4, outdir="hmag", name="out"):
         """Run "hmag" script.
 
-        TODO: Get more info
+        This script evaluates the magnetostatic energy density
+        and the field of a uniformly magnetized cube.
 
         :param threads: Number of execution threads, defaults to 4.
         :type threads: int, optional
@@ -187,7 +188,7 @@ class Simulation:
     def run_materials(self, threads=4, outdir="materials", name="out"):
         """Run "materials" script.
 
-        TODO: Get more info
+        This script generates a `vtu` file that shows the material.
 
         :param threads: Number of execution threads, defaults to 4.
         :type threads: int, optional
