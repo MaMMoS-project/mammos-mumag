@@ -7,8 +7,7 @@ from materials import Materials
 from tools import read_params
 
 
-def getVortex(mask):
-    domain = mask.getDomain()
+def getVortex(domain):
     m = e.Vector(0, e.Solution(domain))
     x = domain.getX()
     r = e.sqrt(x[1] * x[1] + x[2] * x[2])
@@ -19,8 +18,7 @@ def getVortex(mask):
     return m
 
 
-def getFlower(mask):
-    domain = mask.getDomain()
+def getFlower(domain):
     m = e.Vector(0, e.Solution(domain))
     x = domain.getX()
     s = e.sup(x)
@@ -31,8 +29,7 @@ def getFlower(mask):
     return m
 
 
-def getTwisted(mask):
-    domain = mask.getDomain()
+def getTwisted(domain):
     m = e.Vector(0, e.Solution(domain))
     x = domain.getX()
     r = e.sqrt(x[1] * x[1] + x[0] * x[0])
@@ -52,14 +49,18 @@ def getTwisted(mask):
 
 
 def getM(mask, v, state=None):
-    if state == "vortex":
-        m = mask * getVortex(mask)
-    elif state == "flower":
-        m = mask * getFlower(mask)
-    elif state == "twisted":
-        m = mask * getTwisted(mask)
+    domain = mask.getDomain()
+    if state == 2:
+        m = mask * getVortex(domain)
+        print('create vortex state')
+    elif state == 1:
+        m = mask * getFlower(domain)
+        print('create flower state')
+    elif state == 3:
+        m = mask * getTwisted(domain)
     else:
-        m = mask * e.Vector(v, e.Solution(mask.getDomain()))
+        m = mask * e.Vector(v, e.Solution(domain))
+        print('create uniformly magnetised state')
     return e.normalize(m)
 
 

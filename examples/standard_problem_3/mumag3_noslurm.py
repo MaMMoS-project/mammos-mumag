@@ -11,13 +11,12 @@ except IndexError:
     sys.exit("usage python mumag3.py mesh_size\n      where mesh_size is given in units of the exchange length")
 
 
-# salome = "/home/tom/pd/SALOME-9.13.0/salome"
-salome = '/scandium/home/programs/UB22/SALOME-9.10.0-native-UB22.04-SRC/salome'
-tofly = "/scandium/home/programs/UB22/mmag/examples/demagnetization/tofly3"
+salome = "/home/tom/pd/SALOME-9.13.0/salome"
+tofly = "../demagnetization/tofly3"
 
 escript = "run-escript"
-path_to_loop = "/scandium/home/programs/UB22/mmag/src/mmag/sim_scripts/loop.py"
-path_to_store = "/scandium//home/programs/UB22/mmag/src/mmag/sim_scripts/store.py"
+path_to_loop = "../../src/mmag/sim_scripts/loop.py"
+path_to_store = "../../src/mmag/sim_scripts/store.py"
 
 
 matplotlib.rcParams.update({"font.size": 14})
@@ -105,12 +104,12 @@ for s in lengths:
     write_p2("cube", "flower")
 
     # store sparse matrices
-    cmd = f"$MAMBA_EXE run -n escript5 {escript} {path_to_store} cube"
+    cmd = f"{escript} {path_to_store} cube"
     print(cmd)
     os.system(cmd)
 
     # run simulation
-    cmd = f"$MAMBA_EXE run -n escript5 {escript} {path_to_loop} cube"
+    cmd = f"{escript} {path_to_loop} cube"
     print(cmd)
     os.system(cmd)
     
@@ -125,7 +124,7 @@ for s in lengths:
     write_p2("cube", "vortex")
     
     # run simulation
-    cmd = f"$MAMBA_EXE run -n escript5 {escript} {path_to_loop} cube"
+    cmd = f"{escript} {path_to_loop} cube"
     print(cmd)
     os.system(cmd)
     

@@ -5,10 +5,8 @@ import esys.escript as e
 
 from materials import Materials
 from magnetization import getM
-from tools import read_params, read_Js, normalize, dot
-
-import numpy as np
-
+from tools import read_params, read_Js, normalize, get_mu0
+from escript_tools import dot
 
 class External:
     def __init__(self, start, final, step, direction, meas, volume):
@@ -42,24 +40,27 @@ class External:
         else:
             return False
 
-
 if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
         sys.exit("usage run-escript external.py modelname")
 
-    m, h, start, final, step, _, _, _ = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    m, _, _, _ =  mag_pars
+    h, start, final, step = hext_pars
     Js = read_Js(name)
     ezee = -Js * (start - step) * (m[0] * h[0] + m[1] * h[1] + m[2] * h[2])
 
     materials = Materials(name)
     m = getM(e.wherePositive(materials.meas), m)
     external = External(start, final, step, h, materials.meas, materials.volume)
+        
+    mu0 = get_mu0()
+    
+    print('\n')
+    print("Zeeman energy density for an external field")
+    print("of mu_0 Hext  (T)    ", external.value)
+    print("from gradient (J/m^3)", external.solve_e(m)/mu0)
+    print("analytic      (J/m^3)", ezee/mu0)
 
-    print("       h  value     ", external.value)
-    print("energy from gradient", external.solve_e(m))
-    print("       analytic     ", ezee)
-
-    # while external.next():
-    #  print(external.value)

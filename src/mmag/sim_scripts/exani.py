@@ -7,8 +7,9 @@ import esys.escript as e
 from materials import Materials
 from magnetization import xM, getM
 from matrix import exani_matrix
-from tools import dot, read_A, readAnisotropyEnergy
-
+from tools import read_A, readAnisotropyEnergy, get_mu0
+from escript_tools import dot
+from converters import operator2matrix
 
 class ExAni:
     def __init__(self, A, K, u, volume):
@@ -26,6 +27,9 @@ class ExAni:
 
     def saveMM(self, fn):
         self._matrix.saveMM(fn)
+        
+    def getMatrix(self):
+        return operator2matrix(self._matrix)
 
 
 if __name__ == "__main__":
@@ -45,14 +49,21 @@ if __name__ == "__main__":
     A = read_A(name)
     mu0 = 4.0e-7 * math.pi
 
-    print("vortex on a, b plane")
-    print("energy from gradient", exani.solve_e(m))
-    print("       analytic     ", 2 * k * k * mu0 * A / (size * size))
+    mat_exani, dia_exani = exani.getMatrix()
+    
+    mu0 = get_mu0()
+
+    print('\n')
+    print("exchange energy density of a vortex on a, b plane")
+    print("energy from gradient (J/m^3)", exani.solve_e(m)/mu0)
+    print("analytic             (J/m^3)", (2 * k * k * mu0 * A / (size * size))/mu0)
 
     uniform_m = [0.0, 0.0, 1.0]
     m = getM(e.wherePositive(materials.meas), uniform_m)
     eani = readAnisotropyEnergy(name, uniform_m)
-
-    print("uniform m", uniform_m)
-    print("energy from gradient", exani.solve_e(m))
-    print("       analytic     ", eani)
+    
+    print('\n')
+    print("magnetocrystalline anisotropy energy density of uniformly")
+    print("magnetized sample in direction", uniform_m)
+    print("from gradient (J/m^3)", exani.solve_e(m)/mu0)
+    print("analytic      (J/m^3)", eani/mu0)
