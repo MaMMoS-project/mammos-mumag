@@ -12,7 +12,6 @@ from .simulation import Simulation
 
 
 _base_directory = pathlib.Path(__file__).absolute().parent
-_cache_dir = pathlib.Path.home() / ".cache" / "mammos" / "mmag"
 _conf_dir = pathlib.Path.home() / ".config" / "mammos" / "mmag"
 __version__ = importlib.metadata.version(__package__)
 
