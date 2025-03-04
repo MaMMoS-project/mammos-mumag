@@ -124,7 +124,7 @@ class Parameters:
         :type fname: str or pathlib.Path
         """
         env = Environment(
-            loader=PackageLoader("mmag"),
+            loader=PackageLoader("mammos_mmag"),
             autoescape=select_autoescape(),
         )
         template = env.get_template("p2.jinja")

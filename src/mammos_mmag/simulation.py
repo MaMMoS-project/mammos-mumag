@@ -9,7 +9,7 @@ import subprocess
 
 from .materials import Materials
 from .parameters import Parameters
-import mmag
+import mammos_mmag
 
 
 IS_POSIX = os.name == "posix"
@@ -23,7 +23,7 @@ class Simulation:
         self.parameters = Parameters()
         self.materials = Materials()
 
-        with open(mmag._conf_dir / "conf.json", "r") as handle:
+        with open(mammos_mmag._conf_dir / "conf.json", "r") as handle:
             conf_dict = json.load(handle)
         self._escript_bin = list(conf_dict["run_escript"].values())[0]
 

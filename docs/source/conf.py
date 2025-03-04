@@ -15,13 +15,13 @@ import shlex
 import subprocess
 
 
-package_dir = Path(__file__).resolve().parents[2] / "src/mmag"
+package_dir = Path(__file__).resolve().parents[2] / "src/mammos_mmag"
 
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "mmag"
+project = "mammos-mmag"
 copyright = "2025, Thomas Schrefl, Swapneel Amit Pathak, Andrea Petrocchi, Samuel Holt, Martin Lang, Hans Fangohr"
 author = "Thomas Schrefl, Swapneel Amit Pathak, Andrea Petrocchi, Samuel Holt, Martin Lang, Hans Fangohr"
 
@@ -83,7 +83,7 @@ html_sidebars = {"**": ["search-field.html", "sidebar-nav-bs.html"], "index": []
 # https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html
 
 source_dir = Path(".").resolve()
-apidoc_dir = Path("mmag_autodoc")
+apidoc_dir = Path("mammos_mmag_autodoc")
 
 
 cmd = shlex.split(

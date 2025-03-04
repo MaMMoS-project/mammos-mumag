@@ -1,4 +1,4 @@
-"""Build mmag/escript container with apptainer or podman."""
+"""Build mammos_mmag/escript container with apptainer or podman."""
 
 import json
 import os
@@ -8,16 +8,16 @@ import subprocess
 import sys
 import warnings
 
-import mmag
+import mammos_mmag
 
 
 IS_POSIX = os.name == "posix"
 
 
 def main(container, threads, location):
-    """Build `mmag`/`escript` container.
+    """Build `mammos_mmag`/`escript` container.
 
-    :param container: Container where to build `mmag`.
+    :param container: Container where to build `mammos_mmag`.
         Accepted containers are `apptainer` and `podman`.
     :type container: str
     :param threads: Number of building threads.
@@ -28,7 +28,7 @@ def main(container, threads, location):
     :raises ValueError: Value of `container` is not recognized.
     :raises RuntimeError: Unable to build the container.
     """
-    config_path = mmag._conf_dir / "conf.json"
+    config_path = mammos_mmag._conf_dir / "conf.json"
     if config_path.exists():
         with open(config_path, "r") as handle:
             config_dict = json.load(handle)

@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mmag"
+name = "mammos-mmag"
 version = "0.1.0"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
@@ -42,7 +42,7 @@ channels = ["conda-forge"]
 platforms = ["linux-64"]
 
 [tool.pixi.pypi-dependencies]
-mmag = { path = ".", editable = true }
+mammos_mmag = { path = ".", editable = true }
 PyYAML = "*"
 
 [tool.pixi.tasks]
@@ -88,6 +88,7 @@ example-materials = "jupyter-lab examples/materials_io.ipynb"
 example-parameters = "jupyter-lab examples/parameters_io.ipynb"
 example-loop = "jupyter-lab examples/hysteresis_loop.ipynb"
 example-python-files = "jupyter-lab examples/run_python_files.ipynb"
+example-standard-problem = "jupyter-lab examples/standard_problem.ipynb"
 example-unvtofly = "jupyter-lab examples/unvtofly.ipynb"
 
 [tool.ruff]
@@ -98,7 +99,7 @@ respect-gitignore = true
 exclude = [
   "tools/scripts", # scripts not written by me (subject to changes)
   "tools/patches/", # patches
-  "src/mmag/tofly.py", # to be checked
+  "src/mammos_mmag/tofly.py", # to be checked
   "examples", # to be checked
 ]
 
