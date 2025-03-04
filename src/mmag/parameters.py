@@ -33,14 +33,14 @@ class Parameters:
         self.hy = 0.0
         self.hz = 0.0
 
-        # minimizer
+        # minimizer parameters for the LBFGS algorithm.
         self.iter_max = 1000
-        self.precond_iter = 10
-        self.tol_fun = 1e-10
-        self.tol_hmag_factor = 1.0
+        self.precond_iter = 10 # cg iterations for inverse Hessian approximation
+        self.tol_fun = 1e-10 # tolerance of the total energy
+        self.tol_hmag_factor = 1.0 # tolerance for the magnetostatic scalar potential
         self.tol_u = 1e-10
-        self.truncation = 5
-        self.verbose = 0
+        self.truncation = 5 # number of history vectors stored
+        self.verbose = 0 # verbosity level of output
 
     @property
     def m(self):
