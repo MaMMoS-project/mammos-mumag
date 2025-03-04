@@ -15,23 +15,23 @@ class Materials:
         """Initialize Materials class."""
         self.domains = []
 
-    def new_domain(self, A, Js, K1, phi, theta, K2=0.0):
+    def new_domain(self, A, Js, K1, K2, phi, theta):
         """Append domain with specified parameters.
 
         :param A: Exchange stiffness constant in J/m.
         :type A: float
         :param Js: Spontaneous magnetic polarisation in T.
         :type Js: float
-        :param K1: Magnetocrystalline anisotropy constant in J/m^3.
+        :param K1: First magnetocrystalline anisotropy constant in J/m^3.
         :type K1: float
+        :param K2: Second magnetocrystalline anisotropy constant in J/m^3.
+        :type K2: float
         :param phi: angle of the magnetocrystalline anisotropy axis
             from the x-direction in radians.
         :type phi: float
         :param theta: Angle of the magnetocrystalline anisotropy axis
             from the z-direction in radians.
         :type theta: float
-        :param K2: Not sure, defaults to 0.0.
-        :type K2: float, optional
         """
         dom = {
             "theta": theta,
@@ -60,7 +60,7 @@ class Materials:
                 "theta": float(line[0]),
                 "phi": float(line[1]),
                 "K1": 4e-7 * pi * float(line[2]),
-                "K2": float(line[3]),  # this might be wrong
+                "K2": 4e-7 * pi * float(line[3]),
                 "Js": float(line[4]),
                 "A": 4e-7 * pi * float(line[5]),
             }
@@ -83,7 +83,7 @@ class Materials:
                 "theta": float(dom["theta"]),
                 "phi": float(dom["phi"]),
                 "K1": 4e-7 * pi * float(dom["K1"]),
-                "K2": float(dom["K2"]),
+                "K2": 4e-7 * pi * float(dom["K2"]),
                 "Js": float(dom["Js"]),
                 "A": 4e-7 * pi * float(dom["A"]),
             }
@@ -115,7 +115,7 @@ class Materials:
                 "theta": dom["theta"],
                 "phi": dom["phi"],
                 "K1": dom["K1"] / (4e-7 * pi),
-                "K2": dom["K2"],
+                "K2": dom["K2"] / (4e-7 * pi),
                 "Js": dom["Js"],
                 "A": dom["A"] / (4e-7 * pi),
             }
