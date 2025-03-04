@@ -16,8 +16,6 @@ import subprocess
 
 
 package_dir = Path(__file__).resolve().parents[2] / "src/mmag"
-# print(f"{package_dir=}")
-# sys.path.insert(0, package_dir.as_posix())
 
 
 # -- Project information -----------------------------------------------------
