@@ -3,12 +3,16 @@
 import json
 import os
 import pathlib
+import shlex
 import shutil
 import subprocess
 
 from .materials import Materials
 from .parameters import Parameters
 import mmag
+
+
+IS_POSIX = os.name == "posix"
 
 
 class Simulation:
@@ -33,8 +37,10 @@ class Simulation:
         :param threads: Number of execution threads. Defaults to 4.
         :type threads: int, optional
         """
-        is_posix = os.name == "posix"
-        cmd = f"{self._escript_bin} -t{threads} {file}"
+        cmd = shlex.split(
+            f"{self._escript_bin} -t{threads} {file}",
+            posix=IS_POSIX,
+        )
         run_subprocess(cmd, cwd=outdir)
 
     def run_script(self, script, outdir, name, threads):
@@ -49,8 +55,10 @@ class Simulation:
         :param threads: Number of execution threads
         :type threads: int
         """
-        is_posix = os.name == "posix"
-        cmd = f"{self._escript_bin} -t{threads} /scripts/{script}.py {name}"
+        cmd = shlex.split(
+            f"{self._escript_bin} -t{threads} /scripts/{script}.py {name}",
+            posix=IS_POSIX,
+        )
         run_subprocess(cmd, cwd=outdir)
 
     def run_exani(self, threads=4, outdir="exani", name="out"):
