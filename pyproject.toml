@@ -45,6 +45,15 @@ platforms = ["linux-64"]
 mmag = { path = ".", editable = true }
 PyYAML = "*"
 
+[tool.pixi.tasks]
+build = { cmd = [
+  "python",
+  "build.py",
+  "$CONTAINER",
+  "$THREADS",
+  "$LOCATION"
+], cwd = "tools", env = { CONTAINER = "apptainer", THREADS = "16", LOCATION = "" }}
+
 [tool.pixi.feature.format.dependencies]
 ruff = "==0.8"
 [tool.pixi.feature.docs.dependencies]
