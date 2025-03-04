@@ -12,3 +12,10 @@ Welcome to mammos-mmag's documentation!
 
    mammos_mmag_autodoc/modules
 
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
