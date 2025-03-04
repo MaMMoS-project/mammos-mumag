@@ -33,9 +33,6 @@ dependencies = [
   "jinja2",
 ]
 
-[project.scripts]
-mmag = "mmag.cli:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]
 
