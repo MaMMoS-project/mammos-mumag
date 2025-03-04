@@ -87,8 +87,8 @@ line-length = 88
 indent-width = 4
 respect-gitignore = true
 exclude = [
-  "tools/containers/patches/", # patches
   "tools/scripts", # scripts not written by me (subject to changes)
+  "tools/patches/", # patches
   "src/mmag/tofly.py", # to be checked
   "examples", # to be checked
 ]
