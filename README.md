@@ -192,13 +192,13 @@ mmag run -p apptainer -t 5 -s hmag cube
 
 ### Solver parameters
 
-The minimizer section in the *.p2 file gives the paramters for the LBFGS algorithm. The algorithm uses the preconditioner described in
+The minimizer section in the *.p2 file gives the paramters for the preconditioner described in
 Exl, Lukas, et al. "Preconditioned nonlinear conjugate gradient method for micromagnetic energy minimization." Computer Physics Communications 235 (2019): 179-186.
 
 | parameter |  usage  | default value |
 | --------- | ------- | ------------- |
 | tol_fun | set the tolerance of the total energy | 1e-10 |
 | tol_hmag_factor | tol_fun\*tol_hmag_factor is the tolerance for the magnetostatic scalar potential | 1 |
-| truncation | number of history vectors stored | 5 | 
 | precond_iter | number of conjugate gradient iterations for inverse Hessian approximation | 10 |  
-| verbose  | verbosity level of output  | 1 |
+
+
