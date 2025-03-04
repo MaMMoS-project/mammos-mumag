@@ -2,6 +2,7 @@
 
 # Create a base image
 FROM docker.io/condaforge/miniforge3 AS base
+COPY ./scripts /scripts
 COPY ./patches/escript.yaml ./escript.yaml
 RUN conda env create -f ./escript.yaml
 
