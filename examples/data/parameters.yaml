@@ -6,7 +6,9 @@ field:
   hx: 0.01745
   hy: 0.0
   hz: 0.99984
-initial_state:
+  mfinal: -1.2
+  mstep: 0.4
+initial state:
   mx: 0.0
   my: 0.0
   mz: 1.0

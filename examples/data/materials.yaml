@@ -1,10 +1,10 @@
 -
-  theta: 0.0 # angle of the magnetocrystalline anisotropy axis from the z-direction in radians
-  phi: 0.0 # angle of the magnetocrystalline anisotropy axis from the x-direction in radians
-  K1: 4.5e+05 # first uniaxial anisotropy constant in J/m3
-  K2: 0.0 # second uniaxial anisotropy constant in J/m3
-  Js: 1.76 # magnetic polarization in T
-  A: 1.3e-11 # exchange constant in J/m
+  theta: 0.0
+  phi: 0.0 
+  K1: 4.9e+06
+  K2: 0.0
+  Js: 1.61
+  A: 8.0e-11
 -
   theta: 0.0
   phi: 0.0
