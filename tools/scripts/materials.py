@@ -6,7 +6,7 @@ import esys.escript as e
 from esys.weipa import saveVTK
 
 import mesh
-from tools import get_meas
+from escript_tools import get_meas
 
 
 class Materials(mesh.Mesh):
@@ -53,7 +53,7 @@ class Materials(mesh.Mesh):
         self.Js.expand()
         self.A.expand()
         saveVTK(
-            name + ".mat",
+            name + "_mat",
             tags=self.get_tags(),
             u=self.u,
             K=self.K / self.mu0,

@@ -19,5 +19,3 @@ minimizer:
   precond_iter: 10
   tol_fun: 1.0e-10
   tol_hmag_factor: 1.0
-  truncation: 5
-  verbose: 1

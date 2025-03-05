@@ -1,86 +1,163 @@
+import jax
+jax.config.update("jax_enable_x64", True)
 import sys
+from time import time
+from functools import partial
+import os
 
-import esys.escript as e
-from esys.weipa import saveVTK
+import jax.numpy as np
+from jax import jit, lax
+import numpy
 
-from tools import read_params, dot
-from magnetization import getM
-from materials import Materials
-from hmag import Hmag
-from exani import ExAni
-from external import External
-from minimize import Minimize
+from energies import total_eg, projection
+from mapping import escript2arrays, update_pars, initial_m
+from minimizers import hestenes_stiefel_ncg
+from solvers import truncated_cg_diag_precond_jit, truncated_cg_jit
+from store import pickle2jax
+from tools import write_mh, write_stats, get_memory_usage
+from jax_tools import update_m, dot_magnetizations
 
+from escript_tools import write_magnetization_and_potential, readmesh_get_tags
 
-class Loop:
-    def __init__(self, params, materials):
-        m, state, h, start, final, step, self._mstep, self._mfinal, min_params = params
-        self._external = External(
-            start, final, step, h, materials.meas, materials.volume
+import gc
+
+@jit
+def compute_mh(m, pars):
+    direction, meas, volume = pars 
+    return (
+        np.dot(
+            (
+                  direction[0] * m[0::3]
+                + direction[1] * m[1::3]
+                + direction[2] * m[2::3]
+            ),
+            meas,
         )
-        exani = ExAni(materials.A, materials.K, materials.u, materials.volume)
-        hmag_on, truncation, tol_u, tol_mxh, precond_iter, iter_max, verbose = (
-            min_params
+        / volume
+    )
+                  
+@jit
+def M_inv(x,g,func_args,alt_args):
+   tol, field_value, pars = func_args
+   C = pars['exani_pars'][0] 
+   D = pars['exani_pars'][1] 
+   #D = np.ones(len(x))
+   _, gradF = alt_args
+   min_pars = pars['min_pars']
+   precond_iter =  min_pars[2]
+   
+   def A(v):                                         # eq (22) Computer Physics Communications 235 (2019) 179–186
+       r1 = projection(m,C@v) 
+       r2 = dot_magnetizations(m,gradF)*v.reshape(-1,3)
+       return r1 - r2.flatten() 
+       
+   return truncated_cg_diag_precond_jit(A,-g,D,max_iter=precond_iter) 
+
+
+@jit
+def minimize(m, field_value, pars, alt_args, stats):
+  min_pars = pars['min_pars']
+  tol_u = min_pars[0]
+  tol_fun = min_pars[1]
+  args = tol_u, field_value, pars
+  energy, m, cg_iter, alt_args, stats = hestenes_stiefel_ncg(m, total_eg, args, alt_args, stats, tol_fun, update_m, M_inv)
+  return energy, m, cg_iter, alt_args, stats
+  
+def save_callback(m,u,counter):
+    write_magnetization_and_potential(name,counter,m,u,tags)
+    return counter + 1
+  
+@partial(jit, static_argnums=(0,3,))
+def solve(name, m0, pars, max_steps):
+    mfinal = pars['mag_pars'][2]
+    mstep  = pars['mag_pars'][-3]
+    hdir   = pars['hext_pars'][0]
+    hstart = pars['hext_pars'][1]
+    hstep  = pars['hext_pars'][3]
+
+    stats = 0
+    mh = np.finfo(m0.dtype).max
+
+    rec = np.zeros((max_steps, 4)) 
+    u0 = np.zeros(len(m0)//3)
+    gradF = np.zeros(len(m0))
+    alt_args = (u0, gradF)
+    
+    save_counter = 0
+    last_saved_mh = mh
+    
+    def cond(state):
+        _, mh, _, _, _, _, _, idx, _, _ = state
+        return np.logical_and(
+            mh > mfinal,
+            idx < max_steps
         )
-        if hmag_on == 1:
-            hmag = Hmag(materials.Js, materials.volume, tol_u, verbose)
-        else:
-            hmag = None
-        self._direction = h
-        self._meas = materials.meas
-        self._volume = materials.volume
-        self._materials = materials
 
-        self._minimize = Minimize(self._external, exani, hmag, min_params[1:])
-
-    def compute_mh(self, m):
-        return (
-            dot(
-                (
-                    self._direction[0] * m[0]
-                    + self._direction[1] * m[1]
-                    + self._direction[2] * m[2]
-                ),
-                self._meas,
+    def body(state):
+        m, mh, hext, cum_iter, alt_args, stats, rec, idx, counter, last_saved_mh  = state
+        energy, m, cg_iter, alt_args, stats = minimize(m, hext, pars, alt_args, stats)
+        u, _ = alt_args
+        mh = compute_mh(m, (hdir, pars['meas'], pars['volume']))
+        jax.debug.print("--> demag {hext} {mh}", hext=hext, mh=mh)
+        rec = rec.at[idx].set(np.array([counter, hext, mh, energy]))
+        should_save = (last_saved_mh - mh) > mstep
+      
+        def true_fun(_):
+            new_counter = jax.experimental.io_callback(
+                save_callback,
+                jax.ShapeDtypeStruct((), np.int32),
+                m, u, counter
             )
-            / self._volume
-        )
+            return new_counter, mh
 
-    def solve(self, m, name):
-        with open(name + ".dat", "w") as f:
-            i = 0
-            mh_old = 9.99e9
-            while self._external.next():
-                m, e = self._minimize.solve(m)
-                mh = self.compute_mh(m)
-                print("-dem->  ", self._external.value, mh, e, flush=True)
-                if abs(mh - mh_old) >= self._mstep:
-                    mh_old = mh
-                    i = i + 1
-                    saveVTK(name + f".{i:04}", tags=self._materials.get_tags(), m=m)
-                    f.write(f"{i:04} {self._external.value} {mh} {e}\n")
-                else:
-                    f.write(f"{0:04} {self._external.value} {mh} {e}\n")
-                if mh < self._mfinal:
-                    break
+        def false_fun(_):
+            return np.array(counter, dtype=np.int32), last_saved_mh
 
-    def getStatistics(self):
-        return self._minimize.getStatistics()
+        counter, last_saved_mh = lax.cond(should_save, true_fun, false_fun, operand=None)
+        
+        return m, mh, hext+hstep, cum_iter+cg_iter, alt_args, stats, rec, idx+1, counter, last_saved_mh
 
+    state = m0, mh, hstart, 0, alt_args, stats, rec, 0, save_counter, last_saved_mh
+    _, _, _, cum_iter, _, stats, rec, idx, _, _ = lax.while_loop(cond, body, state)
+
+    return cum_iter, stats, rec, idx
+
+def loop(name,m,pars):
+    # print(pars)
+    hstart = pars['hext_pars'][1]
+    hfinal = pars['hext_pars'][2]
+    hstep  = pars['hext_pars'][3]
+    max_iter = int(abs(hfinal-hstart)/abs(hstep))+1
+    
+    t0 = time()    
+    cg_iter, stats, rec, idx = solve(name,m,pars,max_iter)
+    total_time  = time()-t0
+    
+    hmag_iter = 0
+    
+    function_calls = stats
+    write_stats('done',total_time,cg_iter,function_calls,hmag_iter)
+                
+    write_mh(name,rec[:idx])
 
 if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
         sys.exit("usage run-escript loop.py modelname")
-
-    params = read_params(name)
-    materials = Materials(name)
-    m = getM(e.wherePositive(materials.meas), params[0], params[1])
-    i = 0
-    saveVTK(name + f".{i:04}", tags=materials.get_tags(), m=m)
-
-    loop = Loop(params, materials)
-    loop.solve(m, name)
-    out = loop.getStatistics()
-    print(out)
+    
+    print('Memory before conversion to jax ', get_memory_usage(), "MB") 
+    if os.path.exists(f'{name}.pkl'):
+        print('read stored matrices')
+        m, pars = pickle2jax(name)
+        tags    = readmesh_get_tags(name)
+        update_pars(name, pars)
+        m = initial_m(tags.getDomain(),pars)
+    else:
+        m, pars, tags = escript2arrays(name,0)
+    print('Memory after  conversion to jax ', get_memory_usage(), "MB") 
+    gc.collect()
+    print('Memory after  garbage collection', get_memory_usage(), "MB") 
+    
+    loop(name,m,pars) 
+    

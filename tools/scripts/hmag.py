@@ -4,61 +4,13 @@ from time import time
 import esys.escript as e
 from esys.escript.linearPDEs import LinearSinglePDE, SolverOptions
 from esys.weipa import saveVTK
-from esys.escript.pdetools import MaskFromTag
-
-import numpy as np
 
 from materials import Materials
 from magnetization import getM
-from matrix import gx, gy, gz
-from tools import dot, read_Js
-
-
-def findBoundary(x):
-    xe = []
-    for i in range(3):
-        xe.append(e.sup(x[i]))
-    boundaryMask = (
-        e.whereZero(x[0] + xe[0])
-        + e.whereZero(x[0] - xe[0])
-        + e.whereZero(x[1] + xe[1])
-        + e.whereZero(x[1] - xe[1])
-        + e.whereZero(x[2] + xe[2])
-        + e.whereZero(x[2] - xe[2])
-    )
-    return boundaryMask
-
-
-def check_domain(x):
-    Rinf = e.sup(e.length(x))
-    airbox = abs(np.sum(e.convertToNumpy(e.whereZero(e.length(x) - Rinf))) - 8) < 1e-8
-    return airbox, Rinf
-
-
-# IEEE TRANSACTIONS ON MAGNETICS, VOL. 26, NO. 5, SEPTEMBER 1990
-def get_T3D(domain, R, Rinf, tags):
-    k = e.Tensor(0, e.Function(domain))
-    xx = e.Function(domain).getX()
-    x0 = xx[0]
-    x1 = xx[1]
-    x2 = xx[2]
-    x = e.length(xx)
-    a2 = R * (Rinf - R)
-    ax = Rinf / x
-    a2x2 = a2 / (x * x)
-    k[0, 0] = a2x2 * (1 + (ax * (2 - ax) / (ax - 1) ** 2) * (1 - (x0 / x) ** 2))
-    k[1, 1] = a2x2 * (1 + (ax * (2 - ax) / (ax - 1) ** 2) * (1 - (x1 / x) ** 2))
-    k[2, 2] = a2x2 * (1 + (ax * (2 - ax) / (ax - 1) ** 2) * (1 - (x2 / x) ** 2))
-    k[0, 1] = -a2x2 * ((ax * (2 - ax) / (ax - 1) ** 2) * (x0 / x) * (x1 / x))
-    k[0, 2] = -a2x2 * ((ax * (2 - ax) / (ax - 1) ** 2) * (x0 / x) * (x2 / x))
-    k[1, 2] = -a2x2 * ((ax * (2 - ax) / (ax - 1) ** 2) * (x1 / x) * (x2 / x))
-    k[1, 0] = k[0, 1]
-    k[2, 0] = k[0, 2]
-    k[2, 1] = k[1, 2]
-    for tag in tags[:-1]:
-        k.setTaggedValue(tag, e.kronecker(domain))
-    return k
-
+from matrix import gx, gy, gz, dx, dy, dz, poisson
+from tools import read_Js, get_mu0
+from escript_tools import dot
+from converters import operator2matrix
 
 class Hmag:
     def __init__(self, Js, volume, tol=1e-8, verbose=0):
@@ -66,26 +18,7 @@ class Hmag:
         self.rhs_time = 0.0
         self.u_time = 0.0
         self.grad_time = 0.0
-        domain = Js.getDomain()
-
-        x = domain.getX()
-        Rinf = e.sup(e.length(x))
-        boundaryMask = e.whereZero(e.length(x) - Rinf)
-        airbox = abs(np.sum(e.convertToNumpy(boundaryMask)) - 8) < 1e-8
-        if airbox:
-            boundaryMask = findBoundary(x)
-            k = e.kronecker(domain)
-        else:
-            tags = e.Function(domain).getListOfTags()
-            R = e.sup(e.length(x) * MaskFromTag(domain, tags[-2]))
-            k = get_T3D(domain, R, Rinf, tags)
-
-        self._poisson = LinearSinglePDE(domain, isComplex=False)
-        self._poisson.setSymmetryOn()
-        self._poisson.setValue(A=k, q=boundaryMask, r=0.0)
-        self._poisson.getSolverOptions().setPreconditioner(SolverOptions.AMG)
-        self._poisson.getSolverOptions().setPackage(SolverOptions.TRILINOS)
-        self._poisson.getSolverOptions().setTolerance(tol)
+        self._poisson = poisson(Js, volume)
         self._gx = gx(Js, volume)
         self._gy = gy(Js, volume)
         self._gz = gz(Js, volume)
@@ -96,6 +29,7 @@ class Hmag:
     def solve_u(self, m):
         T0 = time()
         self._poisson.setValue(X=self._Js * m)
+        b = self._poisson.getRightHandSide()
         T1 = time()
         self.rhs_time += T1 - T0
         u = self._poisson.getSolution()
@@ -159,6 +93,19 @@ class Hmag:
             self._poisson.getSolverOptions().getDiagnostics("cum_num_iter")
         ), self._poisson.getSolverOptions().getDiagnostics("cum_time")
 
+    def getStiffnessMatrix(self):
+        return operator2matrix( self._poisson.getOperator() )
+        
+    def getGradientMatrices(self):
+        return ( operator2matrix(self._gx,diag=False)[0], 
+                 operator2matrix(self._gy,diag=False)[0], 
+                 operator2matrix(self._gz,diag=False)[0]) 
+
+    def getDivergenzMatrices(self):
+        return ( operator2matrix(dx(self._Js),diag=False)[0], 
+                 operator2matrix(dy(self._Js),diag=False)[0], 
+                 operator2matrix(dz(self._Js),diag=False)[0])  
+
 
 if __name__ == "__main__":
     try:
@@ -166,9 +113,16 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript hmag.py modelname")
 
+
+
     # Hmag solver
     materials = Materials(name)
     hmag = Hmag(materials.Js, materials.volume, 1e-12, 1)
+
+    # Get matrices, do this before solving with escript
+    mat_stiff, dia_stiff   = hmag.getStiffnessMatrix()
+    mat_dx, mat_dy, mat_dz = hmag.getDivergenzMatrices()
+    mat_gx, mat_gy, mat_gz = hmag.getGradientMatrices()
 
     # scalar potential, field, and energy
     m = getM(e.wherePositive(materials.meas), [0.0, 0.0, 1.0])
@@ -177,10 +131,17 @@ if __name__ == "__main__":
 
     # energy
     Js = read_Js(name)
+    
+    params = mat_dx, mat_dy, mat_dz, mat_stiff, dia_stiff, mat_gx, mat_gy, mat_gz
+    tol = 1e-10
 
-    print("energy from field   ", emag)
-    print("       from gradient", hmag.solve_e(m))
-    print("       analytic     ", Js * Js / 6)
+    mu0 = get_mu0()
+
+    print('\n')
+    print('magnetostatic energy density of uniformly magnetized cube')
+    print("from field    (J/m^3)", emag/mu0)
+    print("from gradient (J/m^3)", hmag.solve_e(m)/mu0)
+    print("analytic      (J/m^3)", (Js * Js / 6)/mu0)
 
     # field at nodes
     g = hmag.solve_g(m)
@@ -192,5 +153,5 @@ if __name__ == "__main__":
     h_at_nodes[2] = -materials.volume * (g[2] / meas)
 
     saveVTK(
-        name + ".hmag", tags=materials.get_tags(), m=m, U=u, h=h, h_nodes=h_at_nodes
+        name + "_hmag", tags=materials.get_tags(), m=m, U=u, h=h, h_nodes=h_at_nodes
     )
