@@ -92,10 +92,14 @@ line-length = 88
 indent-width = 4
 respect-gitignore = true
 exclude = [
-  "tools/scripts", # scripts not written by me (subject to changes)
-  "tools/patches/", # patches
-  "src/mammos_mmag/tofly.py", # to be checked
+  "src/mammos_mmag/scripts/*.py", # scripts
   "examples", # to be checked
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/mammos_mmag/tofly.py" = [
+  "D101", # undocumented-public-class
+  "D103", # undocumented-public-function
 ]
 
 [tool.ruff.lint]
