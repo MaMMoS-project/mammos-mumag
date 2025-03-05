@@ -46,13 +46,9 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript external.py modelname")
 
-<<<<<<< HEAD:tools/scripts/external.py
-    m, state, h, start, final, step, _, _, _ = read_params(name)
-=======
     mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
     m, _, _, _ =  mag_pars
     h, start, final, step = hext_pars
->>>>>>> origin/mmag_jax:src/mmag/sim_scripts/external.py
     Js = read_Js(name)
     ezee = -Js * (start - step) * (m[0] * h[0] + m[1] * h[1] + m[2] * h[2])
 
