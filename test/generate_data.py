@@ -1,7 +1,7 @@
 """Generate test data."""
 
 import pathlib
-from mammos_mmag import Simulation
+from mammos_mmag.simulation import Simulation
 
 DATA = pathlib.Path(__file__).resolve().parent / "data"
 
@@ -11,7 +11,7 @@ def main():
     sim = Simulation()
     sim.mesh_path = DATA / "cube.fly"
     sim.materials.read_krn(DATA / "cube.krn")
-    sim.parameters.read_p2(DATA / "cube.p2")
+    sim.parameters.read(DATA / "cube.p2")
 
     sim.run_hmag(
         outdir=DATA / "hmag",
@@ -19,10 +19,6 @@ def main():
     )
     sim.run_loop(
         outdir=DATA / "loop",
-        name="cube",
-    )
-    sim.run_magnetization(
-        outdir=DATA / "magnetization",
         name="cube",
     )
     sim.run_materials(

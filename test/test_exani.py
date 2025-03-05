@@ -2,7 +2,7 @@
 
 import pathlib
 import shutil
-from mammos_mmag import Simulation
+from mammos_mmag.simulation import Simulation
 
 HERE = pathlib.Path(__file__).resolve().parent
 
