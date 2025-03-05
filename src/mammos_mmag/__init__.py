@@ -5,9 +5,9 @@ MaMMoS micromagnetic simulation software.
 
 import importlib.metadata
 import pathlib
+import shutil
 
 
-
-_base_directory = pathlib.Path(__file__).absolute().parent
-_conf_dir = pathlib.Path.home() / ".config" / "mammos" / "mmag"
+_run_escript_bin = shutil.which("run-escript")
+_scripts_directory = pathlib.Path(__file__).parent.resolve() / "scripts"
 __version__ = importlib.metadata.version(__package__)

@@ -32,6 +32,8 @@ class Parameters:
         self.hx = 0.0
         self.hy = 0.0
         self.hz = 0.0
+        self.mstep = 1.0
+        self.mfinal = -0.8
 
         # minimizer parameters for the preconditioned cg
         self.iter_max = 1000
@@ -64,33 +66,42 @@ class Parameters:
         self.hy = value[1]
         self.hz = value[2]
 
-    def read_p2(self, fname):
-        """Read parameter `p2` file.
+    def read(self, fname):
+        """Read parameter file in `yaml` or `p2` format.
 
         Simulation parameters are read and stored.
 
         :param fname: File path
         :type fname: str or pathlib.Path
-        :raises FileNotFoundError: Parameters file not found
+        :raises FileNotFoundError: Wrong file format.
         """
-        check_path(fname)
-        config = configparser.ConfigParser()
-        config.read(fname)
+        fpath = check_path(fname)
 
-        mesh = config["mesh"]
+        if fpath.suffix == ".yaml":
+            with open(fpath, "r") as file:
+                pars = yaml.safe_load(file)
+
+        elif fpath.suffix == ".p2":
+            pars = configparser.ConfigParser()
+            pars.read(fpath)
+
+        else:
+            raise ValueError("Wrong file format.")
+
+        mesh = pars["mesh"]
         if "size" in mesh:
             self.size = float(mesh["size"])
         if "scale" in mesh:
             self.scale = float(mesh["scale"])
 
-        initial_state = config["initial state"]
+        initial_state = pars["initial state"]
         if "state" in initial_state:
             self.state = str(initial_state["state"])
         self.mx = float(initial_state["mx"])
         self.my = float(initial_state["my"])
         self.mz = float(initial_state["mz"])
 
-        field = config["field"]
+        field = pars["field"]
         if "hmag_on" in field:
             self.hmag_on = int(field["hmag_on"])
         self.hstart = float(field["hstart"])
@@ -99,8 +110,12 @@ class Parameters:
         self.hx = float(field["hx"])
         self.hy = float(field["hy"])
         self.hz = float(field["hz"])
+        if "mstep" in field:
+            self.mstep = float(field["mstep"])
+        if "mfinal" in field:
+            self.mfinal = float(field["mfinal"])
 
-        minimizer = config["minimizer"]
+        minimizer = pars["minimizer"]
         if "iter_max" in minimizer:
             self.iter_max = int(minimizer["iter_max"])
         if "precond_iter" in minimizer:

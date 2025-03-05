@@ -26,7 +26,7 @@ class Materials:
         :type K1: float
         :param K2: Second magnetocrystalline anisotropy constant in J/m^3.
         :type K2: float
-        :param phi: angle of the magnetocrystalline anisotropy axis
+        :param phi: Angle of the magnetocrystalline anisotropy axis
             from the x-direction in radians.
         :type phi: float
         :param theta: Angle of the magnetocrystalline anisotropy axis
