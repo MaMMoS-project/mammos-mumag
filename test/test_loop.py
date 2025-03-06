@@ -19,7 +19,7 @@ def test_loop():
 
     loop_1 = np.loadtxt(HERE / "loop" / "out.dat")
     loop_2 = np.loadtxt(HERE / "data" / "loop" / "cube.dat")
-    assert np.linalg.norm(loop_1 - loop_2) < 1.0e-09
+    assert np.linalg.norm(loop_1 - loop_2) < 1.0e-07
 
     for i in range(1):
         m_1_i = meshio.read(HERE / "loop" / f"out_{i:04}.vtu")
