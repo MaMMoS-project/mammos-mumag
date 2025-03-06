@@ -41,13 +41,13 @@ platforms = ["linux-64"]
 [tool.pixi.dependencies]
 cuda = ">=12.8.0,<13"
 esys-escript = ">=5.10,<6"
-jax = ">=0.5.1,<0.6"
 jinja2 = ">=3.1.5,<4"
 psutil = ">=7.0.0,<8"
 pyyaml = ">=6.0.2,<7"
 
 [tool.pixi.pypi-dependencies]
 mammos_mmag = { path = ".", editable = true }
+jax = "*"
 
 [tool.pixi.feature.format.dependencies]
 ruff = "==0.8"
