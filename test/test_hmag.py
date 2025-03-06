@@ -13,7 +13,7 @@ def test_hmag():
     """Test hmag."""
     sim = Simulation()
     sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read_krn(HERE / "data" / "cube.krn")
+    sim.materials.read(HERE / "data" / "cube.krn")
     sim.run_hmag(outdir=HERE / "hmag")
 
     out_mesh = meshio.read(HERE / "hmag" / "out_hmag.vtu")

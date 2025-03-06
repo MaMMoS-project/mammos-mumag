@@ -13,7 +13,7 @@ def test_materials():
     """Test materials."""
     sim = Simulation()
     sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read_krn(HERE / "data" / "cube.krn")
+    sim.materials.read(HERE / "data" / "cube.krn")
     sim.run_materials(outdir=HERE / "materials")
 
     m_1 = meshio.read(HERE / "materials" / "out_mat.vtu")

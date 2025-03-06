@@ -11,7 +11,7 @@ def test_exani():
     """Test exani."""
     sim = Simulation()
     sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read_krn(HERE / "data" / "cube.krn")
+    sim.materials.read(HERE / "data" / "cube.krn")
     sim.run_exani(outdir=HERE / "exani")
     # vortex_energy = sim.get_vortex_energy()
     # assert vortex_energy[0] == 1.2557524195187777

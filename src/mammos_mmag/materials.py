@@ -43,52 +43,25 @@ class Materials:
         }
         self.domains.append(dom)
 
-    def read_krn(self, fname):
-        """Read material `krn` file.
+    def read(self, fname):
+        """Read materials file.
 
-        Material parameters are read and stored.
+        Currently accepted formats: `krn` and `yaml`.
 
-        :param fname: File path
+        :param fname: File name.
         :type fname: str or pathlib.Path
+        :raises FileNotFoundError: Wrong file format.
         """
-        check_path(fname)
-        with open(fname, "r") as file:
-            lines = file.readlines()
-        lines = [line.split() for line in lines]
-        self.domains = [
-            {
-                "theta": float(line[0]),
-                "phi": float(line[1]),
-                "K1": 4e-7 * pi * float(line[2]),
-                "K2": 4e-7 * pi * float(line[3]),
-                "Js": float(line[4]),
-                "A": 4e-7 * pi * float(line[5]),
-            }
-            for line in lines
-        ]
+        fpath = check_path(fname)
 
-    def read_yaml(self, fname):
-        """Read material `yaml` file.
+        if fpath.suffix == ".yaml":
+            self.domains = read_yaml(fpath)
 
-        Material parameters are read and stored.
+        elif fpath.suffix == ".krn":
+            self.domains = read_krn(fpath)
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
-        """
-        check_path(fname)
-        with open(fname, "r") as file:
-            domains = yaml.safe_load(file)
-        self.domains = [
-            {
-                "theta": float(dom["theta"]),
-                "phi": float(dom["phi"]),
-                "K1": 4e-7 * pi * float(dom["K1"]),
-                "K2": 4e-7 * pi * float(dom["K2"]),
-                "Js": float(dom["Js"]),
-                "A": 4e-7 * pi * float(dom["A"]),
-            }
-            for dom in domains
-        ]
+        else:
+            raise ValueError("Wrong file format.")
 
     def write_krn(self, fname):
         """Write material `krn` file.
@@ -123,3 +96,46 @@ class Materials:
         ]
         with open(fname, "w") as file:
             yaml.dump(domains, file)
+
+
+def read_krn(fname):
+    """Read material `krn` file.
+
+    :param fname: File path
+    :type fname: str or pathlib.Path
+    """
+    with open(fname, "r") as file:
+        lines = file.readlines()
+    lines = [line.split() for line in lines]
+    return [
+        {
+            "theta": float(line[0]),
+            "phi": float(line[1]),
+            "K1": 4e-7 * pi * float(line[2]),
+            "K2": 4e-7 * pi * float(line[3]),
+            "Js": float(line[4]),
+            "A": 4e-7 * pi * float(line[5]),
+        }
+        for line in lines
+    ]
+
+
+def read_yaml(fname):
+    """Read material `yaml` file.
+
+    :param fname: File path
+    :type fname: str or pathlib.Path
+    """
+    with open(fname, "r") as file:
+        domains = yaml.safe_load(file)
+    return [
+        {
+            "theta": float(dom["theta"]),
+            "phi": float(dom["phi"]),
+            "K1": 4e-7 * pi * float(dom["K1"]),
+            "K2": 4e-7 * pi * float(dom["K2"]),
+            "Js": float(dom["Js"]),
+            "A": 4e-7 * pi * float(dom["A"]),
+        }
+        for dom in domains
+    ]

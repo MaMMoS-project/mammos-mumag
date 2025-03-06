@@ -13,7 +13,7 @@ def test_loop():
     """Test loop."""
     sim = Simulation()
     sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read_krn(HERE / "data" / "cube.krn")
+    sim.materials.read(HERE / "data" / "cube.krn")
     sim.parameters.read(HERE / "data" / "cube.p2")
     sim.run_loop(outdir=HERE / "loop")
 
