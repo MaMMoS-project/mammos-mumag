@@ -50,36 +50,36 @@ pyyaml = ">=6.0.2,<7"
 mammos_mmag = { path = ".", editable = true }
 jax = "*"
 
-[tool.pixi.feature.format.dependencies]
-ruff = "==0.8"
-[tool.pixi.feature.docs.dependencies]
-sphinx = "==8.1.3"
-sphinx-rtd-theme = "==3.0.1"
-numpy = "*"
-[tool.pixi.feature.test.dependencies]
-meshio = "*"
-pytest = "*"
-[tool.pixi.feature.example.dependencies]
-jupyter = "*"
-
 [tool.pixi.environments]
-format = {features = ["format"]}
-docs = {features = ["docs"]}
+ruff = {features = ["ruff"]}
+sphinx = {features = ["sphinx"]}
 test = {features = ["test"]}
 example = {features = ["example"]}
 
-[tool.pixi.feature.test.tasks]
-test = "pytest -v"
-
-[tool.pixi.feature.docs.tasks]
-docs = "cd docs && make html"
-docs-clean = "cd docs && make clean"
-
-[tool.pixi.feature.format.tasks]
+[tool.pixi.feature.ruff.dependencies]
+ruff = "==0.8"
+[tool.pixi.feature.ruff.tasks]
 lint = "ruff check"
 format = "ruff format"
 clean = "ruff clean && py3clean ."
 
+[tool.pixi.feature.sphinx.dependencies]
+sphinx = "==8.1.3"
+sphinx-rtd-theme = "==3.0.1"
+numpy = "*"
+[tool.pixi.feature.sphinx.tasks]
+docs = "cd docs && make html"
+docs-clean = "cd docs && make clean"
+
+[tool.pixi.feature.test.dependencies]
+polars = "*"
+pytest = "*"
+[tool.pixi.feature.test.tasks]
+test = "pytest -v"
+
+[tool.pixi.feature.example.dependencies]
+jupyter = "*"
+polars = "*"
 [tool.pixi.feature.example.tasks]
 example-materials = "jupyter-lab examples/materials_io.ipynb"
 example-parameters = "jupyter-lab examples/parameters_io.ipynb"
