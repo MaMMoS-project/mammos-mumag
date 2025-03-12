@@ -17,15 +17,21 @@ IS_POSIX = os.name == "posix"
 
 
 class Simulation:
-    """Simulation class."""
+    """Simulation class.
+
+    :param materials: class managing materials.
+    :type materials: :py:class:`~mammos_mmag.materials.Materials`
+    :param parameters: class managing parameters.
+    :type parameters: :py:class:`~mammos_mmag.parameters.Parameters`
+    """
 
     def __init__(self):
-        """Initialize class."""
+        """Initialize :py:attr:`materials` and :py:attr:`parameters` attributes."""
         self.parameters = Parameters()
         self.materials = Materials()
 
     def run_file(self, file, outdir="out"):
-        """Run file using `esys.escript`.
+        """Run python file using `esys.escript`.
 
         :param script: path of file.
         :type script: str or pathlib.Path
@@ -55,15 +61,30 @@ class Simulation:
         run_subprocess(cmd, cwd=outdir)
 
     def run_exani(self, outdir="exani", name="out"):
-        """Run "exani" script.
+        r"""Run "exani" script.
 
         Test the computation of the exchange and anisotropy energy density.
-        This gives the exchange energy density of a vortex in the x-y plane
+        This gives the exchange energy density of a vortex in the :math:`xy`-plane
         and the anistropy energy density in the uniformly magnetized state.
-        Here we have placed the anistropy direction paralle to to the z-axis.
-        The anisotropy energy density is calculated as -K dot(m,k)^2 where m
-        is the unit vector of magnetization and k is the anisotropy direction.
-        K is the magnetocrystalline anisotropy constant.
+        Here we have placed the anistropy direction paralle to to the :math:`z`-axis.
+        The anisotropy energy density is calculated as :math:`-K (\mathbf{m} \cdot
+        \mathbf{k})^2` where :math:`\mathbf{m}` is the unit vector of magnetization
+        and :math:`\mathbf{k}` is the anisotropy direction. :math:`K` is the
+        magnetocrystalline anisotropy constant.
+
+        This scripts creates the following files in `outdir`:
+
+        * `<name>.fly`: mesh file.
+
+        * `<name>.krn`: materials file.
+
+        * `<name>_uniform.csv`: table containing information about
+          the exchange anisotropy energy evaluated with different
+          methods on a uniformly  magnetized cube.
+
+        * `<name>_vortex.csv`: table containing information about
+          the exchange anisotropy energy evaluated with different
+          methods on a vortex.
 
         :param outdir: Working directory, defaults to "exani".
         :type outdir: str or pathlib.Path, optional
@@ -81,9 +102,20 @@ class Simulation:
         )
 
     def run_external(self, outdir="external", name="out"):
-        """Run "external" script.
+        r"""Run "external" script.
 
         Compute the Zeemann energy by finite elements and analytically.
+
+        This scripts creates the following files in `outdir`:
+
+        * `<name>.fly`: mesh file.
+
+        * `<name>.krn`: materials file.
+
+        * `<name>.p2`: simulation parameters file.
+
+        * `<name>.csv`: table containing information about
+          the Zeeman energy evaluated with different methods.
 
         :param outdir: Working directory, defaults to "external".
         :type outdir: str or pathlib.Path, optional
@@ -108,22 +140,42 @@ class Simulation:
         and the field of a uniformly magnetized geometry.
         Creates the `vtk` file for visualisation of the magnetic scalar potential
         and the magnetic field. With linear basis function for the magnetic scalar
-        potential u, the magnetostatic field h = -grad(u) is defined at the finite
-        elements. By smoothing the field can be transfered to the nodes of the
-        finite element mesh.
+        potential :math:`u`, the magnetostatic field :math:`h = -\nabla u` is
+        defined at the finite elements. By smoothing the field can be transfered
+        to the nodes of the finite element mesh.
 
-        The software also gives the magnetostatic energy density computed with
-        finite elements and compares it with the analytic soluation.
-        Three energy values are compared:
+        This scripts creates the following files in `outdir`:
 
-        * from field: (Integral over (1/2) field * magnetic_polarization)/volume
+        * `<name>.fly`: mesh file.
 
-        * from gradient: :math:`1/2 \sum_i m_i \cdot g_i`, where :math:`m_i`
-          and :math:`g_i` are the unit vector of the magnetization and the gradient
-          of the energy normalized by the volume of the energy with respect to
-          :math:`m_i` at the nodes of the finite element mesh.
+        * `<name>.krn`: materials file.
 
-        * analytic: :math:`J_s^2 / (6 \mu_0)`
+        * `<name>.csv`: table containing information about the magnetostatic
+          energy density evaluated with different methods.
+          Three energy values are compared:
+
+          .. math::
+
+            E_{\mathsf{field}} := - \frac{1}{2} \int_\Omega \frac{\mathbf{h} \cdot J_s
+            \mathbf{m}}{V} \ \mathrm{d}x
+
+          where :math:`\Omega` is the domain, :math:`\mathbf{h}` is the
+          demagnetization field, :math:`J_s` is the spontaneous polarisation,
+          :math:`\mathbf{m}` is the magnetization field, and :math:`V` is the volume
+          of the domain.
+
+          .. math::
+
+            E_{\mathsf{gradient}} := \frac{1}{2} \sum_i \mathbf{m}_i \cdot \mathbf{g}_i
+
+          where :math:`\mathbf{m}_i` and :math:`\mathbf{g}_i` are the unit vector of
+          the magnetization and the gradient of the energy normalized by the volume
+          of the energy with respect to :math:`\mathbf{m}_i` at the nodes of the finite
+          element mesh.
+
+          .. math::
+
+            E_{\mathsf{analytic}} := J_s^2 / (6 \mu_0)
 
         :param outdir: Working directory, defaults to "hmag".
         :type outdir: str or pathlib.Path, optional
@@ -145,18 +197,33 @@ class Simulation:
         r"""Run "loop" script.
 
         Compute demagnetization curves.
-        Creates the file `cube.dat` which gives the demagnetization curve.
-        The columns of the file are:
 
-        * `vtk number` the number of the `vtk` file that corresponds
-          to the field and magnetic polarisation values in the line `mu0 Hext`
-          the value of mu_0 Hext (T) where mu_0 is the permability of vacuum
-          and Hext is the external value of the external field.
+        This scripts creates the following files in `outdir`:
 
-        * `polarisation` the componenent of magnetic polarisation (T)
-          parallel to the direction of the external field.
+        * `<name>.fly`: mesh file.
 
-        * `energy density` the energy density (J/m^3) of the current state.
+        * `<name>.krn`: materials file.
+
+        * `<name>.p2`: simulation parameters file.
+
+        * `<name>_{i}.vtu`: saved `vtk` files. TODO
+
+        * `<name>_stats.txt`: memory usage information.
+
+        * `<name>.dat`: table data regarding the demagnetization curve.
+          The columns of the file are:
+
+          * the number of the `vtk` file that corresponds
+            to the field and magnetic polarisation values in the line.
+
+          * value of :math:`\mu_0 H_{\mathsf{ext}}` in Tesla, where :math:`\mu_0` is
+            the permability of vacuum and :math:`H_{\mathsf{ext}}` is the external
+            value of the external field.
+
+          * the componenent of magnetic polarisation (in Tesla)
+            parallel to the direction of the external field.
+
+          * the energy density (:math:`\mathrm{J}/\mathrm{m}^3`) of the current state.
 
         :param outdir: Working directory, defaults to "loop".
         :type outdir: str or pathlib.Path, optional
@@ -205,7 +272,7 @@ class Simulation:
 
         Test the energy calculations with matrices.
         The module mapping.py contains the tools for mapping from the finite element
-        bilinear forms to sparse matrices. We use sparse matrix methods from `jax`.
+        bilinear forms to sparse matrices. We use sparse matrix methods from ``jax``.
 
         :param outdir: Working directory, defaults to "magnetization".
         :type outdir: str or pathlib.Path, optional
@@ -268,7 +335,7 @@ class Simulation:
 
 
 def run_subprocess(cmd, cwd):
-    """Run command using `subprocess`.
+    """Run command using `subprocess` in the specified directory.
 
     :param cmd: command to execute
     :type cmd: list

@@ -10,7 +10,7 @@ mz = 1.
 [field]
 hstart = 1.0
 hfinal = -1.0
-hstep = -0.1
+hstep = -0.2
 hx = 0.01745
 hy = 0
 hz = 0.99984
@@ -19,5 +19,5 @@ mfinal = -1.2
 
 [minimizer]
 tol_fun = 1e-10
-tol_hmag_factor = 1
+tol_hmag_factor = 1.0
 precond_iter = 10

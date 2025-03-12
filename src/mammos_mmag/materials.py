@@ -9,28 +9,35 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 class Materials:
-    """Materials class."""
+    """This class stores, reads, and writes material parameters.
+
+    :param domains: list of domains. Each domain is a dictionary of material
+        parameters, constant in each region.
+    :type domains: list[dict]
+    """
 
     def __init__(self):
-        """Initialize Materials class."""
+        """Initialize empty materials class."""
         self.domains = []
 
     def new_domain(self, A, Js, K1, K2, phi, theta):
-        """Append domain with specified parameters.
+        r"""Append domain with specified parameters.
 
-        :param A: Exchange stiffness constant in J/m.
+        :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         :type A: float
-        :param Js: Spontaneous magnetic polarisation in T.
+        :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
         :type Js: float
-        :param K1: First magnetocrystalline anisotropy constant in J/m^3.
+        :param K1: First magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
         :type K1: float
-        :param K2: Second magnetocrystalline anisotropy constant in J/m^3.
+        :param K2: Second magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
         :type K2: float
         :param phi: Angle of the magnetocrystalline anisotropy axis
-            from the x-direction in radians.
+            from the :math:`x`-direction in radians.
         :type phi: float
         :param theta: Angle of the magnetocrystalline anisotropy axis
-            from the z-direction in radians.
+            from the :math:`z`-direction in radians.
         :type theta: float
         """
         dom = {
@@ -46,11 +53,14 @@ class Materials:
     def read(self, fname):
         """Read materials file.
 
-        Currently accepted formats: `krn` and `yaml`.
+        This function overwrites the current
+        :py:attr:`~materials.Materials.domains` attribute.
+
+        Currently accepted formats: ``krn`` and ``yaml``.
 
         :param fname: File name.
         :type fname: str or pathlib.Path
-        :raises FileNotFoundError: Wrong file format.
+        :raises NotImplementedError: Wrong file format.
         """
         fpath = check_path(fname)
 
@@ -61,10 +71,13 @@ class Materials:
             self.domains = read_krn(fpath)
 
         else:
-            raise ValueError("Wrong file format.")
+            raise NotImplementedError("Wrong file format.")
 
     def write_krn(self, fname):
         """Write material `krn` file.
+
+        Each domain in :py:attr:`~domains` is written on a single line
+        with spaces as separators.
 
         :param fname: File path
         :type fname: str or pathlib.Path
@@ -99,10 +112,13 @@ class Materials:
 
 
 def read_krn(fname):
-    """Read material `krn` file.
+    """Read material `krn` file and return as list of dictionaries.
 
     :param fname: File path
     :type fname: str or pathlib.Path
+    :return: Domains as list of dictionaries, with each dictionary defining
+        the material constant in a specific region.
+    :rtype: list[dict]
     """
     with open(fname, "r") as file:
         lines = file.readlines()
@@ -125,6 +141,9 @@ def read_yaml(fname):
 
     :param fname: File path
     :type fname: str or pathlib.Path
+    :return: Domains as list of dictionaries, with each dictionary defining
+        the material constant in a specific region.
+    :rtype: list[dict]
     """
     with open(fname, "r") as file:
         domains = yaml.safe_load(file)
