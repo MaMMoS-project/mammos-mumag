@@ -3,34 +3,41 @@
 import meshio
 import numpy as np
 import pathlib
-import shutil
+import polars as pl
 from mammos_mmag.simulation import Simulation
 
-HERE = pathlib.Path(__file__).resolve().parent
+DATA = pathlib.Path(__file__).resolve().parent / "data"
 
 
-def test_hmag():
+def test_hmag(tmp_path):
     """Test hmag."""
+    # initialize + load parameters
     sim = Simulation()
-    sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read(HERE / "data" / "cube.krn")
-    sim.run_hmag(outdir=HERE / "hmag")
+    sim.mesh_path = DATA / "cube.fly"
+    sim.materials.read(DATA / "cube.krn")
 
-    out_mesh = meshio.read(HERE / "hmag" / "out_hmag.vtu")
-    cube_mesh = meshio.read(HERE / "data" / "hmag" / "cube_hmag.vtu")
+    # run hmag
+    sim.run_hmag(outdir=tmp_path)
+
+    # check vtk files
+    data_hmag = meshio.read(DATA / "hmag" / "cube_hmag.vtu")
     assert (
-        np.linalg.norm(out_mesh.point_data["U"] - cube_mesh.point_data["U"]) < 1.0e-09
+        np.linalg.norm(sim.hmag.point_data["U"] - data_hmag.point_data["U"]) < 1.0e-09
     )
     assert (
-        np.linalg.norm(out_mesh.point_data["h_nodes"] - cube_mesh.point_data["h_nodes"])
+        np.linalg.norm(sim.hmag.point_data["h_nodes"] - data_hmag.point_data["h_nodes"])
         < 1.0e-09
     )
     assert (
-        np.linalg.norm(out_mesh.point_data["m"] - cube_mesh.point_data["m"]) < 1.0e-09
+        np.linalg.norm(sim.hmag.point_data["m"] - data_hmag.point_data["m"]) < 1.0e-09
     )
     assert (
-        np.linalg.norm(out_mesh.cell_data["h"][0] - cube_mesh.cell_data["h"][0])
+        np.linalg.norm(sim.hmag.cell_data["h"][0] - data_hmag.cell_data["h"][0])
         < 1.0e-09
     )
 
-    shutil.rmtree(HERE / "hmag")
+    # check energies
+    data_energy = pl.read_csv(DATA / "hmag" / "cube.csv", skip_rows=1)
+    out_energy = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
+    diff = (data_energy["value"] - out_energy["value"]).to_numpy()
+    assert np.linalg.norm(diff) < 1.0e-09

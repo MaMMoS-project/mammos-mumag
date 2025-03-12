@@ -1,21 +1,26 @@
 """Check external script."""
 
+import numpy as np
 import pathlib
-import shutil
+import polars as pl
 from mammos_mmag.simulation import Simulation
 
-HERE = pathlib.Path(__file__).resolve().parent
+DATA = pathlib.Path(__file__).resolve().parent / "data"
 
 
-def test_external():
+def test_external(tmp_path):
     """Test external."""
+    # initialize + load parameters
     sim = Simulation()
-    sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read(HERE / "data" / "cube.krn")
-    sim.parameters.read(HERE / "data" / "cube.p2")
-    sim.run_external(outdir=HERE / "external")
-    # h, E_gr, E_an = sim.eval_external()
-    # assert E_gr == -2.1116784159019675
-    # assert E_an == -2.1116784159018285
-    assert True
-    shutil.rmtree(HERE / "external")
+    sim.mesh_path = DATA / "cube.fly"
+    sim.materials.read(DATA / "cube.krn")
+    sim.parameters.read(DATA / "cube.p2")
+
+    # run external
+    sim.run_external(outdir=tmp_path)
+
+    # check Zeeman energy
+    data = pl.read_csv(DATA / "external" / "cube.csv", skip_rows=1)
+    out = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
+    diff = (data["value"] - out["value"]).to_numpy()
+    assert np.linalg.norm(diff) < 1.0e-09

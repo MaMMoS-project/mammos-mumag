@@ -1,25 +1,31 @@
 """Check exani script."""
 
+import numpy as np
 import pathlib
-import shutil
+import polars as pl
 from mammos_mmag.simulation import Simulation
 
-HERE = pathlib.Path(__file__).resolve().parent
+DATA = pathlib.Path(__file__).resolve().parent / "data"
 
 
-def test_exani():
+def test_exani(tmp_path):
     """Test exani."""
+    # initialize + load parameters
     sim = Simulation()
-    sim.mesh_path = HERE / "data" / "cube.fly"
-    sim.materials.read(HERE / "data" / "cube.krn")
-    sim.run_exani(outdir=HERE / "exani")
-    # vortex_energy = sim.get_vortex_energy()
-    # assert vortex_energy[0] == 1.2557524195187777
-    # assert vortex_energy[1] == 1.5828977293026091e-06
+    sim.mesh_path = DATA / "cube.fly"
+    sim.materials.read(DATA / "cube.krn")
 
-    # uniform_m = [0.0, 0.0, 1.0]
-    # uniform_energy = sim.get_energy(uniform_m)
-    # assert uniform_energy[0] == -0.5654866776461906
-    # assert uniform_energy[1] == -7.106115168784338e-07
-    assert True
-    shutil.rmtree(HERE / "exani")
+    # run exani
+    sim.run_exani(outdir=tmp_path)
+
+    # check vortex
+    data_vortex = pl.read_csv(DATA / "exani" / "cube_vortex.csv", skip_rows=1)
+    out_vortex = pl.read_csv(tmp_path / "out_vortex.csv", skip_rows=1)
+    diff_vortex = (data_vortex["value"] - out_vortex["value"]).to_numpy()
+    assert np.linalg.norm(diff_vortex) < 1.0e-09
+
+    # check uniform
+    data_unif = pl.read_csv(DATA / "exani" / "cube_uniform.csv", skip_rows=1)
+    out_unif = pl.read_csv(tmp_path / "out_uniform.csv", skip_rows=1)
+    diff_unif = (data_unif["value"] - out_unif["value"]).to_numpy()
+    assert np.linalg.norm(diff_unif) < 1.0e-09

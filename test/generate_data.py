@@ -10,19 +10,31 @@ def main():
     """Create test data."""
     sim = Simulation()
     sim.mesh_path = DATA / "cube.fly"
-    sim.materials.read_krn(DATA / "cube.krn")
+    sim.materials.read(DATA / "cube.krn")
     sim.parameters.read(DATA / "cube.p2")
 
+    sim.run_materials(
+        outdir=DATA / "materials",
+        name="cube",
+    )
     sim.run_hmag(
         outdir=DATA / "hmag",
         name="cube",
     )
-    sim.run_loop(
-        outdir=DATA / "loop",
+    sim.run_exani(
+        outdir=DATA / "exani",
         name="cube",
     )
-    sim.run_materials(
-        outdir=DATA / "materials",
+    sim.run_external(
+        outdir=DATA / "external",
+        name="cube",
+    )
+    sim.run_mapping(
+        outdir=DATA / "mapping",
+        name="cube",
+    )
+    sim.run_loop(
+        outdir=DATA / "loop",
         name="cube",
     )
 
