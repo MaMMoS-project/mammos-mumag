@@ -174,7 +174,6 @@ class Parameters:
                 "iter_max": self.iter_max,
                 "tol_fun": self.tol_fun,
                 "tol_hmag_factor": self.tol_hmag_factor,
-                "truncation": self.truncation,
                 "precond_iter": self.precond_iter,
                 "verbose": self.verbose,
             },
