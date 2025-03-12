@@ -41,6 +41,7 @@ class Parameters:
         self.tol_fun = 1e-10  # tolerance of the total energy
         self.tol_hmag_factor = 1.0  # tolerance for the magnetostatic scalar potential
         self.tol_u = 1e-10
+        self.verbose = 0
 
     @property
     def m(self):
