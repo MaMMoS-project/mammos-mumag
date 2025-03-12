@@ -8,7 +8,7 @@ from esys.finley import ReadMesh
 
 class Mesh:
     def __init__(self, name):
-        print("read mesh from " + name + ".fly")
+        # print("read mesh from " + name + ".fly")
         self._domain = ReadMesh(name + ".fly")
 
     def getDomain(self):
@@ -21,4 +21,4 @@ if __name__ == "__main__":
         mesh = Mesh(sys.argv[1])
 
     except IndexError:
-        print("usage run-escript mesh.py modelname")
+        print("Argument `name` missing.")

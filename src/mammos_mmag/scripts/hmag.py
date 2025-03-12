@@ -1,3 +1,4 @@
+import inspect
 import sys
 from time import time
 
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     try:
         name = sys.argv[1]
     except IndexError:
-        sys.exit("usage run-escript hmag.py modelname")
+        sys.exit("Argument `name` missing.")
 
 
 
@@ -131,17 +132,24 @@ if __name__ == "__main__":
 
     # energy
     Js = read_Js(name)
-    
+
     params = mat_dx, mat_dy, mat_dz, mat_stiff, dia_stiff, mat_gx, mat_gy, mat_gz
     tol = 1e-10
 
     mu0 = get_mu0()
 
-    print('\n')
-    print('magnetostatic energy density of uniformly magnetized cube')
-    print("from field    (J/m^3)", emag/mu0)
-    print("from gradient (J/m^3)", hmag.solve_e(m)/mu0)
-    print("analytic      (J/m^3)", (Js * Js / 6)/mu0)
+    with open(name + ".csv", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Magnetostatic energy density of uniformly magnetized cube.
+                name,value,explanation
+                E_field,{emag/mu0},Energy density evaluated from field (J/m^3).
+                E_gradient,{hmag.solve_e(m)/mu0},Energy density evaluated from gradient (J/m^3).
+                E_analytic,{(Js * Js / 6)/mu0},Energy density evaluated analytically (J/m^3).
+                """
+            )
+        )
 
     # field at nodes
     g = hmag.solve_g(m)

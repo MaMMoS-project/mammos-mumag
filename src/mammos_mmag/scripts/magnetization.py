@@ -52,15 +52,15 @@ def getM(mask, v, state=None):
     domain = mask.getDomain()
     if state == 2:
         m = mask * getVortex(domain)
-        print('create vortex state')
+        # print('create vortex state')
     elif state == 1:
         m = mask * getFlower(domain)
-        print('create flower state')
+        # print('create flower state')
     elif state == 3:
         m = mask * getTwisted(domain)
     else:
         m = mask * e.Vector(v, e.Solution(domain))
-        print('create uniformly magnetised state')
+        # print('create uniformly magnetised state')
     return e.normalize(m)
 
 

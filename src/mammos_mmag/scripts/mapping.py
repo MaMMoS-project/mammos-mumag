@@ -1,3 +1,4 @@
+import inspect
 import jax.numpy as np
 import math
 import sys
@@ -27,11 +28,18 @@ def check_external(name,m_np,pars,out=True):
     external_pars = pars['hext_pars'][0], pars['meas'], pars['volume']
     energy, _ = external_eg(m_np,field_value,external_pars)
     if out:
-        mu0 = get_mu0()        
-        print("\nZeeman energy density for an external field")
-        print("of mu_0 Hext     (T)    ", field_value)
-        print("with jax backend (J/m^3)", energy/mu0)
-        print("analytic         (J/m^3)", ezee/mu0)
+        mu0 = get_mu0()
+        with open(name + "_zeeman.csv", "w") as file:
+            file.write(
+                inspect.cleandoc(
+                    f"""
+                    Zeeman energy density for an external field of mu_0 Hext {field_value} (T).
+                    name,value,explanation
+                    E_jax,{energy/mu0},Energy evaluated with jax backend (J/m^3).
+                    E_analytic,{ezee/mu0},Energy evaluated analytically (J/m^3).
+                    """
+                )
+            )
     return energy
 
 # test exchange and anisotropy
@@ -47,11 +55,18 @@ def check_exchange(name,m_np,pars,meas,out=True):
     energy, _ = exani_eg(m_np_x,exani_A)
 
     if out:
-        mu0 = get_mu0()      
-        print("\nexchange energy density of a vortex on a, b plane")
-        print("with jax backend (J/m^3)", energy/mu0)
-        print("analytic         (J/m^3)", (2 * k * k * mu0 * A / (size * size))/mu0)
-    
+        mu0 = get_mu0()
+        with open(name + "_exchange.csv", "w") as file:
+            file.write(
+                inspect.cleandoc(
+                    f"""
+                    Exchange energy density of a vortex on a, b plane.
+                    name,value,explanation
+                    E_jax,{energy/mu0},Energy evaluated with jax backend (J/m^3).
+                    E_analytic,{(2 * k * k * mu0 * A / (size * size))/mu0},Energy evaluated analytically (J/m^3).
+                    """
+                )
+            )
     return energy
 
 def check_anisotropy(name,m_np,pars,out=True):
@@ -62,11 +77,18 @@ def check_anisotropy(name,m_np,pars,out=True):
     energy, _ = exani_eg(m_np,exani_A)
 
     if out:
-        mu0 = get_mu0()          
-        print("\nmagnetocrystalline anisotropy energy density of uniformly")
-        print("magnetized sample in direction", uniform_m)
-        print("from gradient (J/m^3)", energy/mu0)
-        print("analytic      (J/m^3)", eani/mu0)
+        mu0 = get_mu0()
+        with open(name + "_anisotropy.csv", "w") as file:
+            file.write(
+                inspect.cleandoc(
+                    f"""
+                    Magnetocrystalline anisotropy energy density of uniformly magnetized sample in direction {uniform_m}.
+                    name,value,explanation
+                    E_jax,{energy/mu0},Energy evaluated with jax backend (J/m^3).
+                    E_analytic,{eani/mu0},Energy evaluated analytically (J/m^3).
+                    """
+                )
+            )
         total_energy += energy/mu0
 
     return energy
@@ -82,9 +104,17 @@ def check_hmag(name,m,pars,out=True):
     energy, _, _ = hmag_eg(m,np.zeros(len(m)//3),tol,pars['hmag_pars'])
     if out:
         mu0 = get_mu0()
-        print('\nmagnetostatic energy density of uniformly magnetized cube')
-        print("with jax backend (J/m^3)", energy/mu0)
-        print("analytic         (J/m^3)", (Js * Js / 6)/mu0)      
+        with open(name + "_hmag.csv", "w") as file:
+            file.write(
+                inspect.cleandoc(
+                    f"""
+                    Magnetostatic energy density of uniformly magnetized cube.
+                    name,value,explanation
+                    E_jax,{energy/mu0},Energy evaluated with jax backend (J/m^3).
+                    E_analytic,{(Js * Js / 6)/mu0},Energy evaluated analytically (J/m^3).
+                    """
+                )
+            )
     return energy    
         
 '''
@@ -213,20 +243,12 @@ if __name__ == "__main__":
     
     store = 0
     
-    print('\n')
-    print('MAP FINITE ELEMENT BACKEND (esys-escript) TO JAX \n')
-    print('Memory before escript2jax       ', get_memory_usage(), "MB") 
-
+    memory_pre = get_memory_usage()
     m, pars, _ = escript2arrays(name,1)
-    
-    print('\n')
-    print('Memory after  escript2jax       ', get_memory_usage(), "MB") 
+    memory_post = get_memory_usage()
     gc.collect()
-    print('Memory after  garbage collection', get_memory_usage(), "MB") 
+    memory_collected = get_memory_usage()
 
-    print('\n')
-    print('COMPUTE TOTAL ENERGY')
-    
     u0 = np.zeros(len(m)//3)
     h, start, final, step = pars['hext_pars']
     field_value = (start - step)
@@ -245,10 +267,29 @@ if __name__ == "__main__":
     energy, _, _, stats = total_eg(m, args, (u0,None,), stats)
     function_calls = stats
 
-    write_stats('timing and statistics',
-                total_time, 0, function_calls,0)
+    with open(name + "_stats.txt", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                MAP FINITE ELEMENT BACKEND (esys-escript) TO JAX.
+                Memory before escript2jax: {memory_pre} MB.
+                Memory after  escript2jax: {memory_post} MB.
+                Memory after garbage collection: {memory_collected} MB.
+                Timing and statistics.
+                elapsed time: {total_time}
+                function_calls: {function_calls}
+                """
+            )
+        )
                            
-    print('\nenergy density of uniformly magnetized state')
-    print('with jax backend (J/m^3)',energy/get_mu0())
-    print('sum of terms     (J/m^3)',total_energy/get_mu0())
-    
+    with open(name + "_energy.csv", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Total energy density of uniformly magnetized state.
+                name,value,explanation
+                E_jax,{energy/get_mu0()},Energy evaluated with jax backend (J/m^3).
+                E_analytic,{total_energy/get_mu0()},Energy evaluated analytically (J/m^3).
+                """
+            )
+        )

@@ -108,7 +108,7 @@ def read_params(name):
     iter_max = int(minimizer["iter_max"])
     tol_u = tol_fun * tol_hmag_factor
     verbose = int(minimizer["verbose"])
-    print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}")
+    # print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}")
     return (                            
         (m,mstep,mfinal,state_id),                                 # magnetic state
         (h,hstart,hfinal,hstep),                                   # field steps

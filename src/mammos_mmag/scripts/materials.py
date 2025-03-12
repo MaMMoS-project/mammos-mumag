@@ -63,10 +63,10 @@ class Materials(mesh.Mesh):
 
 
 if __name__ == "__main__":
-    print("materials:")
+    # print("materials:")
     try:
         name = sys.argv[1]
     except IndexError:
-        sys.exit("usage run-escript materials.py modelname")
+        sys.exit("Argument `name` missing.")
     materials = Materials(name)
     materials.write_vtk()

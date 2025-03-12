@@ -1,3 +1,4 @@
+import inspect
 import sys
 import math
 from time import time
@@ -52,18 +53,35 @@ if __name__ == "__main__":
     mat_exani, dia_exani = exani.getMatrix()
     
     mu0 = get_mu0()
+    E_gradient = exani.solve_e(m)/mu0
+    E_analytic = (2 * k * k * mu0 * A / (size * size))/mu0
 
-    print('\n')
-    print("exchange energy density of a vortex on a, b plane")
-    print("energy from gradient (J/m^3)", exani.solve_e(m)/mu0)
-    print("analytic             (J/m^3)", (2 * k * k * mu0 * A / (size * size))/mu0)
+    with open(name + "_vortex.csv", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Exchange energy density of a vortex on a, b plane.
+                name,value,explanation
+                E_gradient,{E_gradient},Energy evaluated from gradient (J/m^3).
+                E_analytic,{E_analytic},Energy evaluated analytically (J/m^3).
+                """
+            )
+        )
 
     uniform_m = [0.0, 0.0, 1.0]
     m = getM(e.wherePositive(materials.meas), uniform_m)
     eani = readAnisotropyEnergy(name, uniform_m)
+    E_gradient = exani.solve_e(m) / mu0
+    E_analytic = eani / mu0
     
-    print('\n')
-    print("magnetocrystalline anisotropy energy density of uniformly")
-    print("magnetized sample in direction", uniform_m)
-    print("from gradient (J/m^3)", exani.solve_e(m)/mu0)
-    print("analytic      (J/m^3)", eani/mu0)
+    with open(name + "_uniform.csv", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Magnetocrystalline anisotropy energy density of uniformly magnetized sample in direction {uniform_m}.
+                name,value,explanation
+                E_gradient,{E_gradient},Energy evaluated from gradient (J/m^3).
+                E_analytic,{E_analytic},Energy evaluated analytically (J/m^3).
+                """
+            )
+        )

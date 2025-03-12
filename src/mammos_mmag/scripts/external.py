@@ -1,3 +1,4 @@
+import inspect
 import sys
 from time import time
 
@@ -57,10 +58,17 @@ if __name__ == "__main__":
     external = External(start, final, step, h, materials.meas, materials.volume)
         
     mu0 = get_mu0()
-    
-    print('\n')
-    print("Zeeman energy density for an external field")
-    print("of mu_0 Hext  (T)    ", external.value)
-    print("from gradient (J/m^3)", external.solve_e(m)/mu0)
-    print("analytic      (J/m^3)", ezee/mu0)
+    E_gradient = external.solve_e(m) / mu0
+    E_analytic = ezee / mu0
 
+    with open(name + ".csv", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Zeeman energy density for an external field of mu_0 Hext {external.value} (T).
+                name,value,explanation
+                E_gradient,{E_gradient},Energy evaluated from gradient (J/m^3).
+                E_analytic,{E_analytic},Energy evaluated analytically (J/m^3).
+                """
+            )
+        )

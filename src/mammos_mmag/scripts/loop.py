@@ -1,3 +1,4 @@
+import inspect
 import jax
 jax.config.update("jax_enable_x64", True)
 import sys
@@ -12,7 +13,7 @@ import numpy
 from energies import total_eg, projection
 from mapping import escript2arrays, update_pars, initial_m
 from minimizers import hestenes_stiefel_ncg
-from solvers import truncated_cg_diag_precond_jit, truncated_cg_jit
+from solvers import truncated_cg_diag_precond_jit, truncated_cg_jit, jax_scipy_cg
 from store import pickle2jax
 from tools import write_mh, write_stats, get_memory_usage
 from jax_tools import update_m, dot_magnetizations
@@ -146,7 +147,7 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript loop.py modelname")
     
-    print('Memory before conversion to jax ', get_memory_usage(), "MB") 
+    memory_pre = get_memory_usage()
     if os.path.exists(f'{name}.pkl'):
         print('read stored matrices')
         m, pars = pickle2jax(name)
@@ -155,9 +156,19 @@ if __name__ == "__main__":
         m = initial_m(tags.getDomain(),pars)
     else:
         m, pars, tags = escript2arrays(name,0)
-    print('Memory after  conversion to jax ', get_memory_usage(), "MB") 
+    memory_post = get_memory_usage()
     gc.collect()
-    print('Memory after  garbage collection', get_memory_usage(), "MB") 
+    memory_collected = get_memory_usage()
+
+    with open(name + "_stats.txt", "w") as file:
+        file.write(
+            inspect.cleandoc(
+                f"""
+                Memory before escript2jax: {memory_pre} MB.
+                Memory after  escript2jax: {memory_post} MB.
+                Memory after garbage collection: {memory_collected} MB.
+                """
+            )
+        )
     
     loop(name,m,pars) 
-    

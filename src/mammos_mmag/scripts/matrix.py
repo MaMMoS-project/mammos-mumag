@@ -58,7 +58,7 @@ def poisson(Js, volume):
         boundaryMask = findBoundary(x)
         k = e.kronecker(domain)
     else:
-        print('apply spherical shell transformation')
+        # print('apply spherical shell transformation')
         tags = e.Function(domain).getListOfTags()
         R = e.sup(e.length(x) * MaskFromTag(domain, tags[-2]))
         k = get_T3D(domain, R, Rinf, tags)
