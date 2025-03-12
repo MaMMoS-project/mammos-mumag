@@ -155,7 +155,7 @@ class Parameters:
                 "size": self.size,
                 "scale": self.scale,
             },
-            "initial_state": {
+            "initial state": {
                 "state": self.state,
                 "mx": self.mx,
                 "my": self.my,
