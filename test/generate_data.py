@@ -8,10 +8,11 @@ DATA = pathlib.Path(__file__).resolve().parent / "data"
 
 def main():
     """Create test data."""
-    sim = Simulation()
-    sim.mesh_path = DATA / "cube.fly"
-    sim.materials.read(DATA / "cube.krn")
-    sim.parameters.read(DATA / "cube.p2")
+    sim = Simulation(
+        mesh_filepath=DATA / "cube.fly",
+        materials_filepath=DATA / "cube.krn",
+        parameters_filepath=DATA / "cube.p2",
+    )
 
     sim.run_materials(
         outdir=DATA / "materials",

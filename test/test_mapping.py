@@ -11,10 +11,11 @@ DATA = pathlib.Path(__file__).resolve().parent / "data"
 def test_mapping(tmp_path):
     """Test mapping."""
     # initialize + load parameters
-    sim = Simulation()
-    sim.mesh_path = DATA / "cube.fly"
-    sim.materials.read(DATA / "cube.krn")
-    sim.parameters.read(DATA / "cube.p2")
+    sim = Simulation(
+        mesh_filepath=DATA / "cube.fly",
+        materials_filepath=DATA / "cube.krn",
+        parameters_filepath=DATA / "cube.p2",
+    )
 
     # run mapping
     sim.run_mapping(outdir=tmp_path)

@@ -18,7 +18,7 @@ def test_parameters_file(tmp_path):
     parameter is exactly equal or sufficiently close to the original one.
     """
     par = Parameters(
-        m=[1,0,0],
+        m=[1, 0, 0],
         hstart=8.0,
         hfinal=-1.5,
         hstep=-0.01,

@@ -11,9 +11,10 @@ DATA = pathlib.Path(__file__).resolve().parent / "data"
 def test_materials(tmp_path):
     """Test materials."""
     # initialize + load parameters
-    sim = Simulation()
-    sim.mesh_path = DATA / "cube.fly"
-    sim.materials.read(DATA / "cube.krn")
+    sim = Simulation(
+        mesh_filepath=DATA / "cube.fly",
+        materials_filepath=DATA / "cube.krn",
+    )
 
     # run hmag
     sim.run_materials(outdir=tmp_path / "materials")
