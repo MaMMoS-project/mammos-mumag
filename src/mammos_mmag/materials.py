@@ -71,7 +71,7 @@ class Materials:
             self.domains = read_krn(fpath)
 
         else:
-            raise NotImplementedError("Wrong file format.")
+            raise NotImplementedError(f"{fpath.suffix} materials file is not supported.")
 
     def write_krn(self, fname):
         """Write material `krn` file.
