@@ -75,9 +75,6 @@ class Parameters:
     size: float = 1.0e-09
     scale: float = 0.0
     state: str = "mxyz"
-    mx: float = 0.0
-    my: float = 0.0
-    mz: float = 0.0
     _m: list[float] = Field(default_factory=lambda: [0, 0, 0])
     hmag_on: int = 1
     hstart: float = 0.0
@@ -156,9 +153,11 @@ class Parameters:
         initial_state = pars["initial state"]
         if "state" in initial_state:
             self.state = str(initial_state["state"])
-        self.mx = float(initial_state["mx"])
-        self.my = float(initial_state["my"])
-        self.mz = float(initial_state["mz"])
+        self.m = [
+            float(initial_state["mx"]),
+            float(initial_state["my"]),
+            float(initial_state["mz"]),
+        ]
 
         field = pars["field"]
         if "hmag_on" in field:
@@ -166,9 +165,11 @@ class Parameters:
         self.hstart = float(field["hstart"])
         self.hfinal = float(field["hfinal"])
         self.hstep = float(field["hstep"])
-        self.hx = float(field["hx"])
-        self.hy = float(field["hy"])
-        self.hz = float(field["hz"])
+        self.h = [
+            float(field["hx"]),
+            float(field["hy"]),
+            float(field["hz"]),
+        ]
         if "mstep" in field:
             self.mstep = float(field["mstep"])
         if "mfinal" in field:
@@ -205,9 +206,9 @@ class Parameters:
             "mx": self.m[0],
             "my": self.m[1],
             "mz": self.m[2],
-            "hx": self.m[0],
-            "hy": self.m[1],
-            "hz": self.m[2],
+            "hx": self.h[0],
+            "hy": self.h[1],
+            "hz": self.h[2],
         }
         with open(fname, "w") as file:
             file.write(template.render(parameters_dict))
