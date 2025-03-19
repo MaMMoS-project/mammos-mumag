@@ -6,7 +6,11 @@ import shlex
 import shutil
 import subprocess
 
-from .materials import Materials
+import pathlib
+from pydantic import Field
+from pydantic.dataclasses import dataclass
+
+from .materials import MaterialDomain, Materials
 from .parameters import Parameters
 from .tools import check_dir
 from . import _run_escript_bin as run_escript
@@ -16,6 +20,7 @@ from . import _scripts_directory as scripts_dir
 IS_POSIX = os.name == "posix"
 
 
+@dataclass
 class Simulation:
     """Simulation class.
 
@@ -25,10 +30,29 @@ class Simulation:
     :type parameters: :py:class:`~mammos_mmag.parameters.Parameters`
     """
 
-    def __init__(self):
-        """Initialize :py:attr:`materials` and :py:attr:`parameters` attributes."""
-        self.parameters = Parameters()
-        self.materials = Materials()
+    material_domain_list: list[MaterialDomain] = Field(default=None, repr=False)
+    mesh_filepath: pathlib.Path = Field(default=None)
+    materials_filepath: pathlib.Path = Field(default=None, repr=False)
+    parameters_filepath: pathlib.Path = Field(default=None, repr=False)
+    materials: Materials = Field(default=None)
+    parameters: Parameters = Field(default=None)
+
+    # def __init__(self):
+    #     """Initialize :py:attr:`materials` and :py:attr:`parameters` attributes."""
+    #     self.parameters = Parameters()
+    #     self.materials = Materials()
+
+    def __post_init__(self):
+        """Post-initialization.
+
+        Define `Materials` and `Parameters` instance if they have been defined.
+        """
+        if self.material_domain_list is not None:
+            self.materials = Materials(domains=self.material_domain_list)
+        elif self.materials_filepath is not None:
+            self.materials = Materials(filepath=self.materials_filepath)
+        if self.parameters_filepath is not None:
+            self.parameters = Parameters(filepath=self.parameters_filepath)
 
     @classmethod
     def run_file(cls, file, outdir="out"):
@@ -94,7 +118,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -125,7 +149,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -185,7 +209,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -233,7 +257,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -259,7 +283,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -282,7 +306,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -303,7 +327,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -325,7 +349,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
-        shutil.copyfile(self.mesh_path, outdir / f"{name}.fly")
+        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
