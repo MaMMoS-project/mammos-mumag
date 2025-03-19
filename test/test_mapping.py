@@ -20,29 +20,24 @@ def test_mapping(DATA, tmp_path):
     # check anisotropy energy
     data = pl.read_csv(DATA / "mapping" / "cube_anisotropy.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out_anisotropy.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])
 
     # check exchange energy
     data = pl.read_csv(DATA / "mapping" / "cube_exchange.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out_exchange.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])
 
     # check hmag energy
     data = pl.read_csv(DATA / "mapping" / "cube_hmag.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out_hmag.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])
 
     # check zeeman energy
     data = pl.read_csv(DATA / "mapping" / "cube_zeeman.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out_zeeman.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])
 
     # check total energy
     data = pl.read_csv(DATA / "mapping" / "cube_energy.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out_energy.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])

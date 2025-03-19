@@ -20,5 +20,4 @@ def test_external(DATA, tmp_path):
     # check Zeeman energy
     data = pl.read_csv(DATA / "external" / "cube.csv", skip_rows=1)
     out = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
-    diff = (data["value"] - out["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data["value"], out["value"])

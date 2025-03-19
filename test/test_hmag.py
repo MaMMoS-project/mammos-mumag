@@ -19,23 +19,12 @@ def test_hmag(DATA, tmp_path):
 
     # check vtk files
     data_hmag = meshio.read(DATA / "hmag" / "cube_hmag.vtu")
-    assert (
-        np.linalg.norm(sim.hmag.point_data["U"] - data_hmag.point_data["U"]) < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(sim.hmag.point_data["h_nodes"] - data_hmag.point_data["h_nodes"])
-        < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(sim.hmag.point_data["m"] - data_hmag.point_data["m"]) < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(sim.hmag.cell_data["h"][0] - data_hmag.cell_data["h"][0])
-        < 1.0e-09
-    )
+    assert np.allclose(sim.hmag.point_data["U"], data_hmag.point_data["U"])
+    assert np.allclose(sim.hmag.point_data["h_nodes"], data_hmag.point_data["h_nodes"])
+    assert np.allclose(sim.hmag.point_data["m"], data_hmag.point_data["m"])
+    assert np.allclose(sim.hmag.cell_data["h"][0], data_hmag.cell_data["h"][0])
 
     # check energies
     data_energy = pl.read_csv(DATA / "hmag" / "cube.csv", skip_rows=1)
     out_energy = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
-    diff = (data_energy["value"] - out_energy["value"]).to_numpy()
-    assert np.linalg.norm(diff) < 1.0e-09
+    assert np.allclose(data_energy["value"], out_energy["value"])

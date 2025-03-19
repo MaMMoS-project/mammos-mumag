@@ -18,21 +18,7 @@ def test_materials(DATA, tmp_path):
 
     # check materials vtu
     data = meshio.read(DATA / "materials" / "cube_mat.vtu")
-    assert (
-        np.linalg.norm(data.cell_data["A"][0] - sim.materials_fields.cell_data["A"][0])
-        < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(
-            data.cell_data["Js"][0] - sim.materials_fields.cell_data["Js"][0]
-        )
-        < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(data.cell_data["K"][0] - sim.materials_fields.cell_data["K"][0])
-        < 1.0e-09
-    )
-    assert (
-        np.linalg.norm(data.cell_data["u"][0] - sim.materials_fields.cell_data["u"][0])
-        < 1.0e-09
-    )
+    assert np.allclose(data.cell_data["A"][0], sim.materials_fields.cell_data["A"][0])
+    assert np.allclose(data.cell_data["Js"][0], sim.materials_fields.cell_data["Js"][0])
+    assert np.allclose(data.cell_data["K"][0], sim.materials_fields.cell_data["K"][0])
+    assert np.allclose(data.cell_data["u"][0], sim.materials_fields.cell_data["u"][0])
