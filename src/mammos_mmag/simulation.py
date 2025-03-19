@@ -30,7 +30,8 @@ class Simulation:
         self.parameters = Parameters()
         self.materials = Materials()
 
-    def run_file(self, file, outdir="out"):
+    @classmethod
+    def run_file(cls, file, outdir="out"):
         """Run python file using `esys.escript`.
 
         :param script: path of file.
