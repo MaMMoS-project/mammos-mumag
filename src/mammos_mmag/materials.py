@@ -1,5 +1,8 @@
 """Materials class."""
 
+import pathlib
+from pydantic import Field
+from pydantic.dataclasses import dataclass
 import yaml
 
 from math import pi
@@ -8,19 +11,45 @@ from .tools import check_path
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
+@dataclass
+class MaterialDomain:
+    """Uniform material domain.
+
+    It collects material parameters, constant in a certain domain.
+    """
+
+    theta: float = 0.0
+    phi: float = 0.0
+    K1: float = 0.0
+    K2: float = 0.0
+    Js: float = 0.0
+    A: float = 0.0
+
+
+@dataclass
 class Materials:
     """This class stores, reads, and writes material parameters.
 
-    :param domains: list of domains. Each domain is a dictionary of material
-        parameters, constant in each region.
-    :type domains: list[dict]
+    :param domains: list of domains. Each domain is a MaterialDomain
+        class of material parameters, constant in each region.
+        It defaults to an empty list.
+    :type domains: list[MaterialDomain]
     """
 
-    def __init__(self):
-        """Initialize empty materials class."""
-        self.domains = []
+    domains: list[MaterialDomain] = Field(default_factory=list)
+    filepath: pathlib.Path = Field(default=None, repr=False)
 
-    def new_domain(self, A, Js, K1, K2, phi, theta):
+    def __post_init__(self):
+        """Initialize materials with a file.
+
+        If the materials is initialized with an empty `domains` attribute
+        and with a not-`None` `filepath` attribute, the materials files
+        will be read automatically.
+        """
+        if (len(self.domains) == 0) and (self.filepath is not None):
+            self.read(self.filepath)
+
+    def add_domain(self, A, Js, K1, K2, phi, theta):
         r"""Append domain with specified parameters.
 
         :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
@@ -40,14 +69,14 @@ class Materials:
             from the :math:`z`-direction in radians.
         :type theta: float
         """
-        dom = {
-            "theta": theta,
-            "phi": phi,
-            "K1": K1,
-            "K2": K2,
-            "Js": Js,
-            "A": A,
-        }
+        dom = MaterialDomain(
+            theta=theta,
+            phi=phi,
+            K1=K1,
+            K2=K2,
+            Js=Js,
+            A=A,
+        )
         self.domains.append(dom)
 
     def read(self, fname):
@@ -71,7 +100,9 @@ class Materials:
             self.domains = read_krn(fpath)
 
         else:
-            raise NotImplementedError(f"{fpath.suffix} materials file is not supported.")
+            raise NotImplementedError(
+                f"{fpath.suffix} materials file is not supported."
+            )
 
     def write_krn(self, fname):
         """Write material `krn` file.
@@ -98,12 +129,12 @@ class Materials:
         """
         domains = [
             {
-                "theta": dom["theta"],
-                "phi": dom["phi"],
-                "K1": dom["K1"] / (4e-7 * pi),
-                "K2": dom["K2"] / (4e-7 * pi),
-                "Js": dom["Js"],
-                "A": dom["A"] / (4e-7 * pi),
+                "theta": dom.theta,
+                "phi": dom.phi,
+                "K1": dom.K1 / (4e-7 * pi),
+                "K2": dom.K2 / (4e-7 * pi),
+                "Js": dom.Js,
+                "A": dom.A / (4e-7 * pi),
             }
             for dom in self.domains
         ]
@@ -124,14 +155,14 @@ def read_krn(fname):
         lines = file.readlines()
     lines = [line.split() for line in lines]
     return [
-        {
-            "theta": float(line[0]),
-            "phi": float(line[1]),
-            "K1": 4e-7 * pi * float(line[2]),
-            "K2": 4e-7 * pi * float(line[3]),
-            "Js": float(line[4]),
-            "A": 4e-7 * pi * float(line[5]),
-        }
+        MaterialDomain(
+            theta=float(line[0]),
+            phi=float(line[1]),
+            K1=4e-7 * pi * float(line[2]),
+            K2=4e-7 * pi * float(line[3]),
+            Js=float(line[4]),
+            A=4e-7 * pi * float(line[5]),
+        )
         for line in lines
     ]
 
@@ -148,13 +179,13 @@ def read_yaml(fname):
     with open(fname, "r") as file:
         domains = yaml.safe_load(file)
     return [
-        {
-            "theta": float(dom["theta"]),
-            "phi": float(dom["phi"]),
-            "K1": 4e-7 * pi * float(dom["K1"]),
-            "K2": 4e-7 * pi * float(dom["K2"]),
-            "Js": float(dom["Js"]),
-            "A": 4e-7 * pi * float(dom["A"]),
-        }
+        MaterialDomain(
+            theta=float(dom["theta"]),
+            phi=float(dom["phi"]),
+            K1=4e-7 * pi * float(dom["K1"]),
+            K2=4e-7 * pi * float(dom["K2"]),
+            Js=float(dom["Js"]),
+            A=4e-7 * pi * float(dom["A"]),
+        )
         for dom in domains
     ]
