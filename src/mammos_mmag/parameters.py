@@ -78,13 +78,12 @@ class Parameters:
     mx: float = 0.0
     my: float = 0.0
     mz: float = 0.0
+    _m: list[float] = Field(default_factory=lambda: [0, 0, 0])
     hmag_on: int = 1
     hstart: float = 0.0
     hfinal: float = 0.0
     hstep: float = 0.0
-    hx: float = 0.0
-    hy: float = 0.0
-    hz: float = 0.0
+    _h: list[float] = Field(default_factory=lambda: [0, 0, 0])
     mstep: float = 1.0
     mfinal: float = -0.8
     iter_max: int = 1000
@@ -101,32 +100,28 @@ class Parameters:
         If the parameters is initialized with a not-`None` `filepath`
         attribute, the materials files will be read automatically.
         """
-        if (self.filepath is not None):
+        if self.filepath is not None:
             self.read(self.filepath)
 
     @property
     def m(self):
-        """Return list m given the components mx, my, mz."""
-        return normalize([self.mx, self.my, self.mz])
+        """Return list m."""
+        return self._m
 
     @m.setter
     def m(self, value):
-        """Assign mx, my, mz given m."""
-        self.mx = value[0]
-        self.my = value[1]
-        self.mz = value[2]
+        """Assign normalized m."""
+        self._m = normalize(value)
 
     @property
     def h(self):
-        """Return list h given the components hx, hy, hz."""
-        return normalize([self.hx, self.hy, self.hz])
+        """Return list h."""
+        return normalize(self._h)
 
     @h.setter
     def h(self, value):
-        """Assign hx, hy, hz given h."""
-        self.hx = value[0]
-        self.hy = value[1]
-        self.hz = value[2]
+        """Assign normalized h."""
+        self._h = normalize(value)
 
     def read(self, fname):
         """Read parameter file in `yaml` or `p2` format.
@@ -205,8 +200,17 @@ class Parameters:
             autoescape=select_autoescape(),
         )
         template = env.get_template("p2.jinja")
+        parameters_dict = {
+            **self.__dict__,
+            "mx": self.m[0],
+            "my": self.m[1],
+            "mz": self.m[2],
+            "hx": self.m[0],
+            "hy": self.m[1],
+            "hz": self.m[2],
+        }
         with open(fname, "w") as file:
-            file.write(template.render(self.__dict__))
+            file.write(template.render(parameters_dict))
 
     def write_yaml(self, fname):
         """Write parameter `yaml` file.
@@ -221,18 +225,18 @@ class Parameters:
             },
             "initial state": {
                 "state": self.state,
-                "mx": self.mx,
-                "my": self.my,
-                "mz": self.mz,
+                "mx": self.m[0],
+                "my": self.m[1],
+                "mz": self.m[2],
             },
             "field": {
                 "hmag_on": self.hmag_on,
                 "hstart": self.hstart,
                 "hfinal": self.hfinal,
                 "hstep": self.hstep,
-                "hx": self.hx,
-                "hy": self.hy,
-                "hz": self.hz,
+                "hx": self.h[0],
+                "hy": self.h[1],
+                "hz": self.h[2],
             },
             "minimizer": {
                 "iter_max": self.iter_max,

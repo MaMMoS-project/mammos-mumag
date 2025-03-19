@@ -18,7 +18,7 @@ def test_parameters_file(tmp_path):
     parameter is exactly equal or sufficiently close to the original one.
     """
     par = Parameters(
-        mx=1.0,
+        m=[1,0,0],
         hstart=8.0,
         hfinal=-1.5,
         hstep=-0.01,
@@ -52,5 +52,8 @@ def are_parameters_equal(d1, d2):
                 return False
         if isinstance(val, float):
             if abs(dict_2[k] - val) > 1.0e-11:
+                return False
+        if isinstance(val, list):
+            if sum([abs(val[i] - dict_2[k][i]) for i in range(len(val))]) > 1:
                 return False
     return True
