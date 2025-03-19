@@ -1,14 +1,11 @@
 """Test materials file i/o."""
 
-import pathlib
 import numpy as np
 
 from mammos_mmag.materials import Materials
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_materials_file(tmp_path):
+def test_materials_file(DATA, tmp_path):
     """Test materials files i/o.
 
     This test defines a :py:class:`~mammos_mmag.materials.Materials` instance

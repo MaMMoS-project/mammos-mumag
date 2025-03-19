@@ -1,14 +1,11 @@
 """Check external script."""
 
 import numpy as np
-import pathlib
 import polars as pl
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_external(tmp_path):
+def test_external(DATA, tmp_path):
     """Test external."""
     # initialize + load parameters
     sim = Simulation(

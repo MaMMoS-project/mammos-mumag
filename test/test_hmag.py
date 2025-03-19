@@ -2,14 +2,11 @@
 
 import meshio
 import numpy as np
-import pathlib
 import polars as pl
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_hmag(tmp_path):
+def test_hmag(DATA, tmp_path):
     """Test hmag."""
     # initialize + load parameters
     sim = Simulation(

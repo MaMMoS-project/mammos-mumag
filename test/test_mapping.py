@@ -1,14 +1,11 @@
 """Check mapping script."""
 
 import numpy as np
-import pathlib
 import polars as pl
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_mapping(tmp_path):
+def test_mapping(DATA, tmp_path):
     """Test mapping."""
     # initialize + load parameters
     sim = Simulation(

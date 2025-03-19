@@ -1,14 +1,11 @@
 """Check exani script."""
 
 import numpy as np
-import pathlib
 import polars as pl
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_exani(tmp_path):
+def test_exani(DATA, tmp_path):
     """Test exani."""
     # initialize + load parameters
     sim = Simulation(

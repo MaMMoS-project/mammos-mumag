@@ -2,13 +2,10 @@
 
 import meshio
 import numpy as np
-import pathlib
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_materials(tmp_path):
+def test_materials(DATA, tmp_path):
     """Test materials."""
     # initialize + load parameters
     sim = Simulation(

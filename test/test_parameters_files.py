@@ -1,13 +1,9 @@
 """Test parameters file i/o."""
 
-import pathlib
-
 from mammos_mmag.parameters import Parameters
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_parameters_file(tmp_path):
+def test_parameters_file(DATA, tmp_path):
     """Test parameters files i/o.
 
     This test defines a :py:class:`~mammos_mmag.parameters.Parameters` instance.

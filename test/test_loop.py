@@ -2,13 +2,10 @@
 
 import meshio
 import numpy as np
-import pathlib
 from mammos_mmag.simulation import Simulation
 
-DATA = pathlib.Path(__file__).resolve().parent / "data"
 
-
-def test_loop(tmp_path):
+def test_loop(DATA, tmp_path):
     """Test loop."""
     sim = Simulation(
         mesh_filepath=DATA / "cube.fly",
