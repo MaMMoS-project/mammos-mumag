@@ -17,12 +17,13 @@ def test_parameters_file(tmp_path):
     The first parameter instance is tested with the other two, by checking if each
     parameter is exactly equal or sufficiently close to the original one.
     """
-    par = Parameters()
-    par.mx = 1.0
-    par.hstart = 8.0
-    par.hfinal = -1.5
-    par.hstep = -0.01
-    par.iter_max = 5000
+    par = Parameters(
+        mx=1.0,
+        hstart=8.0,
+        hfinal=-1.5,
+        hstep=-0.01,
+        iter_max=5000,
+    )
 
     par.write_p2(tmp_path / "par.p2")
     par.write_yaml(tmp_path / "par.yaml")

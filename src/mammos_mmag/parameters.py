@@ -2,6 +2,7 @@
 
 import math
 import configparser
+from pydantic.dataclasses import dataclass
 import yaml
 
 from .tools import check_path
@@ -9,6 +10,7 @@ from .tools import check_path
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 
+@dataclass
 class Parameters:
     r"""Class storing simulation parameters.
 
@@ -68,36 +70,27 @@ class Parameters:
     :type verbose: int
     """
 
-    def __init__(self):
-        """Initialize Parameters class."""
-        # size and scale
-        self.size = 1.0e-9
-        self.scale = 0.0
-
-        # initial state
-        self.state = "mxyz"
-        self.mx = 0.0
-        self.my = 0.0
-        self.mz = 0.0
-
-        # h field
-        self.hmag_on = 1
-        self.hstart = 0.0
-        self.hfinal = 0.0
-        self.hstep = 0.0
-        self.hx = 0.0
-        self.hy = 0.0
-        self.hz = 0.0
-        self.mstep = 1.0
-        self.mfinal = -0.8
-
-        # minimizer parameters for the preconditioned cg
-        self.iter_max = 1000
-        self.precond_iter = 10
-        self.tol_fun = 1e-10
-        self.tol_hmag_factor = 1.0
-        self.tol_u = 1e-10
-        self.verbose = 0
+    size: float = 1.0e-09
+    scale: float = 0.0
+    state: str = "mxyz"
+    mx: float = 0.0
+    my: float = 0.0
+    mz: float = 0.0
+    hmag_on: int = 1
+    hstart: float = 0.0
+    hfinal: float = 0.0
+    hstep: float = 0.0
+    hx: float = 0.0
+    hy: float = 0.0
+    hz: float = 0.0
+    mstep: float = 1.0
+    mfinal: float = -0.8
+    iter_max: int = 1000
+    precond_iter: int = 10
+    tol_fun: float = 1e-10
+    tol_hmag_factor: float = 1.0
+    tol_u: float = 1e-10
+    verbose: int = 0
 
     @property
     def m(self):
