@@ -19,33 +19,34 @@ def test_materials_file(tmp_path):
     The first materials is tested with the other two, by checking if each
     material in each domain is sufficiently close to the original one.
     """
-    mat = Materials()
-    mat.domains = [
-        {
-            "theta": 0.0,
-            "phi": 0.0,
-            "K1": 4e-7 * np.pi * 4.9e06,
-            "K2": 0.0,
-            "Js": 1.61,
-            "A": 4e-7 * np.pi * 8.0e-11,
-        },
-        {
-            "theta": 0.0,
-            "phi": 0.0,
-            "K1": 0.0,
-            "K2": 0.0,
-            "Js": 0.0,
-            "A": 0.0,
-        },
-        {
-            "theta": 0.0,
-            "phi": 0.0,
-            "K1": 0.0,
-            "K2": 0.0,
-            "Js": 0.0,
-            "A": 0.0,
-        },
-    ]
+    mat = Materials(
+        domains=[
+            {
+                "theta": 0.0,
+                "phi": 0.0,
+                "K1": 4e-7 * np.pi * 4.9e06,
+                "K2": 0.0,
+                "Js": 1.61,
+                "A": 4e-7 * np.pi * 8.0e-11,
+            },
+            {
+                "theta": 0.0,
+                "phi": 0.0,
+                "K1": 0.0,
+                "K2": 0.0,
+                "Js": 0.0,
+                "A": 0.0,
+            },
+            {
+                "theta": 0.0,
+                "phi": 0.0,
+                "K1": 0.0,
+                "K2": 0.0,
+                "Js": 0.0,
+                "A": 0.0,
+            },
+        ]
+    )
 
     mat.write_krn(tmp_path / "mat.krn")
     mat.write_yaml(tmp_path / "mat.yaml")
@@ -56,6 +57,7 @@ def test_materials_file(tmp_path):
 
     mat_2 = Materials()
     mat_2.read(tmp_path / "mat.yaml")
+    print(f"{type(mat.domains[0])=}")
     assert are_domains_equal(mat.domains, mat_2.domains)
 
 
@@ -67,17 +69,17 @@ def are_domains_equal(d1, d2):
     """
     if len(d1) != len(d2):
         return False
-    diff = 0
+    diff = 0.0
     for i, d1_i in enumerate(d1):
         d2_i = d2[i]
         diff += np.linalg.norm(
             [
-                d1_i["A"] - d2_i["A"],
-                d1_i["Js"] - d2_i["Js"],
-                d1_i["K1"] - d2_i["K1"],
-                d1_i["K2"] - d2_i["K2"],
-                d1_i["theta"] - d2_i["theta"],
-                d1_i["phi"] - d2_i["phi"],
+                d1_i.theta - d2_i.theta,
+                d1_i.phi - d2_i.phi,
+                d1_i.K1 - d2_i.K1,
+                d1_i.K2 - d2_i.K2,
+                d1_i.Js - d2_i.Js,
+                d1_i.A - d2_i.A,
             ]
         )
     return diff < 1.0e-8
