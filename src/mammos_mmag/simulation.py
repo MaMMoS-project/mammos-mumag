@@ -45,7 +45,8 @@ class Simulation:
         )
         run_subprocess(cmd, cwd=outdir)
 
-    def run_script(self, script, outdir, name):
+    @classmethod
+    def run_script(cls, script, outdir, name):
         """Run pre-defined script.
 
         :param script: Name of pre-defined script.
