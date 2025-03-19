@@ -1,7 +1,9 @@
 """Parameters class."""
 
 import math
+import pathlib
 import configparser
+from pydantic import Field
 from pydantic.dataclasses import dataclass
 import yaml
 
@@ -91,6 +93,16 @@ class Parameters:
     tol_hmag_factor: float = 1.0
     tol_u: float = 1e-10
     verbose: int = 0
+    filepath: pathlib.Path = Field(default=None, repr=False)
+
+    def __post_init__(self):
+        """Initialize parameters with a file.
+
+        If the parameters is initialized with a not-`None` `filepath`
+        attribute, the materials files will be read automatically.
+        """
+        if (self.filepath is not None):
+            self.read(self.filepath)
 
     @property
     def m(self):
