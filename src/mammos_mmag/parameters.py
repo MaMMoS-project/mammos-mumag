@@ -75,12 +75,12 @@ class Parameters:
     size: float = 1.0e-09
     scale: float = 0.0
     state: str = "mxyz"
-    _m: list[float] = Field(default_factory=lambda: [0, 0, 0])
+    m_vect: list[float] = Field(default_factory=lambda: [0, 0, 0])
     hmag_on: int = 1
     hstart: float = 0.0
     hfinal: float = 0.0
     hstep: float = 0.0
-    _h: list[float] = Field(default_factory=lambda: [0, 0, 0])
+    h_vect: list[float] = Field(default_factory=lambda: [0, 0, 0])
     mstep: float = 1.0
     mfinal: float = -0.8
     iter_max: int = 1000
@@ -103,22 +103,22 @@ class Parameters:
     @property
     def m(self):
         """Return list m."""
-        return self._m
+        return self.m_vect
 
     @m.setter
     def m(self, value):
         """Assign normalized m."""
-        self._m = normalize(value)
+        self.m_vect = normalize(value)
 
     @property
     def h(self):
         """Return list h."""
-        return normalize(self._h)
+        return normalize(self.h_vect)
 
     @h.setter
     def h(self, value):
         """Assign normalized h."""
-        self._h = normalize(value)
+        self.h_vect = normalize(value)
 
     def read(self, fname):
         """Read parameter file in `yaml` or `p2` format.
