@@ -136,7 +136,9 @@ class Parameters:
             pars.read(fpath)
 
         else:
-            raise NotImplementedError("Wrong file format.")
+            raise NotImplementedError(
+                f"{fpath.suffix} materials file is not supported."
+            )
 
         mesh = pars["mesh"]
         if "size" in mesh:
