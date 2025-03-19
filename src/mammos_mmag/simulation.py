@@ -54,6 +54,15 @@ class Simulation:
         if self.parameters_filepath is not None:
             self.parameters = Parameters(filepath=self.parameters_filepath)
 
+    def check_attribute(self, *args):
+        """Check existence of attributes.
+
+        :raises AttributeError: Attribute has not been defined yet.
+        """
+        for attr in args:
+            if self.__getattribute__(attr) is None:
+                raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
+
     @classmethod
     def run_file(cls, file, outdir="out"):
         """Run python file using `esys.escript`.
@@ -118,6 +127,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -149,6 +159,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials", "parameters")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -209,6 +220,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -257,6 +269,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials", "parameters")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -283,6 +296,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials", "parameters")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -306,6 +320,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials", "parameters")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -327,6 +342,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -349,6 +365,7 @@ class Simulation:
         :type name: str, optional.
         """
         outdir = check_dir(outdir)
+        self.check_attribute("mesh_filepath", "materials", "parameters")
         shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
