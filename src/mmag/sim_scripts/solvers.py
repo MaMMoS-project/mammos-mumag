@@ -122,7 +122,14 @@ def truncated_cg_diag_precond_jit(Bk, grad_fk, Dk, max_iter=100):
     #---------------------------
     final_state = lax.while_loop(cond_fun, body_fun, init_state)
     _, _, p_final, _, _, _ = final_state
-    return p_final
+
+    return lax.cond(
+        np.all(p_final == 0),
+        lambda _: -grad_fk,
+        lambda _: p_final,
+        operand=None
+    )
+
 
 
 @partial(jit, static_argnums=(0,))
