@@ -8,8 +8,7 @@
 #SBATCH --job-name=small
 #
 # Number of GPUs
-#SBATCH --gres=gpu:2
-#SBATCH --nodelist=Gd
+#SBATCH --gres=gpu:1
 #
 #SBATCH --export=NONE
 # By default all environment variables of the shell invoking the sbatch command are propagated.
@@ -20,7 +19,6 @@
 # show some information
 SIMDIR=$HOME/slurm_$SLURM_JOB_ID
 echo "JOBNAME:" $SLURM_JOB_NAME
-echo "PARTITION:" $SLURM_JOB_PARTITION
 echo "SUBMIT HOST:" $SLURM_SUBMIT_HOST
 echo "ALLOC. NODES:" $SLURMD_NODENAME
 echo "SUBMIT DIR:" $SLURM_SUBMIT_DIR
@@ -33,7 +31,11 @@ export MAMBA_EXE='/scandium/home/programs/micromamba/bin/micromamba'
 PROGRAMS='/scandium/home/programs/UB22'
 TOFLY='/scandium/home/programs/UB22/mmag/examples/demagnetization/tofly3'
 PY='/scandium/home/programs/UB22/mmag/src/mmag/sim_scripts'
+# use this line for meshgems
+# SALOME='/scandium/home/programs/UB22/SALOME-9.7.0-native-DB10-SRC/salome'
+# use this line for netgen
 SALOME='/scandium/home/programs/UB22/SALOME-9.10.0-native-UB22.04-SRC/salome'
+
 
 # create working directory
 
@@ -43,15 +45,20 @@ mkdir -p $SIMDIR
 cd $SIMDIR
 echo "WORKING DIR:" $PWD
 
+# copy intrinsic properties (.krn) and
+# control parameters (.p2)
 cp $SLURM_SUBMIT_DIR/$MODELNAME.krn .
 cp $SLURM_SUBMIT_DIR/$MODELNAME.p2 .
+
+# copy mesh script
 cp $SLURM_SUBMIT_DIR/$MODELNAME.py .
 
-# create a mesh
+# create a mesh and convert to fly
 $SALOME -t -w1 $MODELNAME.py args:40,2,4
-
-# Create fly file from unv
 $TOFLY -e 1,2 $MODELNAME.unv $MODELNAME.fly
+
+# or use a script that meshes and creates the fly file
+# $SALOME -t  salomescript.py
 
 # compute demagnetization curve
 $MAMBA_EXE run -n escript5 run-escript $PY/loop.py $MODELNAME
