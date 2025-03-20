@@ -64,7 +64,7 @@ def minimize(m, field_value, pars, alt_args, stats):
   return energy, m, cg_iter, alt_args, stats
   
 def save_callback(m,u,counter):
-    write_magnetization_and_potential(name,counter,m,u,tags)
+    write_magnetization_and_potential(name,counter+1,m,u,tags)
     return counter + 1
   
 @partial(jit, static_argnums=(0,3,))
@@ -99,21 +99,21 @@ def solve(name, m0, pars, max_steps):
         u, _ = alt_args
         mh = compute_mh(m, (hdir, pars['meas'], pars['volume']))
         jax.debug.print("--> demag {hext} {mh}", hext=hext, mh=mh)
-        rec = rec.at[idx].set(np.array([counter, hext, mh, energy]))
         should_save = (last_saved_mh - mh) > mstep
       
         def true_fun(_):
             new_counter = jax.experimental.io_callback(
                 save_callback,
-                jax.ShapeDtypeStruct((), np.int32),
+                jax.ShapeDtypeStruct((), np.int64),
                 m, u, counter
             )
             return new_counter, mh
 
         def false_fun(_):
-            return np.array(counter, dtype=np.int32), last_saved_mh
+            return counter, last_saved_mh
 
         counter, last_saved_mh = lax.cond(should_save, true_fun, false_fun, operand=None)
+        rec = rec.at[idx].set(np.array([counter, hext, mh, energy]))
         
         return m, mh, hext+hstep, cum_iter+cg_iter, alt_args, stats, rec, idx+1, counter, last_saved_mh
 
