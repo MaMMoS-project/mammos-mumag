@@ -1,7 +1,7 @@
 # Info
-`mmag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
+`mammos-mmag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
 
-This package allows users to use `mmag` in Python and includes some useful scripts for the use and development of `mmag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
+This package allows users to use the library `mammos_mmag` in Python and includes some useful scripts for the use and development of `mammos-mmag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
 
 
 # Usage with Pixi (recommended)
@@ -14,7 +14,7 @@ This package comes with several pixi tasks (in alphabetical order):
 - `lint`
 - `test`
 
-To run a task, execute `pixi run <task_name>`.
+To run a task, execute `pixi run <task_name>` or `pixi r <task_name>`.
 
 
 ## Style tasks
@@ -22,7 +22,7 @@ These tasks (`clean`, `format`, and `lint`) use [Ruff](https://docs.astral.sh/ru
 
 
 ## Test tasks
-The task (`test`) executes tests found in [`test`](test/).
+The task (`test`) executes tests found in the [`test`](test/) directory.
 
 
 ## Docs tasks
