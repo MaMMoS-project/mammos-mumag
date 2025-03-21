@@ -11,12 +11,6 @@ This package comes with several pixi tasks (in alphabetical order):
 - `clean`
 - `docs`
 - `docs-clean`
-- `example-loop`
-- `example-materials`
-- `example-parameters`
-- `example-python-files`
-- `example-standard-problem`
-- `example-unvtofly`
 - `format`
 - `lint`
 - `test`
@@ -47,12 +41,3 @@ The task (`test`) executes tests found in [`test`](test/).
 
 ## Docs tasks
 The tasks (`docs`, `docs-clean`) manage the documentation. In particular, `docs` builds the html docs, while `docs-clean` cleans the current build.
-
-
-## Example tasks
-The tasks with the `example` prefix run jupyter notebooks with examples:
-- `example-materials`: runs [`materials_io.ipynb`](examples/materials_io.ipynb), that shows the essential input/output functions for material parameters.
-- `example-parameters`: runs [`parameters_io.ipynb`](examples/parameters_io.ipynb), that concerns simulation parameters.
-- `example-loop`: runs [`hysteresis_loop.ipynb`](examples/hysteresis_loop.ipynb), that shows how to collect the right input files and execute an hysteresis loop approximation.
-- `example-python-files`: runs [`run_python_files.ipynb`](examples/run_python_files.ipynb), that shows how to use the package to execute other python scripts in an environment where `mmag` and `escript` are defined.
-- `example-unvtofly`: runs [`unvtofly.ipynb`](examples/unvtofly.ipynb), that shows how to convert an `unv` mesh into a `fly` mesh.

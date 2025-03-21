@@ -16,6 +16,25 @@ class MaterialDomain:
     """Uniform material domain.
 
     It collects material parameters, constant in a certain domain.
+
+    :param theta: Angle of the magnetocrystalline anisotropy axis
+        from the :math:`z`-direction in radians. Defaults to 0.
+    :type theta: float
+    :param phi: Angle of the magnetocrystalline anisotropy axis
+        from the :math:`x`-direction in radians. Defaults to 0.
+    :type phi: float
+    :param K1: First magnetocrystalline anisotropy constant in
+        :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
+    :type K1: float
+    :param K2: Second magnetocrystalline anisotropy constant in
+        :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
+    :type K2: float
+    :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
+        Defaults to 0.
+    :type Js: float
+    :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
+        Defaults to 0.
+    :type A: float
     """
 
     theta: float = 0.0
@@ -34,6 +53,8 @@ class Materials:
         class of material parameters, constant in each region.
         It defaults to an empty list.
     :type domains: list[MaterialDomain]
+    :param filepath: material file path
+    :type filepath: pathlib.Path
     """
 
     domains: list[MaterialDomain] = Field(default_factory=list)

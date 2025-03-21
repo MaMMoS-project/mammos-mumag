@@ -11,6 +11,7 @@ Welcome to mammos-mmag's documentation!
    :caption: Contents:
 
    mammos_mmag_autodoc/modules
+   notebooks/examples
 
 
 Indices and tables

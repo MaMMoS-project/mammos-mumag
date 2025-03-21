@@ -65,6 +65,8 @@ format = "ruff format"
 clean = "ruff clean && py3clean ."
 
 [tool.pixi.feature.sphinx.dependencies]
+ipykernel ="*"
+nbsphinx = "*"
 sphinx = "==8.1.3"
 sphinx-rtd-theme = "==3.0.1"
 numpy = "*"
@@ -82,11 +84,6 @@ test = "pytest -v"
 jupyter = "*"
 polars = "*"
 [tool.pixi.feature.example.tasks]
-example-materials = "jupyter-lab examples/materials_io.ipynb"
-example-parameters = "jupyter-lab examples/parameters_io.ipynb"
-# example-python-files = "jupyter-lab examples/run_python_files.ipynb"
-example-unvtofly = "jupyter-lab examples/unvtofly.ipynb"
-example-scripts = "jupyter-lab examples/scripts.ipynb"
 
 [tool.ruff]
 target-version = "py39"

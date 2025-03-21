@@ -20,19 +20,13 @@ class Parameters:
     :type size: float
     :param scale: Scale of the mesh, defaults to 0.
     :type scale: float
-    :param state: Name of the state. Scripts recognize the strings `flower`, `vortex`,
-        and `twisted`. Other strings are interpreted as the default case. Defaults to
-        "mxyz".
+    :param state: Name of the state. Scripts recognize the strings `vortex`, `flower`,
+        `vortex`, and `twisted`. Other strings are interpreted as the default case.
+        Defaults to "mxyz".
     :type state: str
-    :param mx: :math:`x` component of the magnetization field :math:`\mathbf{m}`.
-        Defaults to 0.
-    :type mx: float
-    :param my: :math:`y` component of the magnetization field :math:`\mathbf{m}`.
-        Defaults to 0.
-    :type my: float
-    :param mz: :math:`z` component of the magnetization field :math:`\mathbf{m}`.
-        Defaults to 0.
-    :type mz: float
+    :param m_vect: Magnetization field :math:`\mathbf{m}`.
+        Defaults to [0,0,0].
+    :type m_vect: list[float]
     :param hmag_on: 1 or 0 indicating whether the external field is on (1) or off (0).
         Defaults to 1.
     :type hmag_on: int
@@ -42,15 +36,9 @@ class Parameters:
     :type hfinal: float
     :param hstep: External field step. Defaults to 0.
     :type hstep: float
-    :param hx: :math:`x` component of the external field :math:`\mathbf{h}`.
-        Defaults to 0.
-    :type hx: float
-    :param hy: :math:`y` component of the external field :math:`\mathbf{h}`.
-        Defaults to 0.
-    :type hy: float
-    :param hz: :math:`z` component of the external field :math:`\mathbf{h}`.
-        Defaults to 0.
-    :type hz: float
+    :param h_vect: External field vector :math:`\mathbf{h}`.
+        Defaults to [0,0,0].
+    :type h_vect: list[float]
     :param mstep: TODO. Defaults to 1.0.
     :type mstep: float
     :param mfinal: TODO. Defaults to -0.8.

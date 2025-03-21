@@ -29,16 +29,22 @@ author = "Thomas Schrefl, Swapneel Amit Pathak, Andrea Petrocchi, Samuel Holt, M
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "nbsphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
 ]
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = [
+    "_build",
+    "**.ipynb_checkpoints",
+]
 master_doc = "index"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    'pydantic': ('https://docs.pydantic.dev/latest', None),
 }
 autodoc_mock_imports = ["esys"]
 
@@ -55,9 +61,6 @@ autodoc_default_options = {
     # Autodoc special members (for the moment only __init__)
     "special-members": "__init__",
 }
-
-# No document TypeHints
-autodoc_typehints = "none"
 
 # Autosummary
 autosummary_generate = True
@@ -94,5 +97,4 @@ cmd = shlex.split(
         "-f"  # We force it so files are overwritten
     )
 )
-# print(f"Command: {' '.join(cmd)}")
 res = subprocess.run(cmd, stderr=subprocess.PIPE)
