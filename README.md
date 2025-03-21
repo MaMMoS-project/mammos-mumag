@@ -7,7 +7,6 @@ This package allows users to use `mmag` in Python and includes some useful scrip
 # Usage with Pixi (recommended)
 Run `pixi shell` to activate a container where `mmag` is installed.
 This package comes with several pixi tasks (in alphabetical order):
-- `build`
 - `clean`
 - `docs`
 - `docs-clean`
@@ -16,19 +15,6 @@ This package comes with several pixi tasks (in alphabetical order):
 - `test`
 
 To run a task, execute `pixi run <task_name>`.
-
-
-## Building task
-The `build` task helps building a container for `escript`.
-The default configuration of
-```terminal
-pixi run build
-```
-builds `escript` inside and [Apptainer](https://apptainer.org/) container using 16 threads and storing the container in `~/.cache/mammos/mmag/mmag.sif`.
-These options are stored as environment variables, and can be changes for example as follows:
-```terminal
-CONTAINER=podman THREADS=4 pixi run build
-```
 
 
 ## Style tasks
