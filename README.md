@@ -27,3 +27,11 @@ The task (`test`) executes tests found in the [`test`](test/) directory.
 
 ## Docs tasks
 The tasks (`docs`, `docs-clean`) manage the documentation. In particular, `docs` builds the html docs, while `docs-clean` cleans the current build.
+
+
+## Working examples
+Please refer to the examples:
+- [Materials i/o](docs/source/notebooks/materials_io.ipynb)
+- [Parameters i/o](docs/source/notebooks/parameters_io.ipynb)
+- [Using the pre-defined scripts](docs/source/notebooks/scripts.ipynb)
+- [Converting `unv` mesh to `fly`](docs/source/notebooks/unvtofly.ipynb)
