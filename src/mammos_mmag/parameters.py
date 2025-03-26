@@ -62,7 +62,7 @@ class Parameters:
 
     size: float = 1.0e-09
     scale: float = 0.0
-    state: str = "mxyz"
+    state: str = Field(default_factory=lambda: "")
     m_vect: list[float] = Field(default_factory=lambda: [0, 0, 0])
     hmag_on: int = 1
     hstart: float = 0.0
