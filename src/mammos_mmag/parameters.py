@@ -91,7 +91,7 @@ class Parameters:
     @property
     def m(self):
         """Return list m."""
-        return self.m_vect
+        return normalize(self.m_vect)
 
     @m.setter
     def m(self, value):
