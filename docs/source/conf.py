@@ -44,7 +44,7 @@ master_doc = "index"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    'pydantic': ('https://docs.pydantic.dev/latest', None),
+    "pydantic": ("https://docs.pydantic.dev/latest", None),
 }
 autodoc_mock_imports = ["esys"]
 

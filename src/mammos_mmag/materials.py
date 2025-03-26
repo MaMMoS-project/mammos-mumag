@@ -13,7 +13,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 @dataclass
 class MaterialDomain:
-    """Uniform material domain.
+    r"""Uniform material domain.
 
     It collects material parameters, constant in a certain domain.
 
