@@ -63,12 +63,20 @@ class Parameters:
     size: float = 1.0e-09
     scale: float = 0.0
     state: str = Field(default_factory=lambda: "")
-    m_vect: list[float] = Field(default_factory=lambda: [0, 0, 0])
+    m_vect: list[float] = Field(
+        default_factory=lambda: [0, 0, 0],
+        min_length=3,
+        max_length=3,
+    )
     hmag_on: int = 1
     hstart: float = 0.0
     hfinal: float = 0.0
     hstep: float = 0.0
-    h_vect: list[float] = Field(default_factory=lambda: [0, 0, 0])
+    h_vect: list[float] = Field(
+        default_factory=lambda: [0, 0, 0],
+        min_length=3,
+        max_length=3,
+    )
     mstep: float = 1.0
     mfinal: float = -0.8
     iter_max: int = 1000
