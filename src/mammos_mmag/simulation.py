@@ -37,11 +37,6 @@ class Simulation:
     materials: Materials = Field(default=None)
     parameters: Parameters = Field(default=None)
 
-    # def __init__(self):
-    #     """Initialize :py:attr:`materials` and :py:attr:`parameters` attributes."""
-    #     self.parameters = Parameters()
-    #     self.materials = Materials()
-
     def __post_init__(self):
         """Post-initialization.
 
