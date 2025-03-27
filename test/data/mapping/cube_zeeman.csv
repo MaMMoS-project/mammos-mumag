@@ -1,0 +1,4 @@
+Zeeman energy density for an external field of mu_0 Hext 1.1 (T).
+name,value,explanation
+E_jax,-1409103.875,Energy evaluated with jax backend (J/m^3).
+E_analytic,-1409102.4313295248,Energy evaluated analytically (J/m^3).

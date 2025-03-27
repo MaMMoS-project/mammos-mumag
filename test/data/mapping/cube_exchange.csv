@@ -1,0 +1,4 @@
+Exchange energy density of a vortex on a, b plane.
+name,value,explanation
+E_jax,983624.3125,Energy evaluated with jax backend (J/m^3).
+E_analytic,986960.4401089362,Energy evaluated analytically (J/m^3).

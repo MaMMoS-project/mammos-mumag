@@ -1,0 +1,4 @@
+Total energy density of uniformly magnetized state.
+name,value,explanation
+E_jax,-5986069.5,Energy evaluated with jax backend (J/m^3).
+E_analytic,-5986069.5,Energy evaluated analytically (J/m^3).

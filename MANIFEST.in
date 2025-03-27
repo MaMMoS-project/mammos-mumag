@@ -1,3 +1,2 @@
-recursive-include src/mmag/sim_scripts *
-recursive-include src/mmag/container_scripts *
-recursive-include src/mmag/container_scripts/patches *
+recursive-include tools/patches *
+recursive-include tools/scripts *
