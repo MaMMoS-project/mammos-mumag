@@ -1,2 +1,0 @@
-recursive-include tools/patches *
-recursive-include tools/scripts *
