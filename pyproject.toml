@@ -29,6 +29,35 @@ classifiers = [
 
 requires-python = ">=3.8"
 
+dependencies = [
+  "jax",
+  "jinja2 >=3.1.6,<4",
+  "meshio",
+  "numpy",
+  "psutil >=7",
+  "pydantic",
+  "pyyaml >6",
+]
+
+[project.optional-dependencies]
+format = [
+  "ruff==0.8",
+]
+docs = [
+  "ipykernel",
+  "nbsphinx",
+  "sphinx==8.1.3",
+  "sphinx-rtd-theme==3.0.1",
+  "numpy",
+]
+examples = [
+  "jupyter",
+  "polars ",
+]
+test = [
+  "polars",
+  "pytest",
+]
 
 # pixi
 [tool.pixi.project]
@@ -36,51 +65,31 @@ channels = ["conda-forge"]
 platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
-cuda = ">=12.8.0,<13"
+cuda = { version=">=12.8.0,<13", channel="nvidia" }
 esys-escript = ">=5.10,<6"
-meshio = "*"
-jinja2 = ">=3.1.5,<4"
-psutil = ">=7.0.0,<8"
-pydantic = "*"
-pyyaml = ">=6.0.2,<7"
 
 [tool.pixi.pypi-dependencies]
 mammos_mmag = { path = ".", editable = true }
-jax = "*"
 
 [tool.pixi.environments]
-ruff = {features = ["ruff"]}
-sphinx = {features = ["sphinx"]}
-test = {features = ["test"]}
-example = {features = ["example"]}
+ruff = { features = ["format"], solve-group = "default" }
+sphinx = { features = ["docs"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+examples = { features = ["examples"], solve-group = "default" }
 
-[tool.pixi.feature.ruff.dependencies]
-ruff = "==0.8"
-[tool.pixi.feature.ruff.tasks]
+[tool.pixi.feature.format.tasks]
 lint = "ruff check"
 format = "ruff format"
 clean = "ruff clean && py3clean ."
 
-[tool.pixi.feature.sphinx.dependencies]
-ipykernel ="*"
-nbsphinx = "*"
-sphinx = "==8.1.3"
-sphinx-rtd-theme = "==3.0.1"
-numpy = "*"
-[tool.pixi.feature.sphinx.tasks]
+[tool.pixi.feature.docs.tasks]
 docs = "cd docs && make html"
 docs-clean = "cd docs && make clean"
 
-[tool.pixi.feature.test.dependencies]
-polars = "*"
-pytest = "*"
 [tool.pixi.feature.test.tasks]
 test = "pytest -v"
 
-[tool.pixi.feature.example.dependencies]
-jupyter = "*"
-polars = "*"
-[tool.pixi.feature.example.tasks]
+[tool.pixi.feature.examples.tasks]
 examples = "jupyter-lab docs/source/notebooks/"
 
 [tool.ruff]
