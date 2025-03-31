@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
 
 [project]
 name = "mammos-mmag"
@@ -29,9 +29,6 @@ classifiers = [
 
 requires-python = ">=3.8"
 
-# setuptools
-[tool.setuptools.packages.find]
-where = ["src"]
 
 # pixi
 [tool.pixi.project]
