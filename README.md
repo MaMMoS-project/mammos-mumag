@@ -57,6 +57,11 @@ This is done with
 pixi shell -e pre-commit
 ```
 
+> *pre-commit* has to be installed first. Run
+> ```console
+> pixi run pre-commit install
+> ```
+
 
 ## Working examples
 Please refer to the examples:
