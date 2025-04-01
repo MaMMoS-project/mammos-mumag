@@ -3,7 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [project]
-name = "mammos-mmag"
+name = "mammos-mumag"
 version = "0.1.0"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
@@ -69,11 +69,11 @@ cuda = { version=">=12.8.0,<13", channel="nvidia" }
 esys-escript = ">=5.10,<6"
 
 [tool.pixi.pypi-dependencies]
-mammos_mmag = { path = ".", editable = true }
+mammos_mumag = { path = ".", editable = true }
 
 [tool.pixi.environments]
-ruff = { features = ["format"], solve-group = "default" }
-sphinx = { features = ["docs"], solve-group = "default" }
+format = { features = ["format"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 examples = { features = ["examples"], solve-group = "default" }
 
@@ -98,12 +98,12 @@ line-length = 88
 indent-width = 4
 respect-gitignore = true
 exclude = [
-  "src/mammos_mmag/scripts/*.py", # scripts
+  "src/mammos_mumag/scripts/*.py", # scripts
   "examples", # to be checked
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/mammos_mmag/tofly.py" = [
+"src/mammos_mumag/tofly.py" = [
   "D101", # undocumented-public-class
   "D103", # undocumented-public-function
 ]

@@ -25,9 +25,9 @@ class Simulation:
     """Simulation class.
 
     :param materials: class managing materials.
-    :type materials: :py:class:`~mammos_mmag.materials.Materials`
+    :type materials: :py:class:`~mammos_mumag.materials.Materials`
     :param parameters: class managing parameters.
-    :type parameters: :py:class:`~mammos_mmag.parameters.Parameters`
+    :type parameters: :py:class:`~mammos_mumag.parameters.Parameters`
     """
 
     material_domain_list: list[MaterialDomain] = Field(default=None, repr=False)
@@ -390,7 +390,5 @@ def run_subprocess(cmd, cwd):
 
     if return_code:
         raise RuntimeError(
-            "Simulation has failed. "
-            "Exit with error: \n"
-            f"{res.stderr.decode('utf-8')}"
+            f"Simulation has failed. Exit with error: \n{res.stderr.decode('utf-8')}"
         )

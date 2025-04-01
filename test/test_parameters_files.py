@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 from pydantic import ValidationError
-from mammos_mmag.parameters import Parameters
+from mammos_mumag.parameters import Parameters
 
 
 def test_m_vect():
@@ -41,9 +41,9 @@ def test_h_vect():
 def test_parameters_file(DATA, tmp_path):
     """Test parameters files i/o.
 
-    This test defines a :py:class:`~mammos_mmag.parameters.Parameters` instance.
+    This test defines a :py:class:`~mammos_mumag.parameters.Parameters` instance.
     Then it is written to `p2` and `yaml` formats.
-    Then two new empty :py:class:`~mammos_mmag.parameters.Parameters`
+    Then two new empty :py:class:`~mammos_mumag.parameters.Parameters`
     instances are created reading, respectively, the `p2` and `yaml files.
     The first parameter instance is tested with the other two, by checking if each
     parameter is exactly equal or sufficiently close to the original one.

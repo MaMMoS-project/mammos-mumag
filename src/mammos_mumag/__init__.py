@@ -1,4 +1,4 @@
-"""mammos_mmag.
+"""mammos_mumag.
 
 MaMMoS micromagnetic simulation software.
 """

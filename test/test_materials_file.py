@@ -2,16 +2,16 @@
 
 import numpy as np
 
-from mammos_mmag.materials import Materials
+from mammos_mumag.materials import Materials
 
 
 def test_materials_file(DATA, tmp_path):
     """Test materials files i/o.
 
-    This test defines a :py:class:`~mammos_mmag.materials.Materials` instance
+    This test defines a :py:class:`~mammos_mumag.materials.Materials` instance
     with a certain :py:attr:`domains` attribute. Then the material is written
     to `krn` and `yaml` formats.
-    Then it creates two new empty :py:class:`~mammos_mmag.materials.Materials`
+    Then it creates two new empty :py:class:`~mammos_mumag.materials.Materials`
     instances that read, respectively, the `krn` and `yaml files.
     The first materials is tested with the other two, by checking if each
     material in each domain is sufficiently close to the original one.

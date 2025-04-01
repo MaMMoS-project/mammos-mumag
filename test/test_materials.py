@@ -2,7 +2,7 @@
 
 import meshio
 import numpy as np
-from mammos_mmag.simulation import Simulation
+from mammos_mumag.simulation import Simulation
 
 
 def test_materials(DATA, tmp_path):

@@ -135,7 +135,7 @@ class Materials:
         :type fname: str or pathlib.Path
         """
         env = Environment(
-            loader=PackageLoader("mammos_mmag"),
+            loader=PackageLoader("mammos_mumag"),
             autoescape=select_autoescape(),
         )
         template = env.get_template("krn.jinja")

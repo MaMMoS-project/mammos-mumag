@@ -1,7 +1,7 @@
 # Info
-`mammos-mmag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
+`mammos-mumag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
 
-This package allows users to use the library `mammos_mmag` in Python and includes some useful scripts for the use and development of `mammos-mmag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
+This package allows users to use the library `mammos_mumag` in Python and includes some useful scripts for the use and development of `mammos-mumag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
 
 
 # Installation with conda-pip (discouraged)
@@ -15,7 +15,7 @@ The package `esys-escript` must be installed from `conda-forge` (see [here](http
 conda install cuda -c nvidia
 ```
 
-Then, in the same environment where the two previous packages have been installed, we can install `mammos_mmag` with pip by running
+Then, in the same environment where the two previous packages have been installed, we can install `mammos_mumag` with pip by running
 ```console
 pip install .
 ```
@@ -24,7 +24,7 @@ pip install .
 
 
 # Installation & usage with Pixi (recommended)
-Run `pixi shell` to activate a container where `mmag` is installed.
+Run `pixi shell` in any subdirectory to activate a container where this package is installed.
 This package comes with several pixi tasks (in alphabetical order):
 - `clean`
 - `docs`

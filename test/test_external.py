@@ -2,7 +2,7 @@
 
 import numpy as np
 import polars as pl
-from mammos_mmag.simulation import Simulation
+from mammos_mumag.simulation import Simulation
 
 
 def test_external(DATA, tmp_path):
