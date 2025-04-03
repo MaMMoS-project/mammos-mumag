@@ -58,6 +58,9 @@ test = [
   "polars",
   "pytest",
 ]
+pre-commit = [
+  "pre-commit",
+]
 
 # pixi
 [tool.pixi.project]
@@ -76,6 +79,7 @@ format = { features = ["format"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 examples = { features = ["examples"], solve-group = "default" }
+pre-commit = { features = ["pre-commit"], solve-group = "default" }
 
 [tool.pixi.feature.format.tasks]
 lint = "ruff check"
@@ -91,6 +95,9 @@ test = "pytest -v"
 
 [tool.pixi.feature.examples.tasks]
 examples = "jupyter-lab docs/source/notebooks/"
+
+[tool.pixi.feature.pre-commit.tasks]
+pre-commit-all-files ="pre-commit run --all-files"
 
 [tool.ruff]
 target-version = "py39"

@@ -31,6 +31,7 @@ This package comes with several pixi tasks (in alphabetical order):
 - `docs-clean`
 - `format`
 - `lint`
+- `pre-commit`
 - `test`
 
 To run a task, execute `pixi run <task_name>` or `pixi r <task_name>`.
@@ -46,6 +47,20 @@ The task (`test`) executes tests found in the [`test`](test/) directory.
 
 ## Docs tasks
 The tasks (`docs`, `docs-clean`) manage the documentation. In particular, `docs` builds the html docs, while `docs-clean` cleans the current build.
+
+
+## Pre-commit task
+The task to execute pre-commit can be run by the user to check that committed changes adhere to the formatting and linting rules.
+If the pre-commit hook is installed, the command `pre-commit` is also executed automatically every time `git commit` is called, but one needs to activate the right environment first.
+This is done with
+```console
+pixi shell -e pre-commit
+```
+
+> *pre-commit* has to be installed after the first activation of the environment. To do this, run
+> ```console
+> pixi run pre-commit install
+> ```
 
 
 ## Working examples
