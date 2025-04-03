@@ -57,7 +57,7 @@ This is done with
 pixi shell -e pre-commit
 ```
 
-> *pre-commit* has to be installed first. Run
+> *pre-commit* has to be installed after the first activation of the environment. To do this, run
 > ```console
 > pixi run pre-commit install
 > ```
