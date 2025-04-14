@@ -1,0 +1,7 @@
+MAP FINITE ELEMENT BACKEND (esys-escript) TO JAX.
+Memory before escript2jax: 173.89453125 MB.
+Memory after  escript2jax: 464.859375 MB.
+Memory after garbage collection: 464.859375 MB.
+Timing and statistics.
+elapsed time: 0.2031702995300293
+function_calls: 1

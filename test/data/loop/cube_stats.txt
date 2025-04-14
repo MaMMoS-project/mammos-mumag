@@ -1,0 +1,3 @@
+Memory before escript2jax: 176.140625 MB.
+Memory after  escript2jax: 426.890625 MB.
+Memory after garbage collection: 426.890625 MB.
