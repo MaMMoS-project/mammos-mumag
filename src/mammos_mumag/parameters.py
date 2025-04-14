@@ -20,8 +20,8 @@ class Parameters:
     :type size: float
     :param scale: Scale of the mesh, defaults to 0.
     :type scale: float
-    :param state: Name of the state. Scripts recognize the strings `vortex`, `flower`,
-        `vortex`, and `twisted`. Other strings are interpreted as the default case.
+    :param state: Name of the state. Scripts recognize the strings `flower`, `vortex`,
+        `twisted`, and `random`. Other strings are interpreted as the default case.
         Defaults to "mxyz".
     :type state: str
     :param m_vect: Magnetization field :math:`\mathbf{m}`.
