@@ -94,6 +94,8 @@ def read_params(name):
       state_id = 2      
     if state.lower()=='twisted':
       state_id = 3   
+    if state.lower()=='random':
+      state_id = 4   
     h = normalize([float(field["hx"]), float(field["hy"]), float(field["hz"])])
     hstart, hfinal, hstep = (
         float(field["hstart"]),

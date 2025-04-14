@@ -6,6 +6,9 @@ import sys
 from materials import Materials
 from tools import read_params
 
+def randomM(domain):
+  fs = e.Solution(domain)
+  return e.normalize(2.0*e.RandomData((3,),fs,1)-1.0)
 
 def getVortex(domain):
     m = e.Vector(0, e.Solution(domain))
@@ -58,6 +61,9 @@ def getM(mask, v, state=None):
         # print('create flower state')
     elif state == 3:
         m = mask * getTwisted(domain)
+    elif state == 4:
+        m = mask * randomM(domain)
+        print('create random magnetization')
     else:
         m = mask * e.Vector(v, e.Solution(domain))
         # print('create uniformly magnetised state')
@@ -97,8 +103,10 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript magnetization.py modelname")
 
-    params = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    m, _, _, state_id = mag_pars
+
     materials = Materials(name)
-    m = getM(e.wherePositive(materials.meas), params[0], params[1])
+    m = getM(e.wherePositive(materials.meas), m, state_id)
     i = 0
     saveVTK(name + f".{i:04}", tags=materials.get_tags(), m=m)

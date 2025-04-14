@@ -46,6 +46,10 @@ def alpha_init(f0,      # energy of previous iteration
                  lambda t: t,
                  term1)
     term2 = 2.0*(f-f0)/gd
+    term2 = lax.cond(term2 < 0,
+                 lambda t: 1.0e30,        # use high value, select term1 afterwards
+                 lambda t: t,
+                 term2)
     # jax.debug.print('initial step length {a} {b} {x}',a=term1,b=term2,x=term1<o*term2)
     return lax.cond(term1 < o*term2,
                     lambda _: term1,
@@ -95,7 +99,7 @@ def line_search(x,      # current magnetization
     rho=0.5
     c=1e-4
     delta=0.1
-    eps=1e-6
+    eps=1e-14
     max_iter=20
     
     h  = compute_h(x, d)
@@ -134,7 +138,7 @@ def line_search(x,      # current magnetization
 # Algorithm 4 Computer Physics Communications 235 (2019) 179–186
 @partial(jit, static_argnums=(1,6,7,))
 def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_inv):
-    iter_max = 10000
+    iter_max = 100000
     
     f0 = np.finfo(x.dtype).max
     f, g, alt_args, stats = func(x, func_args, alt_args, stats)
