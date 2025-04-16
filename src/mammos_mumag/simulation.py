@@ -11,7 +11,6 @@ import json
 import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
-import yaml
 
 from .materials import MaterialDomain, Materials
 from .parameters import Parameters
@@ -96,13 +95,19 @@ class Simulation:
         with open(outdir / "info.json", "w") as file:
             json.dump(
                 {
-                    "datetime": datetime.datetime.now(datetime.UTC).astimezone().isoformat(timespec="seconds"),
+                    "datetime": datetime.datetime.now(datetime.UTC)
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
                     "mammos_mumag info": {
-                        "git hash": subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip(),
+                        "git hash": subprocess.check_output(
+                            ["git", "rev-parse", "HEAD"]
+                        )
+                        .decode("ascii")
+                        .strip(),
                         "version": mumag_version,
-                    }
+                    },
                 },
-                file
+                file,
             )
 
     def run_exani(self, outdir="exani", name="out"):
