@@ -6,6 +6,7 @@ import shlex
 import shutil
 import subprocess
 import datetime
+import json
 
 import pathlib
 from pydantic import Field
@@ -93,7 +94,7 @@ class Simulation:
         )
         run_subprocess(cmd, cwd=outdir)
         with open(outdir / "info.json", "w") as file:
-            yaml.dump(
+            json.dump(
                 {
                     "datetime": datetime.datetime.now(datetime.UTC).astimezone().isoformat(timespec="seconds"),
                     "mammos_mumag info": {
