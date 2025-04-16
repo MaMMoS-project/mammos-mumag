@@ -5,7 +5,7 @@ import os
 import shlex
 import shutil
 import subprocess
-from time import ctime
+import datetime
 
 import pathlib
 from pydantic import Field
@@ -95,7 +95,7 @@ class Simulation:
         with open(outdir / "info.json", "w") as file:
             yaml.dump(
                 {
-                    "datetime": ctime(),
+                    "datetime": datetime.datetime.now(datetime.UTC).astimezone().isoformat(timespec="seconds"),
                     "mammos_mumag info": {
                         "git hash": subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip(),
                         "version": mumag_version,
