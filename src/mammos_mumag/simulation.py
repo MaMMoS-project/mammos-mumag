@@ -96,7 +96,7 @@ class Simulation:
             yaml.dump(
                 {
                     "datetime": ctime(),
-                    "mammus_mumag info": {
+                    "mammos_mumag info": {
                         "git hash": subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip(),
                         "version": mumag_version,
                     }
