@@ -98,14 +98,12 @@ class Simulation:
                     "datetime": datetime.datetime.now(datetime.UTC)
                     .astimezone()
                     .isoformat(timespec="seconds"),
-                    "mammos_mumag info": {
-                        "git hash": subprocess.check_output(
-                            ["git", "rev-parse", "HEAD"]
-                        )
-                        .decode("ascii")
-                        .strip(),
-                        "version": mumag_version,
-                    },
+                    "mammos_mumag_git_hash": subprocess.check_output(
+                        ["git", "rev-parse", "HEAD"]
+                    )
+                    .decode("ascii")
+                    .strip(),
+                    "mammos_mumag_version": mumag_version,
                 },
                 file,
             )
