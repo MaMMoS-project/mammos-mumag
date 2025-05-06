@@ -1,5 +1,7 @@
 name: Publish Python distribution to TestPyPI
 
+on: push
+
 jobs:
 
   test:
@@ -16,6 +18,7 @@ jobs:
         run: pixi run test
       - name: Run lint and format
         run: pixi run pre-commit-all-files
+
   build:
     name: Build distribution
     runs-on: ubuntu-latest
