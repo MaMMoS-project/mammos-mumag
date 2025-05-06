@@ -2138,6 +2138,8 @@ packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
   md5: d7c89558ba9fa0495403155b64376d81
+  arch: x86_64
+  platform: linux
   license: None
   purls: []
   size: 2562
@@ -2151,6 +2153,8 @@ packages:
   - libgomp >=7.5.0
   constrains:
   - openmp_impl 9999
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -2167,6 +2171,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   license_family: GPL
   purls: []
@@ -2271,6 +2277,8 @@ packages:
   md5: d9c69a24ad678ffce24c6543a0176b00
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later
   license_family: GPL
   purls: []
@@ -2377,6 +2385,8 @@ packages:
   md5: 29782348a527eda3ecfc673109d28e93
   depends:
   - binutils_impl_linux-64 >=2.43,<2.44.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only
   license_family: GPL
   purls: []
@@ -2388,6 +2398,8 @@ packages:
   depends:
   - ld_impl_linux-64 2.43 h712a8e2_4
   - sysroot_linux-64
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only
   license_family: GPL
   purls: []
@@ -2398,6 +2410,8 @@ packages:
   md5: c87e146f5b685672d4aa6b527c6d3b5e
   depends:
   - binutils_impl_linux-64 2.43 h4bf12b8_4
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only
   license_family: GPL
   purls: []
@@ -2420,6 +2434,8 @@ packages:
   - libbrotlidec 1.1.0 hb9d3cd8_2
   - libbrotlienc 1.1.0 hb9d3cd8_2
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -2433,6 +2449,8 @@ packages:
   - libbrotlidec 1.1.0 hb9d3cd8_2
   - libbrotlienc 1.1.0 hb9d3cd8_2
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -2444,6 +2462,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: bzip2-1.0.6
   license_family: BSD
   purls: []
@@ -2455,6 +2475,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -2467,6 +2489,8 @@ packages:
   - binutils
   - gcc
   - gcc_linux-64 13.*
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -2501,6 +2525,8 @@ packages:
   - pycparser
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls:
@@ -2547,6 +2573,8 @@ packages:
   - numpy >=1.23
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -2576,6 +2604,8 @@ packages:
   - python_abi 3.11.* *_cp311
   constrains:
   - __glibc >=2.17
+  arch: x86_64
+  platform: linux
   license: Apache-2.0 AND BSD-3-Clause AND PSF-2.0 AND MIT
   license_family: BSD
   purls:
@@ -2612,6 +2642,8 @@ packages:
   - cuda-nvprof 12.9.19.*
   - cuda-nvtx 12.9.19.*
   - cuda-sanitizer-api 12.9.27.*
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 20560
@@ -2645,6 +2677,8 @@ packages:
   md5: 452ec0ccbf67954a0a03c4ec0b1fa7a5
   depends:
   - cuda-version >=12.9,<12.10.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 28214
@@ -2658,6 +2692,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 23165
@@ -2673,6 +2709,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 23652
@@ -2698,6 +2736,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 23253
@@ -2729,6 +2769,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 244544
@@ -2741,6 +2783,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 1844732
@@ -2756,6 +2800,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - cuda-cupti-static >=12.9.19
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 4614575
@@ -2768,6 +2814,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 217225
@@ -2781,6 +2829,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 23030
@@ -2803,6 +2853,8 @@ packages:
   - gmp >=6.3.0,<7.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 387296
@@ -2824,6 +2876,8 @@ packages:
   - libnvfatbin 12.9.19.*
   - libnvjitlink 12.9.41.*
   - libnvjpeg 12.4.0.16.*
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 20555
@@ -2848,6 +2902,8 @@ packages:
   - libnvfatbin-dev 12.9.19.*
   - libnvjitlink-dev 12.9.41.*
   - libnvjpeg-dev 12.4.0.16.*
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 20687
@@ -2857,6 +2913,8 @@ packages:
   md5: f889035891deca8f431b985af3b94fd0
   depends:
   - cuda-version >=12.9,<12.10.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 118694470
@@ -2868,6 +2926,8 @@ packages:
   - cuda-nvcc_linux-64 12.9.41.*
   - gcc_linux-64
   - gxx_linux-64
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 24877
@@ -2898,6 +2958,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   constrains:
   - gcc_impl_linux-64 >=6,<15.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 26481
@@ -2914,6 +2976,8 @@ packages:
   - libstdcxx >=12
   constrains:
   - gcc_impl_linux-64 >=6,<15.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 27425139
@@ -2929,6 +2993,8 @@ packages:
   - cuda-nvcc-impl 12.9.41.*
   - cuda-nvcc-tools 12.9.41.*
   - sysroot_linux-64 >=2.17,<3.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 26841
@@ -2941,6 +3007,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 5517513
@@ -2953,6 +3021,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 143121
@@ -2966,6 +3036,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 2631239
@@ -2978,6 +3050,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 71188
@@ -2990,6 +3064,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 67173643
@@ -3005,6 +3081,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - cuda-nvrtc-static >=12.9.41
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 35831
@@ -3017,6 +3095,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 29222
@@ -3038,6 +3118,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=12
   - libstdcxx >=12
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 21404496
@@ -3050,6 +3132,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=12
   - libstdcxx >=12
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 24248207
@@ -3064,6 +3148,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 117899738
@@ -3077,6 +3163,8 @@ packages:
   - libgcc >=13
   - libstdcxx >=13
   - ocl-icd >=2.3.3,<3.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 30747
@@ -3090,6 +3178,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 97409
@@ -3100,6 +3190,8 @@ packages:
   depends:
   - cuda-cudart-dev
   - cuda-version >=12.9,<12.10.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 23464
@@ -3122,6 +3214,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 9174860
@@ -3147,6 +3241,8 @@ packages:
   - cuda-command-line-tools 12.9.0.*
   - cuda-visual-tools 12.9.0.*
   - gds-tools 1.14.0.30.*
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 20361
@@ -3170,6 +3266,8 @@ packages:
   - cuda-nvml-dev 12.9.40.*
   - cuda-nvvp 12.9.19.*
   - nsight-compute 2025.2.0.11.*
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 20491
@@ -3181,6 +3279,8 @@ packages:
   - c-compiler 1.9.0 h2b85faf_0
   - gxx
   - gxx_linux-64 13.*
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3204,6 +3304,8 @@ packages:
   - expat >=2.4.2,<3.0a0
   - libgcc-ng >=9.4.0
   - libglib >=2.70.2,<3.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later
   license_family: GPL
   purls: []
@@ -3272,6 +3374,8 @@ packages:
   - scipy
   - suitesparse >=7.7.0,<8.0a0
   - sympy
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: APACHE
   purls: []
@@ -3307,6 +3411,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libexpat 2.7.0 h5888daf_0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -3377,6 +3483,8 @@ packages:
   - libgcc >=13
   - libuuid >=2.38.1,<3.0a0
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -3416,6 +3524,8 @@ packages:
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
   - unicodedata2 >=15.1.0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls:
@@ -3435,6 +3545,8 @@ packages:
   depends:
   - libfreetype 2.13.3 ha770c72_1
   - libfreetype6 2.13.3 h48d6fc4_1
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-only OR FTL
   purls: []
   size: 172450
@@ -3444,6 +3556,8 @@ packages:
   md5: d92e51bf4b6bdbfe45e5884fb0755afe
   depends:
   - gcc_impl_linux-64 13.3.0.*
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3460,6 +3574,8 @@ packages:
   - libsanitizer 13.3.0 he8ea267_2
   - libstdcxx >=13.3.0
   - sysroot_linux-64
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -3472,6 +3588,8 @@ packages:
   - binutils_linux-64
   - gcc_impl_linux-64 13.3.0.*
   - sysroot_linux-64
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3487,6 +3605,8 @@ packages:
   - libgcc >=13
   - libnuma >=2.0.18,<3.0a0
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 39629798
@@ -3497,6 +3617,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libstdcxx-ng >=12
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later OR LGPL-3.0-or-later
   purls: []
   size: 460055
@@ -3512,6 +3634,8 @@ packages:
   - mpfr >=4.2.1,<5.0a0
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: LGPL-3.0-or-later
   license_family: LGPL
   purls:
@@ -3524,6 +3648,8 @@ packages:
   depends:
   - gcc 13.3.0.*
   - gxx_impl_linux-64 13.3.0.*
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3537,6 +3663,8 @@ packages:
   - libstdcxx-devel_linux-64 13.3.0 hc03c837_102
   - sysroot_linux-64
   - tzdata
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -3550,6 +3678,8 @@ packages:
   - gcc_linux-64 13.3.0 hc28eda2_10
   - gxx_impl_linux-64 13.3.0.*
   - sysroot_linux-64
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3639,6 +3769,8 @@ packages:
   - libstdcxx >=13
   - libzlib >=1.3.1,<2.0a0
   - openssl >=3.4.0,<4.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -3717,6 +3849,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc-ng >=12
   - libstdcxx-ng >=12
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4426,6 +4560,8 @@ packages:
   md5: 30186d27e2c9fa62b45fb1476b7200e3
   depends:
   - libgcc-ng >=10.3.0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 117831
@@ -4439,6 +4575,8 @@ packages:
   - libstdcxx >=13
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -4455,6 +4593,8 @@ packages:
   - libgcc-ng >=12
   - libstdcxx-ng >=12
   - openssl >=3.3.1,<4.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4468,6 +4608,8 @@ packages:
   - libgcc >=13
   - libjpeg-turbo >=3.0.0,<4.0a0
   - libtiff >=4.7.0,<4.8.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4480,6 +4622,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   constrains:
   - binutils_impl_linux-64 2.43
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only
   license_family: GPL
   purls: []
@@ -4492,6 +4636,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: Apache
   purls: []
@@ -4503,6 +4649,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libstdcxx-ng >=12
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -4517,6 +4665,8 @@ packages:
   - libgfortran
   - libgcc >=13
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4535,6 +4685,8 @@ packages:
   - blas =2.131=openblas
   - mkl <2025
   - libcblas =3.9.0=31*_openblas
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4554,6 +4706,8 @@ packages:
   - zstd >=1.5.6,<1.6.0a0
   constrains:
   - boost-cpp =1.84.0
+  arch: x86_64
+  platform: linux
   license: BSL-1.0
   purls: []
   size: 2826258
@@ -4571,6 +4725,8 @@ packages:
   constrains:
   - py-boost <0.0a0
   - boost =1.84.0
+  arch: x86_64
+  platform: linux
   license: BSL-1.0
   purls: []
   size: 123102
@@ -4581,6 +4737,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4593,6 +4751,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libbrotlicommon 1.1.0 hb9d3cd8_2
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4605,6 +4765,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libbrotlicommon 1.1.0 hb9d3cd8_2
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4617,6 +4779,8 @@ packages:
   - libgcc >=13
   - __glibc >=2.17,<3.0.a0
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 26913
@@ -4628,6 +4792,8 @@ packages:
   - libgcc >=13
   - __glibc >=2.17,<3.0.a0
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4640,6 +4806,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - attr >=2.5.1,<2.6.0a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4655,6 +4823,8 @@ packages:
   - liblapacke =3.9.0=31*_openblas
   - liblapack =3.9.0=31*_openblas
   - blas =2.131=openblas
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4667,6 +4837,8 @@ packages:
   - libgcc >=13
   - __glibc >=2.17,<3.0.a0
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4688,6 +4860,8 @@ packages:
   - libccolamd >=3.3.4,<4.0a0
   - libblas >=3.9.0,<4.0a0
   - libcamd >=3.3.3,<4.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later AND GPL-2.0-or-later AND Apache-2.0
   purls: []
   size: 990886
@@ -4699,6 +4873,8 @@ packages:
   - libgcc >=13
   - __glibc >=2.17,<3.0.a0
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -4713,6 +4889,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 467452297
@@ -4730,6 +4908,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcublas-static >=12.9.0.13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 91998
@@ -4742,6 +4922,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 161845949
@@ -4757,6 +4939,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcufft-static >=11.4.0.6
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 34188
@@ -4770,6 +4954,8 @@ packages:
   - libgcc >=13
   - libstdcxx >=13
   - rdma-core >=55.0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 971139
@@ -4785,6 +4971,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcufile-static >=1.14.0.30
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 36367
@@ -4797,6 +4985,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 46161381
@@ -4812,6 +5002,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcurand-static >=10.3.10.19
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 253530
@@ -4828,6 +5020,8 @@ packages:
   - libzlib >=1.3.1,<2.0a0
   - openssl >=3.4.1,<4.0a0
   - zstd >=1.5.7,<1.6.0a0
+  arch: x86_64
+  platform: linux
   license: curl
   license_family: MIT
   purls: []
@@ -4844,6 +5038,8 @@ packages:
   - libgcc >=13
   - libnvjitlink >=12.9.41,<12.10.0a0
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 201753979
@@ -4859,6 +5055,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcusolver-static >=11.7.4.40
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 60998
@@ -4872,6 +5070,8 @@ packages:
   - libgcc >=13
   - libnvjitlink >=12.9.41,<12.10.0a0
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 208851709
@@ -4888,6 +5088,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libcusparse-static >=12.5.9.5
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 52753
@@ -4900,6 +5102,8 @@ packages:
   - libgcc >=13
   - _openmp_mutex >=4.5
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 113979
@@ -4910,6 +5114,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4923,6 +5129,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - ncurses >=6.5,<7.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -4933,6 +5141,8 @@ packages:
   md5: 172bf1cd1ff8629f2b1179945ed45055
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -4946,6 +5156,8 @@ packages:
   - libgcc >=13
   constrains:
   - expat 2.7.0.*
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4957,6 +5169,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -4967,6 +5181,8 @@ packages:
   md5: 51f5be229d83ecd401fb369ab96ae669
   depends:
   - libfreetype6 >=2.13.3
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-only OR FTL
   purls: []
   size: 7693
@@ -4981,6 +5197,8 @@ packages:
   - libzlib >=1.3.1,<2.0a0
   constrains:
   - freetype >=2.13.3
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-only OR FTL
   purls: []
   size: 380134
@@ -4994,6 +5212,8 @@ packages:
   constrains:
   - libgomp 14.2.0 h767d61c_2
   - libgcc-ng ==14.2.0=*_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5014,6 +5234,8 @@ packages:
   md5: a2222a6ada71fb478682efe483ce0f92
   depends:
   - libgcc 14.2.0 h767d61c_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5026,6 +5248,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libgpg-error >=1.51,<2.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 586185
@@ -5037,6 +5261,8 @@ packages:
   - libgfortran5 14.2.0 hf1ad2bd_2
   constrains:
   - libgfortran-ng ==14.2.0=*_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5047,6 +5273,8 @@ packages:
   md5: 4056c857af1a99ee50589a941059ec55
   depends:
   - libgfortran 14.2.0 h69a702a_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5060,6 +5288,8 @@ packages:
   - libgcc >=14.2.0
   constrains:
   - libgfortran 14.2.0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5077,6 +5307,8 @@ packages:
   - pcre2 >=10.45,<10.46.0a0
   constrains:
   - glib 2.84.1 *_1
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 3939065
@@ -5086,6 +5318,8 @@ packages:
   md5: 434ca7e50e40f4918ab701e3facd59a0
   depends:
   - __glibc >=2.17,<3.0.a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-libglvnd
   purls: []
   size: 132463
@@ -5095,6 +5329,8 @@ packages:
   md5: 06d02030237f4d5b3d9a7e7d348fe3c6
   depends:
   - __glibc >=2.17,<3.0.a0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5108,6 +5344,8 @@ packages:
   - libgcc >=13
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-only
   purls: []
   size: 312184
@@ -5118,6 +5356,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-only
   purls: []
   size: 713084
@@ -5130,6 +5370,8 @@ packages:
   - libgcc >=13
   constrains:
   - jpeg <0.0.0a
+  arch: x86_64
+  platform: linux
   license: IJG AND BSD-3-Clause AND Zlib
   purls: []
   size: 628947
@@ -5152,6 +5394,8 @@ packages:
   - libblas >=3.9.0,<4.0a0
   - libbtf >=2.3.2,<3.0a0
   - libccolamd >=3.3.4,<4.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 131775
@@ -5166,6 +5410,8 @@ packages:
   - libcblas =3.9.0=31*_openblas
   - liblapacke =3.9.0=31*_openblas
   - blas =2.131=openblas
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5178,6 +5424,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 23391
@@ -5188,6 +5436,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: 0BSD
   purls: []
   size: 112709
@@ -5204,6 +5454,8 @@ packages:
   - libstdcxx >=13
   - libzlib >=1.3.1,<2.0a0
   - openssl >=3.3.2,<4.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -5215,6 +5467,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   license_family: LGPL
   purls: []
@@ -5228,6 +5482,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 175330836
@@ -5243,6 +5499,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libnpp-static >=12.4.0.27
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 462774
@@ -5252,6 +5510,8 @@ packages:
   md5: 30fd6e37fe21f86f4bd26d6ee73eeec7
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-only
   license_family: GPL
   purls: []
@@ -5262,6 +5522,8 @@ packages:
   md5: a263760479dbc7bc1f3df12707bd90dc
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-only
   purls: []
   size: 43346
@@ -5274,6 +5536,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 818679
@@ -5289,6 +5553,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - liblibnvfatbin-static >=12.9.19
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 27254
@@ -5301,6 +5567,8 @@ packages:
   - cuda-version >=12,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 30491008
@@ -5316,6 +5584,8 @@ packages:
   - libstdcxx >=13
   constrains:
   - libnvjitlink-static >=12.9.41
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 26563
@@ -5328,6 +5598,8 @@ packages:
   - cuda-version >=12.9,<12.10.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 3582527
@@ -5341,6 +5613,8 @@ packages:
   - libnvjpeg 12.4.0.16 h5888daf_0
   constrains:
   - libnvjpeg-static >=12.4.0.16
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 32764
@@ -5355,6 +5629,8 @@ packages:
   - libgfortran5 >=14.2.0
   constrains:
   - openblas >=0.3.29,<0.3.30.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5366,6 +5642,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libglvnd 1.7.0 ha4b6fd6_2
+  arch: x86_64
+  platform: linux
   license: LicenseRef-libglvnd
   purls: []
   size: 50757
@@ -5382,6 +5660,8 @@ packages:
   - libsuitesparseconfig >=7.10.1,<8.0a0
   - libblas >=3.9.0,<4.0a0
   - libumfpack >=6.3.5,<7.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-or-later
   license_family: GPL
   purls: []
@@ -5394,6 +5674,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: zlib-acknowledgement
   purls: []
   size: 288701
@@ -5405,6 +5687,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later
   license_family: GPL
   purls: []
@@ -5417,6 +5701,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13.3.0
   - libstdcxx >=13.3.0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5434,6 +5720,8 @@ packages:
   - libsuitesparseconfig >=7.10.1,<8.0a0
   - gmp >=6.3.0,<7.0a0
   - mpfr >=4.2.1,<5.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.0-or-later
   license_family: LGPL
   purls: []
@@ -5451,6 +5739,8 @@ packages:
   - libblas >=3.9.0,<4.0a0
   - liblapack >=3.9.0,<4.0a0
   - libsuitesparseconfig >=7.10.1,<8.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later
   license_family: GPL
   purls: []
@@ -5463,6 +5753,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: Unlicense
   purls: []
   size: 918664
@@ -5475,6 +5767,8 @@ packages:
   - libgcc >=13
   - libzlib >=1.3.1,<2.0a0
   - openssl >=3.5.0,<4.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5486,6 +5780,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc 14.2.0 h767d61c_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5506,6 +5802,8 @@ packages:
   md5: c75da67f045c2627f59e6fcb5f4e3a9b
   depends:
   - libstdcxx 14.2.0 h8f9b012_2
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only WITH GCC-exception-3.1
   license_family: GPL
   purls: []
@@ -5521,6 +5819,8 @@ packages:
   - libgfortran
   - libgcc >=13
   - _openmp_mutex >=4.5
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5537,6 +5837,8 @@ packages:
   - liblzma >=5.6.4,<6.0a0
   - lz4-c >=1.10.0,<1.11.0a0
   - zstd >=1.5.7,<1.6.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 488733
@@ -5555,6 +5857,8 @@ packages:
   - libwebp-base >=1.5.0,<2.0a0
   - libzlib >=1.3.1,<2.0a0
   - zstd >=1.5.7,<1.6.0a0
+  arch: x86_64
+  platform: linux
   license: HPND
   purls: []
   size: 429381
@@ -5566,6 +5870,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libcap >=2.75,<2.76.0a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 144039
@@ -5580,6 +5886,8 @@ packages:
   - libcholmod >=5.3.1,<6.0a0
   - libblas >=3.9.0,<4.0a0
   - libamd >=3.3.3,<4.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-2.0-or-later
   license_family: GPL
   purls: []
@@ -5590,6 +5898,8 @@ packages:
   md5: 40b61aab5c7ba9ff276c41cfffe6b80b
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5603,6 +5913,8 @@ packages:
   - libgcc >=13
   constrains:
   - libwebp 1.5.0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -5617,6 +5929,8 @@ packages:
   - pthread-stubs
   - xorg-libxau >=1.0.11,<2.0a0
   - xorg-libxdmcp
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -5627,6 +5941,8 @@ packages:
   md5: 5aa797f8787fe7a17d1b0821485b5adc
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later
   purls: []
   size: 100393
@@ -5642,6 +5958,8 @@ packages:
   - libxml2 >=2.13.7,<2.14.0a0
   - xkeyboard-config
   - xorg-libxau >=1.0.12,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT/X11 Derivative
   license_family: MIT
   purls: []
@@ -5652,6 +5970,8 @@ packages:
   md5: c6274d38be57ac8b059b8e33d406aaf6
   depends:
   - libgcc-ng >=12
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -5667,6 +5987,8 @@ packages:
   - libiconv >=1.18,<2.0a0
   - liblzma >=5.8.1,<6.0a0
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -5680,6 +6002,8 @@ packages:
   - libgcc >=13
   constrains:
   - zlib 1.3.1 *_2
+  arch: x86_64
+  platform: linux
   license: Zlib
   license_family: Other
   purls: []
@@ -5695,6 +6019,8 @@ packages:
   - clangdev 8.0.1|8.0.1.*
   - llvmdev 8.0.1|8.0.1.*
   - openmp 8.0.1|8.0.1.*
+  arch: x86_64
+  platform: linux
   license: NCSA
   purls: []
   size: 449441
@@ -5706,6 +6032,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -5775,6 +6103,8 @@ packages:
   - python_abi 3.11.* *_cp311
   - qhull >=2020.2,<2020.3.0a0
   - tk >=8.6.13,<8.7.0a0
+  arch: x86_64
+  platform: linux
   license: PSF-2.0
   license_family: PSF
   purls:
@@ -5817,6 +6147,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: APACHE
   purls: []
@@ -5864,6 +6196,8 @@ packages:
   - gmp >=6.3.0,<7.0a0
   - libgcc >=13
   - mpfr >=4.2.1,<5.0a0
+  arch: x86_64
+  platform: linux
   license: LGPL-3.0-or-later
   license_family: LGPL
   purls: []
@@ -5876,6 +6210,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - gmp >=6.3.0,<7.0a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: LGPL-3.0-only
   license_family: LGPL
   purls: []
@@ -6027,6 +6363,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: X11 AND BSD-3-Clause
   purls: []
   size: 891641
@@ -6127,6 +6465,8 @@ packages:
   - xorg-libxrender >=0.9.12,<0.10.0a0
   - xorg-libxtst >=1.2.5,<1.3.0a0
   - xorg-libxtst >=1.2.5,<2.0a0
+  arch: x86_64
+  platform: linux
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   purls: []
   size: 333919420
@@ -6138,6 +6478,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: MPL-2.0
   license_family: MOZILLA
   purls: []
@@ -6153,6 +6495,8 @@ packages:
   - libstdcxx >=13
   - libzlib >=1.3.1,<2.0a0
   - nspr >=4.36,<5.0a0
+  arch: x86_64
+  platform: linux
   license: MPL-2.0
   license_family: MOZILLA
   purls: []
@@ -6171,6 +6515,8 @@ packages:
   - python_abi 3.11.* *_cp311
   constrains:
   - numpy-base <0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -6244,6 +6590,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - opencl-headers >=2024.10.24
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -6256,6 +6604,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: APACHE
   purls: []
@@ -6271,6 +6621,8 @@ packages:
   - libstdcxx >=13
   - libtiff >=4.7.0,<4.8.0a0
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-2-Clause
   license_family: BSD
   purls: []
@@ -6281,6 +6633,8 @@ packages:
   md5: b35241079152e5cc891c99368395b2c6
   depends:
   - llvm-openmp 8.0.1 hc9558a2_0
+  arch: x86_64
+  platform: linux
   license: NCSA
   purls: []
   size: 8198
@@ -6292,6 +6646,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - ca-certificates
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: Apache
   purls: []
@@ -6356,6 +6712,8 @@ packages:
   - bzip2 >=1.0.8,<2.0a0
   - libgcc >=13
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
@@ -6389,6 +6747,8 @@ packages:
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
   - tk >=8.6.13,<8.7.0a0
+  arch: x86_64
+  platform: linux
   license: HPND
   purls:
   - pkg:pypi/pillow?source=hash-mapping
@@ -6475,6 +6835,8 @@ packages:
   - sqlite
   constrains:
   - proj4 ==999999999999
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -6531,6 +6893,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -6614,6 +6978,8 @@ packages:
   - proj >=9.6.0,<9.7.0a0
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls:
@@ -6663,6 +7029,8 @@ packages:
   - tzdata
   constrains:
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: Python-2.0
   purls: []
   size: 30545496
@@ -6735,6 +7103,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc-ng >=12
   - libstdcxx-ng >=12
+  arch: x86_64
+  platform: linux
   license: LicenseRef-Qhull
   purls: []
   size: 552937
@@ -6749,6 +7119,8 @@ packages:
   - libstdcxx >=13
   - libsystemd0 >=257.4
   - libudev1 >=257.4
+  arch: x86_64
+  platform: linux
   license: Linux-OpenIB
   license_family: BSD
   purls: []
@@ -6760,6 +7132,8 @@ packages:
   depends:
   - libgcc >=13
   - ncurses >=6.5,<7.0a0
+  arch: x86_64
+  platform: linux
   license: GPL-3.0-only
   license_family: GPL
   purls: []
@@ -6840,6 +7214,8 @@ packages:
   - numpy >=1.23.5
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -6855,6 +7231,8 @@ packages:
   - jeepney >=0.6
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -7109,6 +7487,8 @@ packages:
   - libzlib >=1.3.1,<2.0a0
   - ncurses >=6.5,<7.0a0
   - readline >=8.2,<9.0a0
+  arch: x86_64
+  platform: linux
   license: Unlicense
   purls: []
   size: 859553
@@ -7145,6 +7525,8 @@ packages:
   - librbio ==4.3.4 hf02c80a_7100101
   - libspex ==3.2.3 h9226d62_7100101
   - libspqr ==4.3.4 h23b7119_7100101
+  arch: x86_64
+  platform: linux
   license: LGPL-2.1-or-later AND BSD-3-Clause AND GPL-2.0-or-later AND Apache-2.0
   purls: []
   size: 12135
@@ -7209,6 +7591,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libzlib >=1.2.13,<2.0.0a0
+  arch: x86_64
+  platform: linux
   license: TCL
   license_family: BSD
   purls: []
@@ -7317,6 +7701,8 @@ packages:
   - libgcc >=13
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: Apache-2.0
   license_family: Apache
   purls:
@@ -7381,6 +7767,8 @@ packages:
   - libgcc >=13
   constrains:
   - __glibc >=2.17
+  arch: x86_64
+  platform: linux
   license: Apache-2.0 OR MIT
   purls: []
   size: 13646786
@@ -7408,6 +7796,8 @@ packages:
   - libffi >=3.4.6,<3.5.0a0
   - libgcc >=13
   - libstdcxx >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7451,6 +7841,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libxcb >=1.16,<2.0.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7466,6 +7858,8 @@ packages:
   - libxcb >=1.16,<2.0.0a0
   - xcb-util-image >=0.4.0,<0.5.0a0
   - xcb-util-renderutil >=0.3.10,<0.4.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7478,6 +7872,8 @@ packages:
   - libgcc-ng >=12
   - libxcb >=1.16,<2.0.0a0
   - xcb-util >=0.4.1,<0.5.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7489,6 +7885,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libxcb >=1.16,<2.0.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7500,6 +7898,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libxcb >=1.16,<2.0.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7511,6 +7911,8 @@ packages:
   depends:
   - libgcc-ng >=12
   - libxcb >=1.16,<2.0.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7523,6 +7925,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - xorg-libx11 >=1.8.12,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7534,6 +7938,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7547,6 +7953,8 @@ packages:
   - libgcc >=13
   - libuuid >=2.38.1,<3.0a0
   - xorg-libice >=1.1.2,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7559,6 +7967,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - libxcb >=1.17.0,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7570,6 +7980,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7583,6 +7995,8 @@ packages:
   - libgcc >=13
   - xorg-libx11 >=1.8.10,<2.0a0
   - xorg-libxfixes >=6.0.1,<7.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7597,6 +8011,8 @@ packages:
   - xorg-libx11 >=1.8.10,<2.0a0
   - xorg-libxext >=1.3.6,<2.0a0
   - xorg-libxfixes >=6.0.1,<7.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7608,6 +8024,8 @@ packages:
   depends:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7620,6 +8038,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - xorg-libx11 >=1.8.10,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7632,6 +8052,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - xorg-libx11 >=1.8.10,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7646,6 +8068,8 @@ packages:
   - xorg-libx11 >=1.8.10,<2.0a0
   - xorg-libxext >=1.3.6,<2.0a0
   - xorg-libxfixes >=6.0.1,<7.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7660,6 +8084,8 @@ packages:
   - xorg-libx11 >=1.8.10,<2.0a0
   - xorg-libxext >=1.3.6,<2.0a0
   - xorg-libxrender >=0.9.11,<0.10.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7672,6 +8098,8 @@ packages:
   - __glibc >=2.17,<3.0.a0
   - libgcc >=13
   - xorg-libx11 >=1.8.10,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7686,6 +8114,8 @@ packages:
   - xorg-libx11 >=1.8.10,<2.0a0
   - xorg-libxext >=1.3.6,<2.0a0
   - xorg-libxi >=1.7.10,<2.0a0
+  arch: x86_64
+  platform: linux
   license: MIT
   license_family: MIT
   purls: []
@@ -7711,6 +8141,8 @@ packages:
   - libgcc >=13
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls:
@@ -7725,6 +8157,8 @@ packages:
   - libgcc >=13
   - libstdcxx >=13
   - libzlib >=1.3.1,<2.0a0
+  arch: x86_64
+  platform: linux
   license: BSD-3-Clause
   license_family: BSD
   purls: []
