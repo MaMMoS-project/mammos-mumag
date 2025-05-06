@@ -1,23 +1,26 @@
 name: Publish Python distribution to TestPyPI
 
-on: push
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.8.3
-        with:
-          pixi-version: v0.46.0
-          cache: true
-      - name: Run tests
-        run: pixi run test
-      - name: Run lint and format
-        run: pixi run pre-commit-all-files
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Pixi
+      uses: prefix-dev/setup-pixi@v0.8.8
+      with:
+        pixi-version: v0.44.0
+        cache: true
+    - name: Run tests
+      run: pixi run test
+    - name: Run lint and format
+      run: pixi run pre-commit-all-files
 
   build:
     name: Build distribution
