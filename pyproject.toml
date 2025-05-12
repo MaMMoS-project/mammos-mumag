@@ -58,9 +58,6 @@ test = [
   "polars",
   "pytest",
 ]
-pre-commit = [
-  "pre-commit",
-]
 
 # pixi
 [tool.pixi.project]
@@ -70,17 +67,21 @@ platforms = ["linux-64"]
 [tool.pixi.dependencies]
 cuda = { version=">=12" }
 esys-escript = ">=5.10,<6"
-hatch = "*"
 
 [tool.pixi.pypi-dependencies]
 mammos_mumag = { path = ".", editable = true }
+
+[tool.pixi.feature.dev.dependencies]
+hatch = "*"
+git = "*"
+pre-commit = "*"
 
 [tool.pixi.environments]
 format = { features = ["format"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 examples = { features = ["examples"], solve-group = "default" }
-pre-commit = { features = ["pre-commit"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.feature.format.tasks]
 lint = "ruff check"
@@ -97,8 +98,10 @@ test = "pytest -v"
 [tool.pixi.feature.examples.tasks]
 examples = "jupyter-lab docs/source/notebooks/"
 
-[tool.pixi.feature.pre-commit.tasks]
+[tool.pixi.feature.dev.tasks]
+build = "hatch build"
 pre-commit-all-files ="pre-commit run --all-files"
+tag-version = "git tag -s -a $(hatch version)"
 
 [tool.ruff]
 target-version = "py39"
