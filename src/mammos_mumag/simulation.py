@@ -5,6 +5,8 @@ import os
 import shlex
 import shutil
 import subprocess
+import datetime
+import json
 
 import pathlib
 from pydantic import Field
@@ -15,6 +17,7 @@ from .parameters import Parameters
 from .tools import check_dir
 from . import _run_escript_bin as run_escript
 from . import _scripts_directory as scripts_dir
+from . import __version__ as mumag_version
 
 
 IS_POSIX = os.name == "posix"
@@ -89,6 +92,16 @@ class Simulation:
             posix=IS_POSIX,
         )
         run_subprocess(cmd, cwd=outdir)
+        with open(outdir / "info.json", "w") as file:
+            json.dump(
+                {
+                    "datetime": datetime.datetime.now(datetime.UTC)
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                    "mammos_mumag_version": mumag_version,
+                },
+                file,
+            )
 
     def run_exani(self, outdir="exani", name="out"):
         r"""Run "exani" script.

@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 name = "mammos-mumag"
-version = "0.1.0"
+version = "0.2.4"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -70,6 +70,7 @@ platforms = ["linux-64"]
 [tool.pixi.dependencies]
 cuda = { version=">=12" }
 esys-escript = ">=5.10,<6"
+hatch = "*"
 
 [tool.pixi.pypi-dependencies]
 mammos_mumag = { path = ".", editable = true }
