@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import datetime
 import json
+from textwrap import dedent
 
 import pathlib
 from pydantic import Field
@@ -19,6 +20,19 @@ from . import _run_escript_bin as run_escript
 from . import _scripts_directory as scripts_dir
 from . import __version__ as mumag_version
 
+
+if run_escript is None:
+    raise SystemError(
+        dedent(
+            """
+            esys-escript is not installed.
+            Consider installing esys-escript in your environment with
+            $ conda install esys-escript -c conda-forge
+            or, using pixi,
+            $ pixi add esys-escript
+            """
+        )
+    )
 
 IS_POSIX = os.name == "posix"
 
