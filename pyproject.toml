@@ -101,6 +101,7 @@ build = "hatch build"
 pre-commit-all-files ="pre-commit run --all-files"
 tag-version = "git tag -s -a $(hatch version)"
 
+# ruff
 [tool.ruff]
 target-version = "py39"
 line-length = 88
