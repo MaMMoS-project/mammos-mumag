@@ -22,6 +22,7 @@ optional arguments:
                         3D elements).
 """
 
+import functools
 import pathlib
 
 CONTACT_GRP = "contact"
@@ -33,10 +34,11 @@ UNV_ELEMS = "2412"
 UNV_GROUPS = "2467"
 
 UNV_BEAM = set(["11", "21", "22", "23", "24"])
-UNV_1D = set(["11", "21", "22", "24"])
-UNV_2D = set(["41", "81", "91", "42", "82", "92", "44"])
-UNV_3D = set(["115", "116", "111", "118"])
-
+UNV_index = {
+    1: set(["11", "21", "22", "24"]),
+    2: set(["41", "81", "91", "42", "82", "92", "44"]),
+    3: set(["115", "116", "111", "118"]),
+}
 FLY_MESH_NAME = "Mesh"
 
 FLY_NODES = "Nodes"
@@ -258,8 +260,7 @@ def writeFly(nodes, groups, index, contact, unvFile, flyFile, exclude):
     writeHeader(flyFile)
     convertNodes(nodes, unvFile, flyFile)
     convertElemsContact(index, groups, contact, unvFile, flyFile)
-    # writeFooter(flyFile)
-    if UNV_2D.issubset(exclude):
+    if UNV_index[2].issubset(exclude):  # if 2D is excluded
         writeFooter(flyFile)
     else:
         writeFooter2(flyFile)
@@ -353,22 +354,15 @@ def parseElem(t, file):
     return eId, data
 
 
-def dimension(text):
-    exclude = set()
-    for opt in text.split(","):
-        if opt == "1":
-            exclude |= UNV_1D
-        elif opt == "2":
-            exclude |= UNV_2D
-        elif opt == "3":
-            exclude |= UNV_3D
-        else:
-            msg = "Invalid dimension: %s" % opt
-            raise TypeError(msg)
-    return exclude
+def get_exclude_set(exclude_list):
+    return functools.reduce(
+        lambda x, y: x.union(y),
+        [UNV_index[i] for i in exclude_list],
+        set(),
+    )
 
 
-def convert(unv_path, fly_path, exclude_list=[]):
+def convert(unv_path, fly_path, exclude_list=[1, 2]):
     """Convert mesh file from `unv` to `fly`.
 
     :param unv_path: Input `unv` file path.
@@ -376,13 +370,14 @@ def convert(unv_path, fly_path, exclude_list=[]):
     :param fly_path: Output `fly` file path.
     :type fly_path: str or pathlib.Path
     :param exclude: List of dimensions to be excluded.
-        Defaults to []
+        Defaults to [1,2], so it will exclude 1D and 2D elements.
     :type exclude: list[int]
     """
     infile = open(unv_path, "r")
     pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
     outfile = open(fly_path, "w")
-    nodes, index, groups, contact = scanUnv(infile, exclude_list)
-    writeFly(nodes, groups, index, contact, infile, outfile, exclude_list)
+    exclude_set = get_exclude_set(exclude_list)
+    nodes, index, groups, contact = scanUnv(infile, exclude_set)
+    writeFly(nodes, groups, index, contact, infile, outfile, exclude_set)
     infile.close()
     outfile.close()
