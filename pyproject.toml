@@ -45,13 +45,11 @@ format = [
 ]
 docs = [
   "ipykernel",
+  "jupyter",
   "nbsphinx",
   "sphinx==8.1.3",
   "sphinx-rtd-theme==3.0.1",
   "numpy",
-]
-examples = [
-  "jupyter",
   "polars ",
 ]
 test = [
@@ -76,12 +74,14 @@ hatch = "*"
 git = "*"
 pre-commit = "*"
 
+[tool.pixi.feature.format.dependencies]
+python = ">=3.8"
+
 [tool.pixi.environments]
-format = { features = ["format"], solve-group = "default" }
+format = { features = ["format"], no-default-feature = true, solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
-examples = { features = ["examples"], solve-group = "default" }
-dev = { features = ["dev"], solve-group = "default" }
+dev = { features = ["dev"], no-default-feature = true }
 
 [tool.pixi.feature.format.tasks]
 lint = "ruff check"
@@ -91,12 +91,10 @@ clean = "ruff clean && py3clean ."
 [tool.pixi.feature.docs.tasks]
 docs = "cd docs && make html"
 docs-clean = "cd docs && make clean"
+examples = "jupyter-lab docs/source/notebooks/"
 
 [tool.pixi.feature.test.tasks]
 test = "pytest -v"
-
-[tool.pixi.feature.examples.tasks]
-examples = "jupyter-lab docs/source/notebooks/"
 
 [tool.pixi.feature.dev.tasks]
 build = "hatch build"
