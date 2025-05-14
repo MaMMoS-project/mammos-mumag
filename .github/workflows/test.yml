@@ -14,7 +14,7 @@ jobs:
       with:
         pixi-version: v0.41.4
         cache: true
-    - name: Run tests
-      run: pixi run test
     - name: Run lint and format
       run: pixi run pre-commit-all-files
+    - name: Run tests
+      run: pixi run test
