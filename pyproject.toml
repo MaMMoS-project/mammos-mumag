@@ -40,9 +40,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-format = [
-  "ruff==0.8",
-]
 docs = [
   "ipykernel",
   "jupyter",
@@ -51,6 +48,9 @@ docs = [
   "sphinx-rtd-theme==3.0.1",
   "numpy",
   "polars ",
+]
+format = [
+  "ruff==0.8",
 ]
 gpu = [
   "jax[cuda12]",
@@ -83,8 +83,8 @@ python = ">=3.8"
 cuda = ">=12"
 
 [tool.pixi.environments]
-format = { features = ["format"], no-default-feature = true, solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
+format = { features = ["format"], no-default-feature = true, solve-group = "default" }
 gpu = { features = ["gpu"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 dev = { features = ["dev"], no-default-feature = true }
