@@ -7,7 +7,7 @@ import yaml
 
 from math import pi
 
-from .tools import check_path
+from mammos_mumag.tools import check_path
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 

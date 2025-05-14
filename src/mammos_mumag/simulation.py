@@ -13,12 +13,12 @@ import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from .materials import MaterialDomain, Materials
-from .parameters import Parameters
-from .tools import check_dir
-from . import _run_escript_bin as run_escript
-from . import _scripts_directory as scripts_dir
-from . import __version__ as mumag_version
+from mammos_mumag.materials import MaterialDomain, Materials
+from mammos_mumag.parameters import Parameters
+from mammos_mumag.tools import check_dir
+from mammos_mumag import _run_escript_bin as run_escript
+from mammos_mumag import _scripts_directory as scripts_dir
+from mammos_mumag import __version__ as mumag_version
 
 
 if run_escript is None:
