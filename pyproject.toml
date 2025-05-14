@@ -30,7 +30,7 @@ classifiers = [
 requires-python = ">=3.8"
 
 dependencies = [
-  "jax[cuda12]",
+  "jax",
   "jinja2 >=3.1.6,<4",
   "meshio",
   "numpy",
@@ -52,6 +52,9 @@ docs = [
   "numpy",
   "polars ",
 ]
+gpu = [
+  "jax[cuda12]",
+]
 test = [
   "polars",
   "pytest",
@@ -63,7 +66,6 @@ channels = ["conda-forge"]
 platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
-cuda = { version=">=12" }
 esys-escript = ">=5.10,<6"
 
 [tool.pixi.pypi-dependencies]
@@ -77,9 +79,13 @@ pre-commit = "*"
 [tool.pixi.feature.format.dependencies]
 python = ">=3.8"
 
+[tool.pixi.feature.gpu.dependencies]
+cuda = ">=12"
+
 [tool.pixi.environments]
 format = { features = ["format"], no-default-feature = true, solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
+gpu = { features = ["gpu"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 dev = { features = ["dev"], no-default-feature = true }
 
