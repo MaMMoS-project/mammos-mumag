@@ -1,7 +1,7 @@
 name: Test Python distribution
 
 on:
-  push:
+  workflow_call:
 
 jobs:
   test:
