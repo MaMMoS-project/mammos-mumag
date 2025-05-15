@@ -1,0 +1,23 @@
+field:
+  hfinal: -1.0
+  hmag_on: 1
+  hstart: 1.0
+  hstep: -0.2
+  hx: 0.01745
+  hy: 0.0
+  hz: 0.99984
+  mfinal: -1.2
+  mstep: 0.4
+initial state:
+  mx: 0.0
+  my: 0.0
+  mz: 1.0
+  state: mxyz
+mesh:
+  scale: 0.0
+  size: 1.0e-09
+minimizer:
+  iter_max: 1000
+  precond_iter: 10
+  tol_fun: 1.0e-10
+  tol_hmag_factor: 1.0

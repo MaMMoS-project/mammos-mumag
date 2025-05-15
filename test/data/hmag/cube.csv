@@ -1,0 +1,5 @@
+Magnetostatic energy density of uniformly magnetized cube.
+name,value,explanation
+E_field,323030.6036230678,Energy density evaluated from field (J/m^3).
+E_gradient,323030.6036230672,Energy density evaluated from gradient (J/m^3).
+E_analytic,343787.94003580953,Energy density evaluated analytically (J/m^3).

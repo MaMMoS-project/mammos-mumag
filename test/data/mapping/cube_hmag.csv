@@ -1,0 +1,4 @@
+Magnetostatic energy density of uniformly magnetized cube.
+name,value,explanation
+E_jax,323030.46875,Energy evaluated with jax backend (J/m^3).
+E_analytic,343787.94003580953,Energy evaluated analytically (J/m^3).

@@ -1,0 +1,4 @@
+Magnetocrystalline anisotropy energy density of uniformly magnetized sample in direction [0.0, 0.0, 1.0].
+name,value,explanation
+E_jax,-4899996.0,Energy evaluated with jax backend (J/m^3).
+E_analytic,-4900000.00064696,Energy evaluated analytically (J/m^3).

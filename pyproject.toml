@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
 
 [project]
-name = "mmag"
-version = "0.1.0"
+name = "mammos-mumag"
+version = "0.2.7"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -27,52 +27,101 @@ classifiers = [
   'Topic :: Scientific/Engineering :: Physics',
 ]
 
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 
-[project.scripts]
-mmag = "mmag.cli:main"
-
-[tool.setuptools.packages.find]
-where = ["src"]
+dependencies = [
+  "jax[cuda12]",
+  "jinja2 >=3.1.6,<4",
+  "meshio",
+  "numpy",
+  "psutil >=7",
+  "pydantic",
+  "pyyaml >6",
+]
 
 [project.optional-dependencies]
 format = [
   "ruff==0.8",
 ]
+docs = [
+  "ipykernel",
+  "jupyter",
+  "nbsphinx",
+  "sphinx==8.1.3",
+  "sphinx-rtd-theme==3.0.1",
+  "numpy",
+  "polars ",
+]
+test = [
+  "polars",
+  "pytest",
+]
 
+# pixi
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.dependencies]
+cuda = { version=">=12" }
+esys-escript = ">=5.10,<6"
+
+[tool.pixi.pypi-dependencies]
+mammos_mumag = { path = ".", editable = true }
+
+[tool.pixi.feature.dev.dependencies]
+hatch = "*"
+git = "*"
+pre-commit = "*"
+
+[tool.pixi.feature.format.dependencies]
+python = ">=3.8"
+
+[tool.pixi.environments]
+format = { features = ["format"], no-default-feature = true, solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
+test = { features = ["test"], solve-group = "default" }
+dev = { features = ["dev"], no-default-feature = true }
+
+[tool.pixi.feature.format.tasks]
+lint = "ruff check"
+format = "ruff format"
+clean = "ruff clean && py3clean ."
+
+[tool.pixi.feature.docs.tasks]
+docs = "cd docs && make html"
+docs-clean = "cd docs && make clean"
+examples = "jupyter-lab docs/source/notebooks/"
+
+[tool.pixi.feature.test.tasks]
+test = "pytest -v"
+
+[tool.pixi.feature.dev.tasks]
+build = "hatch build"
+pre-commit-all-files ="pre-commit run --all-files"
+tag-version = "git tag -s -a $(hatch version)"
+
+# ruff
 [tool.ruff]
 target-version = "py39"
 line-length = 88
 indent-width = 4
 respect-gitignore = true
+exclude = [
+  "src/mammos_mumag/scripts/*.py", # scripts
+  "examples", # to be checked
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/mammos_mumag/tofly.py" = [
+  "D101", # undocumented-public-class
+  "D103", # undocumented-public-function
+]
 
 [tool.ruff.lint]
 # Ruff default rules, pydocstyle, and pycodestyle warnings
 select = ["D", "E4", "E7", "E9", "F", "W"]
 ignore = []
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = [
-  "D104", # undocumented-public-package
-]
-"src/mmag/sim_scripts/*.py" = [
-  "D1", # undocumented-*
-  "W505", # Doc line too long
-]
-"src/mmag/container_scripts/patches/*.py" = [
-  "D1", # uncodumented-*
-  "E722", # bare-except
-  "W505", # Doc line too long
-]
-"src/mmag/tofly.py" = [
-  "D101", # undocumented-public-class
-  "D103", # undocumented-public-function
-]
-"examples/*.py" = [
-  "D1", # undocumented-*
-  "E722", # bare-except
-  "W505", # Doc line too long
-]
 
 [tool.ruff.lint.pycodestyle]
 max-doc-length = 88
