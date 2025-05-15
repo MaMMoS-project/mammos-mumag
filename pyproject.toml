@@ -79,9 +79,6 @@ pre-commit = "*"
 [tool.pixi.feature.format.dependencies]
 python = ">=3.8"
 
-[tool.pixi.feature.gpu.dependencies]
-cuda = ">=12"
-
 [tool.pixi.environments]
 docs = { features = ["docs"], solve-group = "default" }
 format = { features = ["format"], no-default-feature = true, solve-group = "default" }
