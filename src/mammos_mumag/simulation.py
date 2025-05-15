@@ -7,32 +7,15 @@ import shutil
 import subprocess
 import datetime
 import json
-from textwrap import dedent
 
 import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
+import mammos_mumag
 from mammos_mumag.materials import MaterialDomain, Materials
 from mammos_mumag.parameters import Parameters
-from mammos_mumag.tools import check_dir
-from mammos_mumag import _run_escript_bin as run_escript
-from mammos_mumag import _scripts_directory as scripts_dir
-from mammos_mumag import __version__ as mumag_version
-
-
-if run_escript is None:
-    raise SystemError(
-        dedent(
-            """
-            esys-escript is not installed.
-            Consider installing esys-escript in your environment with
-            $ conda install esys-escript -c conda-forge
-            or, using pixi,
-            $ pixi add esys-escript
-            """
-        )
-    )
+from mammos_mumag.tools import check_dir, check_esys_escript
 
 IS_POSIX = os.name == "posix"
 
@@ -84,8 +67,9 @@ class Simulation:
         :param outdir: Working directory. Defaults to "out"
         :type outdir: str or pathlib.Path, optional
         """
+        check_esys_escript()
         cmd = shlex.split(
-            f"{run_escript} {file}",
+            f"{mammos_mumag._run_escript_bin} {file}",
             posix=IS_POSIX,
         )
         run_subprocess(cmd, cwd=outdir)
@@ -101,8 +85,9 @@ class Simulation:
         :param name: System name
         :type name: str
         """
+        check_esys_escript()
         cmd = shlex.split(
-            f"{run_escript} {scripts_dir / script}.py {name}",
+            f"{mammos_mumag._run_escript_bin} {mammos_mumag._scripts_directory / script}.py {name}",
             posix=IS_POSIX,
         )
         run_subprocess(cmd, cwd=outdir)
@@ -112,7 +97,7 @@ class Simulation:
                     "datetime": datetime.datetime.now(datetime.UTC)
                     .astimezone()
                     .isoformat(timespec="seconds"),
-                    "mammos_mumag_version": mumag_version,
+                    "mammos_mumag_version": mammos_mumag.__version__,
                 },
                 file,
             )

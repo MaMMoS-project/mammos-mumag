@@ -1,11 +1,12 @@
 """Functions for the standard problem."""
 
+import math
+import pandas as pd
+
 from mammos_mumag.materials import Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
 import mammos_units as u
-import pandas as pd
-import math
 
 
 def hystloop(
