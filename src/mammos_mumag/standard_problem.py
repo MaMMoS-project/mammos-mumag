@@ -22,7 +22,7 @@ def hystloop(
 ):
     """Run hysteresis loop."""
     if hstep is None:
-        hstep = (hstart - hfinal) / hnsteps
+        hstep = (hfinal - hstart) / hnsteps
     if K1.unit != u.J / u.m**3:
         K1 = K1.to(u.J / u.m**3)
     if Ms.unit != u.T:
@@ -35,11 +35,11 @@ def hystloop(
         materials=Materials(
             domains=[
                 {
-                    "theta": 0.0,
+                    "theta": 0,
                     "phi": 0.0,
                     "K1": 4e-7 * math.pi * K1.value,
                     "K2": 0.0,
-                    "Js": Ms.value,
+                    "Js": Ms.to(u.T, equivalencies=u.magnetic_flux_field()).value,
                     "A": 4e-7 * math.pi * A.value,
                 },
                 {
@@ -64,9 +64,9 @@ def hystloop(
             size=1.0e-9,
             scale=0,
             m_vect=[0, 0, 1],
-            hstart=hstart,
-            hfinal=hfinal,
-            hstep=hstep,
+            hstart=hstart.value,
+            hfinal=hfinal.value,
+            hstep=hstep.value,
             h_vect=[0.01745, 0, 0.99984],
             mstep=0.4,
             mfinal=-1.2,
@@ -76,5 +76,7 @@ def hystloop(
         ),
     )
     sim.run_loop(outdir=outdir, name="stdpb")
-    pd.read_csv("out/loop/cube.dat", separator=" ", has_header=False)
-    return hystloop, sim.loop_vtu_list
+    hl = pd.read_csv(
+        f"{outdir}/stdpb.dat", delimiter=" ", names=["idx", "mu0_Hext", "pol", "E"]
+    )
+    return hl, sim.loop_vtu_list
