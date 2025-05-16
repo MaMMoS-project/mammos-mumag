@@ -3,12 +3,15 @@
 import numpy as np
 
 import mammos_entity as me
+import mammos_units as u
 
 
 def get_extrinsic_properties(hystloop):
     """Evaluate extrinsic properties from hysteresis loop."""
-    h = hystloop["mu0_Hext"]
-    m = hystloop["pol"]
+    h = hystloop["mu0_Hext"]#.to_numpy() * u.T
+    # h = h.to("A/m", equivalencies=u.magnetic_flux_field())
+    m = hystloop["pol"]#.to_numpy() * u.T
+    # m = m.to("A/m", equivalencies=u.magnetic_flux_field())
 
     sign_changes_m = np.where(np.diff(np.sign(m)))[0]
     sign_changes_h = np.where(np.diff(np.sign(h)))[0]
@@ -34,7 +37,10 @@ def get_extrinsic_properties(hystloop):
         [h[index_before], h[index_after]],
         [m[index_before], m[index_after]],
     )
-    Hc = me.Hc(Hc)
-    Mr = me.Mr(Mr)
-    BHmax = me.BHmax()
+
+
+    Hc = me.Hc((Hc * u.T).to("A/m", equivalencies=u.magnetic_flux_field()))
+    Mr = me.Mr((Mr * u.T).to("A/m", equivalencies=u.magnetic_flux_field()))
+    bh = (h.to_numpy() * u.T) * (m.to_numpy() * u.T).to("A/m", equivalencies=u.magnetic_flux_field())
+    BHmax = me.BHmax(max(bh))
     return Hc, Mr, BHmax
