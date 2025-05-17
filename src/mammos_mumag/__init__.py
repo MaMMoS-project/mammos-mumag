@@ -7,11 +7,10 @@ import importlib.metadata
 import pathlib
 import shutil
 
-from mammos_mumag import postprocess
-from mammos_mumag.standard_problem import hystloop
+from mammos_mumag import hysteresis_loop, postprocess
 
 __all__ = [
-    "hystloop",
+    "hysteresis_loop",
     "postprocess",
 ]
 

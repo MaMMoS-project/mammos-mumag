@@ -1,6 +1,6 @@
-"""Functions for the standard problem."""
+"""Functions for evaluating and processin the hysteresis loop."""
 
-import math
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from mammos_mumag.materials import Materials
@@ -9,7 +9,7 @@ from mammos_mumag.simulation import Simulation
 import mammos_units as u
 
 
-def hystloop(
+def run(
     mesh_filepath,
     Ms,
     A,
@@ -37,10 +37,10 @@ def hystloop(
                 {
                     "theta": 0,
                     "phi": 0.0,
-                    "K1": 4e-7 * math.pi * K1.value,
+                    "K1": K1.value,
                     "K2": 0.0,
                     "Js": Ms.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-                    "A": 4e-7 * math.pi * A.value,
+                    "A": A.value,
                 },
                 {
                     "theta": 0.0,
@@ -80,3 +80,15 @@ def hystloop(
         f"{outdir}/stdpb.dat", delimiter=" ", names=["idx", "mu0_Hext", "pol", "E"]
     )
     return hl, sim.loop_vtu_list
+
+
+def plot(hl, duplicate=True):
+    """Plot hysteresis loop."""
+    plt.plot(hl["mu0_Hext"], hl["pol"])
+    j = 0
+    for i, r in hl.iterrows():
+        if r["idx"] != j:
+            plt.plot(r["mu0_Hext"], r["pol"], "rx")
+            j = r["idx"]
+    if duplicate:
+        plt.plot(-hl["mu0_Hext"], -hl["pol"])
