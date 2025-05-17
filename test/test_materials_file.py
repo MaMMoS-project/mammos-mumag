@@ -2,6 +2,9 @@
 
 import numpy as np
 
+import mammos_entity as me
+import mammos_units as u
+
 from mammos_mumag.materials import Materials
 
 
@@ -19,28 +22,28 @@ def test_materials_file(DATA, tmp_path):
     mat = Materials(
         domains=[
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 4.9e06,
-                "K2": 0.0,
-                "Js": 1.61,
-                "A": 8.0e-11,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(4.9e06, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(1.61, unit=u.A / u.m),
+                "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 0.0,
-                "K2": 0.0,
-                "Js": 0.0,
-                "A": 0.0,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
             },
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 0.0,
-                "K2": 0.0,
-                "Js": 0.0,
-                "A": 0.0,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
             },
         ]
     )
@@ -54,8 +57,40 @@ def test_materials_file(DATA, tmp_path):
 
     mat_2 = Materials()
     mat_2.read(tmp_path / "mat.yaml")
-    print(f"{type(mat.domains[0])=}")
     assert are_domains_equal(mat.domains, mat_2.domains)
+
+    mat_3 = Materials()
+    assert not are_domains_equal(mat.domains, mat_3.domains)
+
+    mat_4 = Materials(
+        domains=[
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(1, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(2, unit=u.A / u.m),
+                "A": me.A(3, unit=u.J / u.m),
+            },
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
+            },
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m ** 3),
+                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "Js": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
+            },
+        ]
+    )
+    assert not are_domains_equal(mat.domains, mat_4.domains)
 
 
 def are_domains_equal(d1, d2):
@@ -66,17 +101,15 @@ def are_domains_equal(d1, d2):
     """
     if len(d1) != len(d2):
         return False
-    diff = 0.0
     for i, d1_i in enumerate(d1):
         d2_i = d2[i]
-        diff += np.linalg.norm(
-            [
-                d1_i.theta - d2_i.theta,
-                d1_i.phi - d2_i.phi,
-                d1_i.K1 - d2_i.K1,
-                d1_i.K2 - d2_i.K2,
-                d1_i.Js - d2_i.Js,
-                d1_i.A - d2_i.A,
-            ]
-        )
-    return diff < 1.0e-8
+        if not (
+            np.allclose(d1_i.theta, d2_i.theta) and
+            np.allclose(d1_i.phi, d2_i.phi) and
+            np.allclose(d1_i.K1, d2_i.K1) and
+            np.allclose(d1_i.K2, d2_i.K2) and
+            np.allclose(d1_i.Js, d2_i.Js) and
+            np.allclose(d1_i.A, d2_i.A)
+        ):
+            return False
+    return True
