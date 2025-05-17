@@ -4,6 +4,14 @@ mammos\_mumag package
 Submodules
 ----------
 
+mammos\_mumag.hysteresis\_loop module
+-------------------------------------
+
+.. automodule:: mammos_mumag.hysteresis_loop
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 mammos\_mumag.materials module
 ------------------------------
 
@@ -16,6 +24,14 @@ mammos\_mumag.parameters module
 -------------------------------
 
 .. automodule:: mammos_mumag.parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mammos\_mumag.postprocess module
+--------------------------------
+
+.. automodule:: mammos_mumag.postprocess
    :members:
    :undoc-members:
    :show-inheritance:
