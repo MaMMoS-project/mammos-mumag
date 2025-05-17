@@ -6,6 +6,7 @@ import pandas as pd
 from mammos_mumag.materials import Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
+import mammos_entity as me
 import mammos_units as u
 
 
@@ -23,12 +24,23 @@ def run(
     """Run hysteresis loop."""
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
-    if K1.unit != u.J / u.m**3:
-        K1 = K1.to(u.J / u.m**3)
-    if Ms.unit != u.T:
-        Ms = Ms.to(u.T, equivalencies=u.magnetic_flux_field())
-    if A.unit != u.J / u.m:
-        A = A.to(u.J / u.m)
+    if isinstance(K1, u.Quantity):
+        if K1.unit != u.J / u.m**3:
+            K1 = K1.to(u.J / u.m**3)
+    else:
+        K1 = me.Ku(K1, unit=u.J / u.m**3)
+
+    if isinstance(Ms, u.Quantity):
+        if Ms.unit != u.A / u.m:
+            Ms = Ms.to(u.A / u.m)
+    else:
+        Ms = me.Ms(Ms, unit=u.A / u.m)
+
+    if isinstance(A, u.Quantity):
+        if A.unit != u.J / u.m:
+            A = A.to(u.J / u.m)
+    else:
+        A = me.A(A, unit=u.J / u.m)
 
     sim = Simulation(
         mesh_filepath=mesh_filepath,
@@ -37,26 +49,26 @@ def run(
                 {
                     "theta": 0,
                     "phi": 0.0,
-                    "K1": K1.value,
-                    "K2": 0.0,
-                    "Js": Ms.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-                    "A": A.value,
+                    "K1": K1,
+                    "K2": me.Ku(0),
+                    "Js": Ms,
+                    "A": A,
                 },
                 {
                     "theta": 0.0,
                     "phi": 0.0,
-                    "K1": 0.0,
-                    "K2": 0.0,
-                    "Js": 0.0,
-                    "A": 0.0,
+                    "K1": me.Ku(0),
+                    "K2": me.Ku(0),
+                    "Js": me.Ms(0),
+                    "A": me.A(0),
                 },
                 {
                     "theta": 0.0,
                     "phi": 0.0,
-                    "K1": 0.0,
-                    "K2": 0.0,
-                    "Js": 0.0,
-                    "A": 0.0,
+                    "K1": me.Ku(0),
+                    "K2": me.Ku(0),
+                    "Js": me.Ms(0),
+                    "A": me.A(0),
                 },
             ],
         ),
@@ -75,9 +87,9 @@ def run(
             precond_iter=10,
         ),
     )
-    sim.run_loop(outdir=outdir, name="stdpb")
+    sim.run_loop(outdir=outdir, name="hystloop")
     hl = pd.read_csv(
-        f"{outdir}/stdpb.dat", delimiter=" ", names=["idx", "mu0_Hext", "pol", "E"]
+        f"{outdir}/hystloop.dat", delimiter=" ", names=["idx", "mu0_Hext", "pol", "E"]
     )
     return hl, sim.loop_vtu_list
 
