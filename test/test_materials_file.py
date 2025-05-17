@@ -21,10 +21,10 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0.0,
                 "phi": 0.0,
-                "K1": 4e-7 * np.pi * 4.9e06,
+                "K1": 4.9e06,
                 "K2": 0.0,
                 "Js": 1.61,
-                "A": 4e-7 * np.pi * 8.0e-11,
+                "A": 8.0e-11,
             },
             {
                 "theta": 0.0,

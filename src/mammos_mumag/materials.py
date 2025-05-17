@@ -4,7 +4,6 @@ import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 import yaml
-from math import pi
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from mammos_mumag.tools import check_path
@@ -139,7 +138,7 @@ class Materials:
         )
         template = env.get_template("krn.jinja")
         with open(fname, "w") as file:
-            file.write(template.render({"domains": self.domains, "const": 4e-7 * pi}))
+            file.write(template.render({"domains": self.domains}))
 
     def write_yaml(self, fname):
         """Write material `yaml` file.
@@ -151,10 +150,10 @@ class Materials:
             {
                 "theta": dom.theta,
                 "phi": dom.phi,
-                "K1": dom.K1 / (4e-7 * pi),
-                "K2": dom.K2 / (4e-7 * pi),
+                "K1": dom.K1,
+                "K2": dom.K2,
                 "Js": dom.Js,
-                "A": dom.A / (4e-7 * pi),
+                "A": dom.A,
             }
             for dom in self.domains
         ]
@@ -178,10 +177,10 @@ def read_krn(fname):
         MaterialDomain(
             theta=float(line[0]),
             phi=float(line[1]),
-            K1=4e-7 * pi * float(line[2]),
-            K2=4e-7 * pi * float(line[3]),
+            K1=float(line[2]),
+            K2=float(line[3]),
             Js=float(line[4]),
-            A=4e-7 * pi * float(line[5]),
+            A=float(line[5]),
         )
         for line in lines
     ]
@@ -202,10 +201,10 @@ def read_yaml(fname):
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=4e-7 * pi * float(dom["K1"]),
-            K2=4e-7 * pi * float(dom["K2"]),
+            K1=float(dom["K1"]),
+            K2=float(dom["K2"]),
             Js=float(dom["Js"]),
-            A=4e-7 * pi * float(dom["A"]),
+            A=float(dom["A"]),
         )
         for dom in domains
     ]
