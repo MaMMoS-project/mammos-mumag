@@ -1,15 +1,18 @@
 """Materials class."""
 
 import pathlib
-from pydantic import Field
+from pydantic import ConfigDict, Field
 from pydantic.dataclasses import dataclass
 import yaml
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+import mammos_entity as me
+import mammos_units as u
+
 from mammos_mumag.tools import check_path
 
 
-@dataclass
+@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class MaterialDomain:
     r"""Uniform material domain.
 
@@ -37,10 +40,10 @@ class MaterialDomain:
 
     theta: float = 0.0
     phi: float = 0.0
-    K1: float = 0.0
-    K2: float = 0.0
-    Js: float = 0.0
-    A: float = 0.0
+    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m ** 3)
+    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m ** 3)
+    Js: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    A: me.Entity = me.A(0.0, unit=u.J / u.m)
 
 
 @dataclass
@@ -138,7 +141,15 @@ class Materials:
         )
         template = env.get_template("krn.jinja")
         with open(fname, "w") as file:
-            file.write(template.render({"domains": self.domains}))
+            file.write(
+                template.render(
+                    {
+                        "domains": self.domains,
+                        "u": u,
+                        "eq": u.magnetic_flux_field(),
+                    }
+                )
+            )
 
     def write_yaml(self, fname):
         """Write material `yaml` file.
@@ -146,14 +157,15 @@ class Materials:
         :param fname: File path
         :type fname: str or pathlib.Path
         """
+
         domains = [
             {
                 "theta": dom.theta,
                 "phi": dom.phi,
-                "K1": dom.K1,
-                "K2": dom.K2,
-                "Js": dom.Js,
-                "A": dom.A,
+                "K1": dom.K1.value.tolist(),
+                "K2": dom.K2.value.tolist(),
+                "Js": dom.Js.to(u.T, equivalencies=u.magnetic_flux_field()).value.tolist(),
+                "A": dom.A.value.tolist(),
             }
             for dom in self.domains
         ]
@@ -177,10 +189,14 @@ def read_krn(fname):
         MaterialDomain(
             theta=float(line[0]),
             phi=float(line[1]),
-            K1=float(line[2]),
-            K2=float(line[3]),
-            Js=float(line[4]),
-            A=float(line[5]),
+            K1=me.Ku(float(line[2]), unit=u.J / u.m ** 3),
+            K2=me.Ku(float(line[3]), unit=u.J / u.m ** 3),
+            Js=me.Ms(
+                (float(line[4]) * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                )
+            ),
+            A=me.A(float(line[5]), unit=u.J / u.m),
         )
         for line in lines
     ]
@@ -201,10 +217,14 @@ def read_yaml(fname):
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=float(dom["K1"]),
-            K2=float(dom["K2"]),
-            Js=float(dom["Js"]),
-            A=float(dom["A"]),
+            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m ** 3),
+            K2=me.Ku(float(dom["K2"]), unit=u.J / u.m ** 3),
+            Js=me.Ms(
+                (float(dom["Js"]) * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                )
+            ),
+            A=me.A(float(dom["A"]), unit=u.J / u.m),
         )
         for dom in domains
     ]
