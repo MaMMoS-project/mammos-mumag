@@ -7,11 +7,24 @@ import importlib.metadata
 import pathlib
 import shutil
 
-from mammos_mumag import hysteresis_loop, postprocess
+from mammos_mumag import (
+    hysteresis_loop,
+    materials,
+    mesh,
+    parameters,
+    postprocess,
+    simulation,
+    tofly,
+)
 
 __all__ = [
     "hysteresis_loop",
+    "materials",
+    "mesh",
+    "parameters",
     "postprocess",
+    "simulation",
+    "tofly",
 ]
 
 _run_escript_bin = shutil.which("run-escript")

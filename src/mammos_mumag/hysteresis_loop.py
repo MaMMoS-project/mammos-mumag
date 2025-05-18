@@ -2,8 +2,12 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import pathlib
+from textwrap import dedent
+from typing import Optional
 
 from mammos_mumag.materials import Materials
+from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
 import mammos_entity as me
@@ -11,17 +15,30 @@ import mammos_units as u
 
 
 def run(
-    mesh_filepath,
     Ms,
     A,
     K1,
     hstart=2 * u.T,
     hfinal=-2 * u.T,
+    mesh: Optional[Mesh] = None,
+    mesh_filepath: Optional[pathlib.Path] = None,
     hstep=None,
     hnsteps=20,
     outdir="hystloop",
 ):
     """Run hysteresis loop."""
+    if mesh is None and mesh_filepath is None:
+        raise ValueError(
+            dedent(
+                """
+                mesh and mesh_filepath are both None.
+                Either define mesh as a `mammos_mumag.mesh.Mesh` instance,
+                or define the location of the mesh file.
+                """
+            )
+        )
+    elif mesh is not None:
+        mesh_filepath = mesh.value
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
     if isinstance(K1, u.Quantity):
