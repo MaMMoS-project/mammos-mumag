@@ -20,6 +20,14 @@ mammos\_mumag.materials module
    :undoc-members:
    :show-inheritance:
 
+mammos\_mumag.mesh module
+-------------------------
+
+.. automodule:: mammos_mumag.mesh
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 mammos\_mumag.parameters module
 -------------------------------
 
