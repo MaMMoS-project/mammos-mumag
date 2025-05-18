@@ -18,10 +18,10 @@ def run(
     Ms,
     A,
     K1,
-    hstart=2 * u.T,
-    hfinal=-2 * u.T,
     mesh: Optional[Mesh] = None,
     mesh_filepath: Optional[pathlib.Path] = None,
+    hstart=(2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+    hfinal=(-2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
     hstep=None,
     hnsteps=20,
     outdir="hystloop",
@@ -41,23 +41,13 @@ def run(
         mesh_filepath = mesh.value
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
-    if isinstance(K1, u.Quantity):
-        if K1.unit != u.J / u.m**3:
-            K1 = K1.to(u.J / u.m**3)
-    else:
-        K1 = me.Ku(K1, unit=u.J / u.m**3)
 
-    if isinstance(Ms, u.Quantity):
-        if Ms.unit != u.A / u.m:
-            Ms = Ms.to(u.A / u.m)
-    else:
-        Ms = me.Ms(Ms, unit=u.A / u.m)
-
-    if isinstance(A, u.Quantity):
-        if A.unit != u.J / u.m:
-            A = A.to(u.J / u.m)
-    else:
+    if not isinstance(A, u.Quantity) or A.unit != u.J / u.m:
         A = me.A(A, unit=u.J / u.m)
+    if not isinstance(K1, u.Quantity) or K1.unit != u.J / u.m**3:
+        K1 = me.Ku(K1, unit=u.J / u.m**3)
+    if not isinstance(Ms, u.Quantity) or Ms.unit != u.A / u.m:
+        Ms = me.Ms(Ms, unit=u.A / u.m)
 
     sim = Simulation(
         mesh_filepath=mesh_filepath,
@@ -93,9 +83,9 @@ def run(
             size=1.0e-9,
             scale=0,
             m_vect=[0, 0, 1],
-            hstart=hstart.value,
-            hfinal=hfinal.value,
-            hstep=hstep.value,
+            hstart=hstart.to(u.T, equivalencies=u.magnetic_flux_field()).value,
+            hfinal=hfinal.to(u.T, equivalencies=u.magnetic_flux_field()).value,
+            hstep=hstep.to(u.T, equivalencies=u.magnetic_flux_field()).value,
             h_vect=[0.01745, 0, 0.99984],
             mstep=0.4,
             mfinal=-1.2,
