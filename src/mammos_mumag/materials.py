@@ -40,8 +40,8 @@ class MaterialDomain:
 
     theta: float = 0.0
     phi: float = 0.0
-    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m ** 3)
-    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m ** 3)
+    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
     Js: me.Entity = me.Ms(0.0, unit=u.A / u.m)
     A: me.Entity = me.A(0.0, unit=u.J / u.m)
 
@@ -157,14 +157,15 @@ class Materials:
         :param fname: File path
         :type fname: str or pathlib.Path
         """
-
         domains = [
             {
                 "theta": dom.theta,
                 "phi": dom.phi,
                 "K1": dom.K1.value.tolist(),
                 "K2": dom.K2.value.tolist(),
-                "Js": dom.Js.to(u.T, equivalencies=u.magnetic_flux_field()).value.tolist(),
+                "Js": dom.Js.to(
+                    u.T, equivalencies=u.magnetic_flux_field()
+                ).value.tolist(),
                 "A": dom.A.value.tolist(),
             }
             for dom in self.domains
@@ -189,8 +190,8 @@ def read_krn(fname):
         MaterialDomain(
             theta=float(line[0]),
             phi=float(line[1]),
-            K1=me.Ku(float(line[2]), unit=u.J / u.m ** 3),
-            K2=me.Ku(float(line[3]), unit=u.J / u.m ** 3),
+            K1=me.Ku(float(line[2]), unit=u.J / u.m**3),
+            K2=me.Ku(float(line[3]), unit=u.J / u.m**3),
             Js=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
@@ -217,8 +218,8 @@ def read_yaml(fname):
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m ** 3),
-            K2=me.Ku(float(dom["K2"]), unit=u.J / u.m ** 3),
+            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
+            K2=me.Ku(float(dom["K2"]), unit=u.J / u.m**3),
             Js=me.Ms(
                 (float(dom["Js"]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()

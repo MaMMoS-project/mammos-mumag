@@ -24,24 +24,24 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(4.9e06, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(4.9e06, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(1.61, unit=u.A / u.m),
                 "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -67,24 +67,24 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(1, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(1, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(2, unit=u.A / u.m),
                 "A": me.A(3, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m ** 3),
-                "K2": me.Ku(0, unit=u.J / u.m ** 3),
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
                 "Js": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -104,12 +104,12 @@ def are_domains_equal(d1, d2):
     for i, d1_i in enumerate(d1):
         d2_i = d2[i]
         if not (
-            np.allclose(d1_i.theta, d2_i.theta) and
-            np.allclose(d1_i.phi, d2_i.phi) and
-            np.allclose(d1_i.K1, d2_i.K1) and
-            np.allclose(d1_i.K2, d2_i.K2) and
-            np.allclose(d1_i.Js, d2_i.Js) and
-            np.allclose(d1_i.A, d2_i.A)
+            np.allclose(d1_i.theta, d2_i.theta)
+            and np.allclose(d1_i.phi, d2_i.phi)
+            and np.allclose(d1_i.K1, d2_i.K1)
+            and np.allclose(d1_i.K2, d2_i.K2)
+            and np.allclose(d1_i.Js, d2_i.Js)
+            and np.allclose(d1_i.A, d2_i.A)
         ):
             return False
     return True
