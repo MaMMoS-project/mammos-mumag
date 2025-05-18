@@ -1,12 +1,12 @@
 """Simulation class."""
 
+import datetime
+import json
 import meshio
 import os
 import shlex
 import shutil
 import subprocess
-import datetime
-import json
 
 import pathlib
 from pydantic import Field
