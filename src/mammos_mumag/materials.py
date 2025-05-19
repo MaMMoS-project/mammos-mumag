@@ -49,6 +49,7 @@ class MaterialDomain:
     @field_validator("K1", mode="before")
     @classmethod
     def convert_K1(cls, K1):
+        """Convert K1."""
         if isinstance(K1, float) or isinstance(K1, int) or isinstance(K1, u.Quantity):
             K1 = me.Ku(K1, unit=u.J / u.m**3)
         return K1
@@ -56,6 +57,7 @@ class MaterialDomain:
     @field_validator("K2", mode="before")
     @classmethod
     def convert_K2(cls, K2):
+        """Convert K2."""
         if isinstance(K2, float) or isinstance(K2, int) or isinstance(K2, u.Quantity):
             K2 = me.Ku(K2, unit=u.J / u.m**3)
         return K2
@@ -63,6 +65,7 @@ class MaterialDomain:
     @field_validator("A", mode="before")
     @classmethod
     def convert_A(cls, A):
+        """Convert A."""
         if isinstance(A, float) or isinstance(A, int) or isinstance(A, u.Quantity):
             A = me.A(A, unit=u.J / u.m)
         return A
@@ -70,6 +73,7 @@ class MaterialDomain:
     @field_validator("Js", mode="before")
     @classmethod
     def convert_Js(cls, Js):
+        """Convert Js."""
         if isinstance(Js, float) or isinstance(Js, int) or isinstance(Js, u.Quantity):
             Js = me.Ms(Js, unit=u.A / u.m)
         return Js
