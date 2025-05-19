@@ -3145,8 +3145,8 @@ packages:
   timestamp: 1566244924699
 - pypi: .
   name: mammos-mumag
-  version: 0.3.0.dev202505160956
-  sha256: ab680c5dd5a5096f20e450ce273ea5c2171891a80e9b54e79605fea51c93b869
+  version: 0.3.0.dev202505190923
+  sha256: dc247e45834cf3f07faa3f3ddb622198a7954df3b306fae38ab31e8b4a659ed3
   requires_dist:
   - jax
   - jinja2>=3.1.6,<4
