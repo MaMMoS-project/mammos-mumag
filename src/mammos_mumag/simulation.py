@@ -11,6 +11,7 @@ import subprocess
 import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
+from typing import Optional
 
 import mammos_mumag
 from mammos_mumag.materials import MaterialDomain, Materials
@@ -30,14 +31,16 @@ class Simulation:
     :type parameters: :py:class:`~mammos_mumag.parameters.Parameters`
     """
 
-    material_domain_list: list[MaterialDomain] = Field(default=None, repr=False)
-    mesh_filepath: pathlib.Path = Field(default=None)
-    materials_filepath: pathlib.Path = Field(default=None, repr=False)
-    parameters_filepath: pathlib.Path = Field(default=None, repr=False)
-    materials: Materials = Field(default=None)
-    parameters: Parameters = Field(default=None)
+    material_domain_list: Optional[list[MaterialDomain]] = Field(
+        default=None, repr=False
+    )
+    mesh_filepath: Optional[pathlib.Path] = Field(default=None)
+    materials_filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
+    parameters_filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
+    materials: Optional[Materials] = Field(default=None)
+    parameters: Optional[Parameters] = Field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post-initialization.
 
         Define `Materials` and `Parameters` instance if they have been defined.
@@ -49,7 +52,7 @@ class Simulation:
         if self.parameters_filepath is not None:
             self.parameters = Parameters(filepath=self.parameters_filepath)
 
-    def check_attribute(self, *args):
+    def check_attribute(self, *args) -> None:
         """Check existence of attributes.
 
         :raises AttributeError: Attribute has not been defined yet.
@@ -59,7 +62,9 @@ class Simulation:
                 raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
 
     @classmethod
-    def run_file(cls, file, outdir="out"):
+    def run_file(
+        cls, file: str | pathlib.Path, outdir: Optional[str | pathlib.Path] = "out"
+    ) -> None:
         """Run python file using `esys.escript`.
 
         :param script: path of file.
@@ -75,7 +80,7 @@ class Simulation:
         run_subprocess(cmd, cwd=outdir)
 
     @classmethod
-    def run_script(cls, script, outdir, name):
+    def run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
         """Run pre-defined script.
 
         :param script: Name of pre-defined script.
@@ -102,7 +107,11 @@ class Simulation:
                 file,
             )
 
-    def run_exani(self, outdir="exani", name="out"):
+    def run_exani(
+        self,
+        outdir: Optional[str | pathlib.Path] = "exani",
+        name: Optional[str] = "out",
+    ) -> None:
         r"""Run "exani" script.
 
         Test the computation of the exchange and anisotropy energy density.
@@ -144,7 +153,11 @@ class Simulation:
             name=name,
         )
 
-    def run_external(self, outdir="external", name="out"):
+    def run_external(
+        self,
+        outdir: Optional[str | pathlib.Path] = "external",
+        name: Optional[str] = "out",
+    ) -> None:
         r"""Run "external" script.
 
         Compute the Zeemann energy by finite elements and analytically.
@@ -177,7 +190,9 @@ class Simulation:
             name=name,
         )
 
-    def run_hmag(self, outdir="hmag", name="out"):
+    def run_hmag(
+        self, outdir: Optional[str | pathlib.Path] = "hmag", name: Optional[str] = "out"
+    ) -> None:
         r"""Run "hmag" script.
 
         This script evaluates the magnetostatic energy density
@@ -237,7 +252,9 @@ class Simulation:
             name=name,
         )
 
-    def run_loop(self, outdir="loop", name="out"):
+    def run_loop(
+        self, outdir: Optional[str | pathlib.Path] = "loop", name: Optional[str] = "out"
+    ) -> None:
         r"""Run "loop" script.
 
         Compute demagnetization curves.
@@ -286,7 +303,11 @@ class Simulation:
             name=name,
         )
 
-    def run_magnetization(self, outdir="magnetization", name="out"):
+    def run_magnetization(
+        self,
+        outdir: Optional[str | pathlib.Path] = "magnetization",
+        name: Optional[str] = "out",
+    ) -> None:
         """Run "magnetization" script.
 
         Creates the `vtk` file for the visualisation of the material properties.
@@ -308,7 +329,11 @@ class Simulation:
             name=name,
         )
 
-    def run_mapping(self, outdir="magnetization", name="out"):
+    def run_mapping(
+        self,
+        outdir: Optional[str | pathlib.Path] = "magnetization",
+        name: Optional[str] = "out",
+    ) -> None:
         """Run "mapping" script.
 
         Test the energy calculations with matrices.

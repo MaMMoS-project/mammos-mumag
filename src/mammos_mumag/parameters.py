@@ -5,6 +5,7 @@ import pathlib
 import configparser
 from pydantic import Field
 from pydantic.dataclasses import dataclass
+from typing import Optional
 import yaml
 
 from mammos_mumag.tools import check_path
@@ -60,34 +61,34 @@ class Parameters:
     :type verbose: int
     """
 
-    size: float = 1.0e-09
-    scale: float = 0.0
-    state: str = Field(default_factory=lambda: "")
-    m_vect: list[float] = Field(
+    size: Optional[float] = 1.0e-09
+    scale: Optional[float] = 0.0
+    state: Optional[str] = Field(default_factory=lambda: "")
+    m_vect: Optional[list[float]] = Field(
         default_factory=lambda: [0, 0, 0],
         min_length=3,
         max_length=3,
     )
-    hmag_on: int = 1
-    hstart: float = 0.0
-    hfinal: float = 0.0
-    hstep: float = 0.0
-    h_vect: list[float] = Field(
+    hmag_on: Optional[int] = 1
+    hstart: Optional[float] = 0.0
+    hfinal: Optional[float] = 0.0
+    hstep: Optional[float] = 0.0
+    h_vect: Optional[list[float]] = Field(
         default_factory=lambda: [0, 0, 0],
         min_length=3,
         max_length=3,
     )
-    mstep: float = 1.0
-    mfinal: float = -0.8
-    iter_max: int = 1000
-    precond_iter: int = 10
-    tol_fun: float = 1e-10
-    tol_hmag_factor: float = 1.0
-    tol_u: float = 1e-10
-    verbose: int = 0
-    filepath: pathlib.Path = Field(default=None, repr=False)
+    mstep: Optional[float] = 1.0
+    mfinal: Optional[float] = -0.8
+    iter_max: Optional[int] = 1000
+    precond_iter: Optional[int] = 10
+    tol_fun: Optional[float] = 1e-10
+    tol_hmag_factor: Optional[float] = 1.0
+    tol_u: Optional[float] = 1e-10
+    verbose: Optional[int] = 0
+    filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize parameters with a file.
 
         If the parameters is initialized with a not-`None` `filepath`
@@ -97,26 +98,26 @@ class Parameters:
             self.read(self.filepath)
 
     @property
-    def m(self):
+    def m(self) -> list[float]:
         """Return list m."""
         return normalize(self.m_vect)
 
     @m.setter
-    def m(self, value):
+    def m(self, value: list[float]) -> None:
         """Assign normalized m."""
         self.m_vect = normalize(value)
 
     @property
-    def h(self):
+    def h(self) -> list[float]:
         """Return list h."""
         return normalize(self.h_vect)
 
     @h.setter
-    def h(self, value):
+    def h(self, value: list[float]) -> None:
         """Assign normalized h."""
         self.h_vect = normalize(value)
 
-    def read(self, fname):
+    def read(self, fname: str | pathlib.Path) -> None:
         """Read parameter file in `yaml` or `p2` format.
 
         Simulation parameters are read and stored.
@@ -186,7 +187,7 @@ class Parameters:
         if "verbose" in minimizer:
             self.verbose = int(minimizer["verbose"])
 
-    def write_p2(self, fname):
+    def write_p2(self, fname: str | pathlib.Path) -> None:
         """Write parameter `p2` file.
 
         :param fname: File path
@@ -209,7 +210,7 @@ class Parameters:
         with open(fname, "w") as file:
             file.write(template.render(parameters_dict))
 
-    def write_yaml(self, fname):
+    def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write parameter `yaml` file.
 
         :param fname: File path
@@ -247,7 +248,7 @@ class Parameters:
             yaml.dump(parameters_dict, file)
 
 
-def normalize(v):
+def normalize(v: list[float]) -> list[float]:
     """Normalize list.
 
     :param v: list to normalize

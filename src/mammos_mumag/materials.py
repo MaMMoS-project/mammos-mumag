@@ -1,8 +1,9 @@
 """Materials class."""
 
 import pathlib
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, field_validator
 from pydantic.dataclasses import dataclass
+from typing import Optional
 import yaml
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -38,12 +39,40 @@ class MaterialDomain:
     :type A: float
     """
 
-    theta: float = 0.0
-    phi: float = 0.0
-    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
-    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
-    Js: me.Entity = me.Ms(0.0, unit=u.A / u.m)
-    A: me.Entity = me.A(0.0, unit=u.J / u.m)
+    theta: Optional[float] = 0.0
+    phi: Optional[float] = 0.0
+    K1: Optional[me.Entity] = me.Ku(0.0, unit=u.J / u.m**3)
+    K2: Optional[me.Entity] = me.Ku(0.0, unit=u.J / u.m**3)
+    Js: Optional[me.Entity] = me.Ms(0.0, unit=u.A / u.m)
+    A: Optional[me.Entity] = me.A(0.0, unit=u.J / u.m)
+
+    @field_validator("K1", mode="before")
+    @classmethod
+    def convert_K1(cls, K1):
+        if isinstance(K1, float) or isinstance(K1, int) or isinstance(K1, u.Quantity):
+            K1 = me.Ku(K1, unit=u.J / u.m**3)
+        return K1
+
+    @field_validator("K2", mode="before")
+    @classmethod
+    def convert_K2(cls, K2):
+        if isinstance(K2, float) or isinstance(K2, int) or isinstance(K2, u.Quantity):
+            K2 = me.Ku(K2, unit=u.J / u.m**3)
+        return K2
+
+    @field_validator("A", mode="before")
+    @classmethod
+    def convert_A(cls, A):
+        if isinstance(A, float) or isinstance(A, int) or isinstance(A, u.Quantity):
+            A = me.A(A, unit=u.J / u.m)
+        return A
+
+    @field_validator("Js", mode="before")
+    @classmethod
+    def convert_Js(cls, Js):
+        if isinstance(Js, float) or isinstance(Js, int) or isinstance(Js, u.Quantity):
+            Js = me.Ms(Js, unit=u.A / u.m)
+        return Js
 
 
 @dataclass
@@ -58,10 +87,10 @@ class Materials:
     :type filepath: pathlib.Path
     """
 
-    domains: list[MaterialDomain] = Field(default_factory=list)
-    filepath: pathlib.Path = Field(default=None, repr=False)
+    domains: Optional[list[MaterialDomain]] = Field(default_factory=list)
+    filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize materials with a file.
 
         If the materials is initialized with an empty `domains` attribute
@@ -71,7 +100,9 @@ class Materials:
         if (len(self.domains) == 0) and (self.filepath is not None):
             self.read(self.filepath)
 
-    def add_domain(self, A, Js, K1, K2, phi, theta):
+    def add_domain(
+        self, A: float, Js: float, K1: float, K2: float, phi: float, theta: float
+    ) -> None:
         r"""Append domain with specified parameters.
 
         :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
@@ -101,7 +132,7 @@ class Materials:
         )
         self.domains.append(dom)
 
-    def read(self, fname):
+    def read(self, fname: str | pathlib.Path) -> None:
         """Read materials file.
 
         This function overwrites the current
@@ -126,7 +157,7 @@ class Materials:
                 f"{fpath.suffix} materials file is not supported."
             )
 
-    def write_krn(self, fname):
+    def write_krn(self, fname: str | pathlib.Path) -> None:
         """Write material `krn` file.
 
         Each domain in :py:attr:`~domains` is written on a single line
@@ -151,7 +182,7 @@ class Materials:
                 )
             )
 
-    def write_yaml(self, fname):
+    def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write material `yaml` file.
 
         :param fname: File path
@@ -174,7 +205,7 @@ class Materials:
             yaml.dump(domains, file)
 
 
-def read_krn(fname):
+def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `krn` file and return as list of dictionaries.
 
     :param fname: File path
@@ -203,7 +234,7 @@ def read_krn(fname):
     ]
 
 
-def read_yaml(fname):
+def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `yaml` file.
 
     :param fname: File path
