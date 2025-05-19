@@ -1,8 +1,8 @@
 """Check hmag script."""
 
-import meshio
 import numpy as np
-import polars as pl
+import pandas as pd
+import pyvista as pv
 from mammos_mumag.simulation import Simulation
 
 
@@ -15,16 +15,17 @@ def test_hmag(DATA, tmp_path):
     )
 
     # run hmag
-    sim.run_hmag(outdir=tmp_path)
+    sim.run_hmag(outdir=tmp_path, name="cube")
 
     # check vtk files
-    data_hmag = meshio.read(DATA / "hmag" / "cube_hmag.vtu")
-    assert np.allclose(sim.hmag.point_data["U"], data_hmag.point_data["U"])
-    assert np.allclose(sim.hmag.point_data["h_nodes"], data_hmag.point_data["h_nodes"])
-    assert np.allclose(sim.hmag.point_data["m"], data_hmag.point_data["m"])
-    assert np.allclose(sim.hmag.cell_data["h"][0], data_hmag.cell_data["h"][0])
+    sim_hmag = pv.read(tmp_path / "cube_hmag.vtu")
+    data_hmag = pv.read(DATA / "hmag" / "cube_hmag.vtu")
+    assert np.allclose(sim_hmag.point_data["U"], data_hmag.point_data["U"])
+    assert np.allclose(sim_hmag.point_data["h_nodes"], data_hmag.point_data["h_nodes"])
+    assert np.allclose(sim_hmag.point_data["m"], data_hmag.point_data["m"])
+    assert np.allclose(sim_hmag.cell_data["h"][0], data_hmag.cell_data["h"][0])
 
     # check energies
-    data_energy = pl.read_csv(DATA / "hmag" / "cube.csv", skip_rows=1)
-    out_energy = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
-    assert np.allclose(data_energy["value"], out_energy["value"])
+    sim_energy = pd.read_csv(tmp_path / "cube.csv", skiprows=1)
+    data_energy = pd.read_csv(DATA / "hmag" / "cube.csv", skiprows=1)
+    assert np.allclose(sim_energy["value"], data_energy["value"])
