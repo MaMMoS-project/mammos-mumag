@@ -15,17 +15,21 @@ import mammos_units as u
 
 
 def run(
-    Ms,
-    A,
-    K1,
+    Ms: float | u.Quantity | me.Entity,
+    A: float | u.Quantity | me.Entity,
+    K1: float | u.Quantity | me.Entity,
     mesh: Optional[Mesh] = None,
     mesh_filepath: Optional[pathlib.Path] = None,
-    hstart=(2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
-    hfinal=(-2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
-    hstep=None,
-    hnsteps=20,
-    outdir="hystloop",
 ):
+    hstart: Optional[float | u.Quantity] = (2 * u.T).to(
+        u.A / u.m, equivalencies=u.magnetic_flux_field()
+    ),
+    hfinal: Optional[float | u.Quantity] = (-2 * u.T).to(
+        u.A / u.m, equivalencies=u.magnetic_flux_field()
+    ),
+    hstep: Optional[float | u.Quantity] = None,
+    hnsteps: Optional[int] = 20,
+    outdir: Optional[str | pathlib.Path] = "hystloop",
     """Run hysteresis loop."""
     if mesh is None and mesh_filepath is None:
         raise ValueError(
@@ -101,7 +105,10 @@ def run(
     return hl, sim.loop_vtu_list
 
 
-def plot(hl, duplicate=True):
+def plot(
+    hl: pd.DataFrame,
+    duplicate: Optional[bool] = True,
+):
     """Plot hysteresis loop."""
     plt.plot(hl["mu0_Hext"], hl["pol"])
     j = 0
