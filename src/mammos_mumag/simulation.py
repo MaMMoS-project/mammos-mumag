@@ -2,7 +2,7 @@
 
 import datetime
 import json
-import meshio
+
 import os
 import shlex
 import shutil
@@ -236,7 +236,6 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.hmag = meshio.read(outdir / f"{name}_hmag.vtu")
 
     def run_loop(self, outdir="loop", name="out"):
         r"""Run "loop" script.
@@ -286,11 +285,6 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.loop_vtu_list = [
-            meshio.read(outdir / fname)
-            for fname in os.listdir(outdir)
-            if "vtu" in fname
-        ]
 
     def run_magnetization(self, outdir="magnetization", name="out"):
         """Run "magnetization" script.
@@ -358,7 +352,6 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.materials_fields = meshio.read(outdir / f"{name}_mat.vtu")
 
     def run_store(self, outdir="magnetization", name="out"):
         """Run "store" script.
