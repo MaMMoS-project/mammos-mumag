@@ -1,11 +1,13 @@
 """Test materials file i/o."""
 
 import numpy as np
+import pytest
+from pydantic import ValidationError
 
 import mammos_entity as me
 import mammos_units as u
 
-from mammos_mumag.materials import Materials
+from mammos_mumag.materials import MaterialDomain, Materials
 
 
 def test_materials_file(DATA, tmp_path):
@@ -113,3 +115,49 @@ def are_domains_equal(d1, d2):
         ):
             return False
     return True
+
+
+def test_materials_types():
+    """Test MaterialDomain instances initialized with different types.
+
+    The instances are initialized with the same value, so we expect
+    them to be defined as equal.
+    """
+    dom_1 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=me.Ku(1, unit=u.J / u.m**3),
+        K2=me.Ku(2, unit=u.J / u.m**3),
+        Js=me.Ms(3, unit=u.A / u.m),
+        A=me.A(4, unit=u.J / u.m),
+    )
+
+    dom_2 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=1,
+        K2=2,
+        Js=3,
+        A=4,
+    )
+
+    dom_3 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=1 * u.J / u.m**3,
+        K2=2 * u.J / u.m**3,
+        Js=3 * u.A / u.m,
+        A=4 * u.J / u.m,
+    )
+
+    assert are_domains_equal([dom_1], [dom_2])
+    assert are_domains_equal([dom_1], [dom_3])
+
+
+def test_wrong_domains():
+    """Use wrong types in definition.
+
+    All tests are supposed to raise `ValidationError`.
+    """
+    with pytest.raises(ValidationError):
+        MaterialDomain(K1="K1")
