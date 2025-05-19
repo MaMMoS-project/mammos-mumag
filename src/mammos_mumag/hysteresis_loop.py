@@ -9,6 +9,7 @@ from typing import Optional
 from mammos_mumag.materials import Materials
 from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
+from mammos_mumag.results import ResultsLoop
 from mammos_mumag.simulation import Simulation
 import mammos_entity as me
 import mammos_units as u
@@ -20,7 +21,6 @@ def run(
     K1: float | u.Quantity | me.Entity,
     mesh: Optional[Mesh] = None,
     mesh_filepath: Optional[pathlib.Path] = None,
-):
     hstart: Optional[float | u.Quantity] = (2 * u.T).to(
         u.A / u.m, equivalencies=u.magnetic_flux_field()
     ),
@@ -30,6 +30,7 @@ def run(
     hstep: Optional[float | u.Quantity] = None,
     hnsteps: Optional[int] = 20,
     outdir: Optional[str | pathlib.Path] = "hystloop",
+) -> ResultsLoop:
     """Run hysteresis loop."""
     if mesh is None and mesh_filepath is None:
         raise ValueError(
@@ -99,10 +100,19 @@ def run(
         ),
     )
     sim.run_loop(outdir=outdir, name="hystloop")
-    hl = pd.read_csv(
-        f"{outdir}/hystloop.dat", delimiter=" ", names=["idx", "mu0_Hext", "pol", "E"]
+    res = ResultsLoop(
+        pd.read_csv(
+            f"{outdir}/hystloop.dat",
+            delimiter=" ",
+            names=["idx", "mu0_Hext", "pol", "E"],
+        ),
+        [
+            fname
+            for fname in pathlib.Path(outdir).resolve().iterdir()
+            if fname.suffix == ".vtu"
+        ],
     )
-    return hl, sim.loop_vtu_list
+    return res
 
 
 def plot(

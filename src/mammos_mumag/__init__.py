@@ -13,6 +13,7 @@ from mammos_mumag import (
     mesh,
     parameters,
     postprocess,
+    results,
     simulation,
     tofly,
 )
@@ -23,6 +24,7 @@ __all__ = [
     "mesh",
     "parameters",
     "postprocess",
+    "results",
     "simulation",
     "tofly",
 ]
