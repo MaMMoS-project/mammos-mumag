@@ -150,8 +150,18 @@ def test_materials_types():
         A=4 * u.J / u.m,
     )
 
+    dom_4 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=me.Ku(1, unit=u.J / u.m**3).value,
+        K2=me.Ku(2, unit=u.J / u.m**3).value,
+        Js=me.Ms(3, unit=u.A / u.m).value,
+        A=me.A(4, unit=u.J / u.m).value,
+    )
+
     assert are_domains_equal([dom_1], [dom_2])
     assert are_domains_equal([dom_1], [dom_3])
+    assert are_domains_equal([dom_1], [dom_4])
 
 
 def test_wrong_domains():
