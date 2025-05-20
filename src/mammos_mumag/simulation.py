@@ -11,7 +11,6 @@ import subprocess
 import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
-from typing import Optional
 
 import mammos_mumag
 from mammos_mumag.materials import MaterialDomain, Materials
@@ -31,14 +30,12 @@ class Simulation:
     :type parameters: :py:class:`~mammos_mumag.parameters.Parameters`
     """
 
-    material_domain_list: Optional[list[MaterialDomain]] = Field(
-        default=None, repr=False
-    )
-    mesh_filepath: Optional[pathlib.Path] = Field(default=None)
-    materials_filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
-    parameters_filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
-    materials: Optional[Materials] = Field(default=None)
-    parameters: Optional[Parameters] = Field(default=None)
+    material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
+    mesh_filepath: pathlib.Path | None = Field(default=None)
+    materials_filepath: pathlib.Path | None = Field(default=None, repr=False)
+    parameters_filepath: pathlib.Path | None = Field(default=None, repr=False)
+    materials: Materials | None = Field(default=None)
+    parameters: Parameters | None = Field(default=None)
 
     def __post_init__(self) -> None:
         """Post-initialization.
@@ -63,7 +60,7 @@ class Simulation:
 
     @classmethod
     def run_file(
-        cls, file: str | pathlib.Path, outdir: Optional[str | pathlib.Path] = "out"
+        cls, file: str | pathlib.Path, outdir: str | pathlib.Path = "out"
     ) -> None:
         """Run python file using `esys.escript`.
 
@@ -109,8 +106,8 @@ class Simulation:
 
     def run_exani(
         self,
-        outdir: Optional[str | pathlib.Path] = "exani",
-        name: Optional[str] = "out",
+        outdir: str | pathlib.Path = "exani",
+        name: str = "out",
     ) -> None:
         r"""Run "exani" script.
 
@@ -155,8 +152,8 @@ class Simulation:
 
     def run_external(
         self,
-        outdir: Optional[str | pathlib.Path] = "external",
-        name: Optional[str] = "out",
+        outdir: str | pathlib.Path = "external",
+        name: str = "out",
     ) -> None:
         r"""Run "external" script.
 
@@ -190,9 +187,7 @@ class Simulation:
             name=name,
         )
 
-    def run_hmag(
-        self, outdir: Optional[str | pathlib.Path] = "hmag", name: Optional[str] = "out"
-    ) -> None:
+    def run_hmag(self, outdir: str | pathlib.Path = "hmag", name: str = "out") -> None:
         r"""Run "hmag" script.
 
         This script evaluates the magnetostatic energy density
@@ -252,9 +247,7 @@ class Simulation:
             name=name,
         )
 
-    def run_loop(
-        self, outdir: Optional[str | pathlib.Path] = "loop", name: Optional[str] = "out"
-    ) -> None:
+    def run_loop(self, outdir: str | pathlib.Path = "loop", name: str = "out") -> None:
         r"""Run "loop" script.
 
         Compute demagnetization curves.
@@ -305,8 +298,8 @@ class Simulation:
 
     def run_magnetization(
         self,
-        outdir: Optional[str | pathlib.Path] = "magnetization",
-        name: Optional[str] = "out",
+        outdir: str | pathlib.Path = "magnetization",
+        name: str = "out",
     ) -> None:
         """Run "magnetization" script.
 
@@ -331,8 +324,8 @@ class Simulation:
 
     def run_mapping(
         self,
-        outdir: Optional[str | pathlib.Path] = "magnetization",
-        name: Optional[str] = "out",
+        outdir: str | pathlib.Path = "magnetization",
+        name: str = "out",
     ) -> None:
         """Run "mapping" script.
 
@@ -357,7 +350,9 @@ class Simulation:
             name=name,
         )
 
-    def run_materials(self, outdir="materials", name="out"):
+    def run_materials(
+        self, outdir: str | pathlib.Path = "materials", name: str = "out"
+    ) -> None:
         """Run "materials" script.
 
         This script generates a `vtu` file that shows the material.
@@ -378,7 +373,9 @@ class Simulation:
             name=name,
         )
 
-    def run_store(self, outdir="magnetization", name="out"):
+    def run_store(
+        self, outdir: str | pathlib.Path = "magnetization", name: str = "out"
+    ) -> None:
         """Run "store" script.
 
         The sparse matrices used for computation can be stored
@@ -402,7 +399,7 @@ class Simulation:
         )
 
 
-def run_subprocess(cmd, cwd):
+def run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
     """Run command using `subprocess` in the specified directory.
 
     :param cmd: command to execute

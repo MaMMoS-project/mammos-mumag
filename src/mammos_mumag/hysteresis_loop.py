@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pathlib
 from textwrap import dedent
-from typing import Optional
 
 from mammos_mumag.materials import Materials
 from mammos_mumag import mesh
@@ -19,17 +18,16 @@ def run(
     Ms: float | u.Quantity | me.Entity,
     A: float | u.Quantity | me.Entity,
     K1: float | u.Quantity | me.Entity,
-    mesh: Optional[Mesh] = None,
-    mesh_filepath: Optional[pathlib.Path] = None,
-    hstart: Optional[float | u.Quantity] = (2 * u.T).to(
+    mesh_filepath: pathlib.Path | None = None,
+    hstart: float | u.Quantity = (2 * u.T).to(
         u.A / u.m, equivalencies=u.magnetic_flux_field()
     ),
-    hfinal: Optional[float | u.Quantity] = (-2 * u.T).to(
+    hfinal: float | u.Quantity = (-2 * u.T).to(
         u.A / u.m, equivalencies=u.magnetic_flux_field()
     ),
-    hstep: Optional[float | u.Quantity] = None,
-    hnsteps: Optional[int] = 20,
-    outdir: Optional[str | pathlib.Path] = "hystloop",
+    hstep: float | u.Quantity | None = None,
+    hnsteps: int = 20,
+    outdir: str | pathlib.Path = "hystloop",
 ) -> ResultsLoop:
     """Run hysteresis loop."""
     if mesh is None and mesh_filepath is None:
@@ -117,7 +115,7 @@ def run(
 
 def plot(
     hl: pd.DataFrame,
-    duplicate: Optional[bool] = True,
+    duplicate: bool = True,
 ):
     """Plot hysteresis loop."""
     plt.plot(hl["mu0_Hext"], hl["pol"])

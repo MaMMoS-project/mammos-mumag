@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pathlib
 import pyvista as pv
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 from dataclasses import dataclass
 
 
@@ -18,9 +18,9 @@ class ResultsLoop:
     """Class ResultsLoop."""
 
     dataframe: pd.DataFrame
-    configurations: list[pathlib.Path]
+    configurations: list[pathlib.Path] | None = None
 
-    def plot(self, duplicate: Optional[bool] = True) -> None:
+    def plot(self, duplicate: bool = True) -> None:
         """Plot hysteresis loop."""
         plt.plot(self.dataframe["mu0_Hext"], self.dataframe["pol"])
         j = 0

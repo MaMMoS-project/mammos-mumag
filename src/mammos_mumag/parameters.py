@@ -5,7 +5,6 @@ import pathlib
 import configparser
 from pydantic import Field
 from pydantic.dataclasses import dataclass
-from typing import Optional
 import yaml
 
 from mammos_mumag.tools import check_path
@@ -61,32 +60,32 @@ class Parameters:
     :type verbose: int
     """
 
-    size: Optional[float] = 1.0e-09
-    scale: Optional[float] = 0.0
-    state: Optional[str] = Field(default_factory=lambda: "")
-    m_vect: Optional[list[float]] = Field(
+    size: float = 1.0e-09
+    scale: float = 0.0
+    state: str = Field(default_factory=lambda: "")
+    m_vect: list[float] = Field(
         default_factory=lambda: [0, 0, 0],
         min_length=3,
         max_length=3,
     )
-    hmag_on: Optional[int] = 1
-    hstart: Optional[float] = 0.0
-    hfinal: Optional[float] = 0.0
-    hstep: Optional[float] = 0.0
-    h_vect: Optional[list[float]] = Field(
+    hmag_on: int = 1
+    hstart: float = 0.0
+    hfinal: float = 0.0
+    hstep: float = 0.0
+    h_vect: list[float] = Field(
         default_factory=lambda: [0, 0, 0],
         min_length=3,
         max_length=3,
     )
-    mstep: Optional[float] = 1.0
-    mfinal: Optional[float] = -0.8
-    iter_max: Optional[int] = 1000
-    precond_iter: Optional[int] = 10
-    tol_fun: Optional[float] = 1e-10
-    tol_hmag_factor: Optional[float] = 1.0
-    tol_u: Optional[float] = 1e-10
-    verbose: Optional[int] = 0
-    filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
+    mstep: float = 1.0
+    mfinal: float = -0.8
+    iter_max: int = 1000
+    precond_iter: int = 10
+    tol_fun: float = 1e-10
+    tol_hmag_factor: float = 1.0
+    tol_u: float = 1e-10
+    verbose: int = 0
+    filepath: pathlib.Path | None = Field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         """Initialize parameters with a file.

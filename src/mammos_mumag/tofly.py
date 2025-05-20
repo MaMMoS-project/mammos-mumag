@@ -362,7 +362,11 @@ def get_exclude_set(exclude_list):
     )
 
 
-def convert(unv_path, fly_path, exclude_list=[1, 2]):
+def convert(
+    unv_path: str | pathlib.Path,
+    fly_path: str | pathlib.Path,
+    exclude_list: list[int] = [1, 2],
+) -> None:
     """Convert mesh file from `unv` to `fly`.
 
     :param unv_path: Input `unv` file path.

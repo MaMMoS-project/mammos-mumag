@@ -1,11 +1,11 @@
 """Materials class."""
 
+from jinja2 import Environment, PackageLoader, select_autoescape
+import numbers
 import pathlib
 from pydantic import ConfigDict, Field, field_validator
 from pydantic.dataclasses import dataclass
-from typing import Optional
 import yaml
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 import mammos_entity as me
 import mammos_units as u
@@ -39,18 +39,18 @@ class MaterialDomain:
     :type A: float
     """
 
-    theta: Optional[float] = 0.0
-    phi: Optional[float] = 0.0
-    K1: Optional[me.Entity] = me.Ku(0.0, unit=u.J / u.m**3)
-    K2: Optional[me.Entity] = me.Ku(0.0, unit=u.J / u.m**3)
-    Js: Optional[me.Entity] = me.Ms(0.0, unit=u.A / u.m)
-    A: Optional[me.Entity] = me.A(0.0, unit=u.J / u.m)
+    theta: float = 0.0
+    phi: float = 0.0
+    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    Js: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    A: me.Entity = me.A(0.0, unit=u.J / u.m)
 
     @field_validator("K1", mode="before")
     @classmethod
     def convert_K1(cls, K1):
         """Convert K1."""
-        if isinstance(K1, float) or isinstance(K1, int) or isinstance(K1, u.Quantity):
+        if isinstance(K1, (numbers.Real, u.Quantity)):
             K1 = me.Ku(K1, unit=u.J / u.m**3)
         return K1
 
@@ -91,8 +91,8 @@ class Materials:
     :type filepath: pathlib.Path
     """
 
-    domains: Optional[list[MaterialDomain]] = Field(default_factory=list)
-    filepath: Optional[pathlib.Path] = Field(default=None, repr=False)
+    domains: list[MaterialDomain] = Field(default_factory=list)
+    filepath: pathlib.Path | None = Field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         """Initialize materials with a file.
