@@ -61,7 +61,7 @@ def run(
                     "phi": 0.0,
                     "K1": K1,
                     "K2": me.Ku(0),
-                    "Js": Ms,
+                    "Ms": Ms,
                     "A": A,
                 },
                 {
@@ -69,7 +69,7 @@ def run(
                     "phi": 0.0,
                     "K1": me.Ku(0),
                     "K2": me.Ku(0),
-                    "Js": me.Ms(0),
+                    "Ms": me.Ms(0),
                     "A": me.A(0),
                 },
                 {
@@ -77,7 +77,7 @@ def run(
                     "phi": 0.0,
                     "K1": me.Ku(0),
                     "K2": me.Ku(0),
-                    "Js": me.Ms(0),
+                    "Ms": me.Ms(0),
                     "A": me.A(0),
                 },
             ],

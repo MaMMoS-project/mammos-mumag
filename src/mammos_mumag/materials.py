@@ -31,9 +31,9 @@ class MaterialDomain:
     :param K2: Second magnetocrystalline anisotropy constant in
         :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
     :type K2: float
-    :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
+    :param Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
         Defaults to 0.
-    :type Js: float
+    :type Ms: float
     :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         Defaults to 0.
     :type A: float
@@ -43,7 +43,7 @@ class MaterialDomain:
     phi: float = 0.0
     K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
     K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
-    Js: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    Ms: me.Entity = me.Ms(0.0, unit=u.A / u.m)
     A: me.Entity = me.A(0.0, unit=u.J / u.m)
 
     @field_validator("K1", mode="before")
@@ -70,13 +70,13 @@ class MaterialDomain:
             A = me.A(A, unit=u.J / u.m)
         return A
 
-    @field_validator("Js", mode="before")
+    @field_validator("Ms", mode="before")
     @classmethod
-    def convert_Js(cls, Js):
-        """Convert Js."""
-        if isinstance(Js, float) or isinstance(Js, int) or isinstance(Js, u.Quantity):
-            Js = me.Ms(Js, unit=u.A / u.m)
-        return Js
+    def convert_Ms(cls, Ms):
+        """Convert Ms."""
+        if isinstance(Ms, float) or isinstance(Ms, int) or isinstance(Ms, u.Quantity):
+            Ms = me.Ms(Ms, unit=u.A / u.m)
+        return Ms
 
 
 @dataclass
@@ -105,14 +105,14 @@ class Materials:
             self.read(self.filepath)
 
     def add_domain(
-        self, A: float, Js: float, K1: float, K2: float, phi: float, theta: float
+        self, A: float, Ms: float, K1: float, K2: float, phi: float, theta: float
     ) -> None:
         r"""Append domain with specified parameters.
 
         :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         :type A: float
-        :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
-        :type Js: float
+        :param Ms: Spontaneous magnetisation in :math:`\mathrm{T}`.
+        :type Ms: float
         :param K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
         :type K1: float
@@ -131,7 +131,7 @@ class Materials:
             phi=phi,
             K1=K1,
             K2=K2,
-            Js=Js,
+            Ms=Ms,
             A=A,
         )
         self.domains.append(dom)
@@ -198,7 +198,7 @@ class Materials:
                 "phi": dom.phi,
                 "K1": dom.K1.value.tolist(),
                 "K2": dom.K2.value.tolist(),
-                "Js": dom.Js.to(
+                "Ms": dom.Ms.to(
                     u.T, equivalencies=u.magnetic_flux_field()
                 ).value.tolist(),
                 "A": dom.A.value.tolist(),
@@ -227,7 +227,7 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
             phi=float(line[1]),
             K1=me.Ku(float(line[2]), unit=u.J / u.m**3),
             K2=me.Ku(float(line[3]), unit=u.J / u.m**3),
-            Js=me.Ms(
+            Ms=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
                 )
@@ -255,8 +255,8 @@ def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
             phi=float(dom["phi"]),
             K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
             K2=me.Ku(float(dom["K2"]), unit=u.J / u.m**3),
-            Js=me.Ms(
-                (float(dom["Js"]) * u.T).to(
+            Ms=me.Ms(
+                (float(dom["Ms"]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
                 )
             ),
