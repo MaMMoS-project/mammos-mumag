@@ -171,3 +171,5 @@ def test_wrong_domains():
     """
     with pytest.raises(ValidationError):
         MaterialDomain(K1="K1")
+    with pytest.raises(ValidationError):
+        MaterialDomain(theta=0 * u.rad)
