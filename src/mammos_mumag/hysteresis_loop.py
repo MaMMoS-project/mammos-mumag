@@ -7,7 +7,7 @@ from textwrap import dedent
 from typing import Optional
 
 from mammos_mumag.materials import Materials
-from mammos_mumag.mesh import Mesh
+from mammos_mumag import mesh
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.results import ResultsLoop
 from mammos_mumag.simulation import Simulation
