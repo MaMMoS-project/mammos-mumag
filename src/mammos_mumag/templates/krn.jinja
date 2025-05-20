@@ -1,3 +1,3 @@
 {% for dom in domains -%}
-    {{dom.theta}} {{dom.phi}} {{dom.K1.value}} {{dom.K2.value}} {{dom.Js.to(u.T, equivalencies=eq).value}} {{dom.A.value}} 1.0 0.0
+    {{dom.theta}} {{dom.phi}} {{dom.K1.value}} {{dom.K2.value}} {{dom.Ms.to(u.T, equivalencies=eq).value}} {{dom.A.value}} 1.0 0.0
 {% endfor %}
