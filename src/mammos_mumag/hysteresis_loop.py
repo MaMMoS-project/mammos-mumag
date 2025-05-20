@@ -18,7 +18,7 @@ def run(
     Ms: float | u.Quantity | me.Entity,
     A: float | u.Quantity | me.Entity,
     K1: float | u.Quantity | me.Entity,
-    mesh_filepath: pathlib.Path | None = None,
+    mesh_filepath: pathlib.Path,
     hstart: float | u.Quantity = (2 * u.T).to(
         u.A / u.m, equivalencies=u.magnetic_flux_field()
     ),
@@ -30,18 +30,6 @@ def run(
     outdir: str | pathlib.Path = "hystloop",
 ) -> ResultsLoop:
     """Run hysteresis loop."""
-    if mesh is None and mesh_filepath is None:
-        raise ValueError(
-            dedent(
-                """
-                mesh and mesh_filepath are both None.
-                Either define mesh as a `mammos_mumag.mesh.Mesh` instance,
-                or define the location of the mesh file.
-                """
-            )
-        )
-    elif mesh is not None:
-        mesh_filepath = mesh.value
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
 
