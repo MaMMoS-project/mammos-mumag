@@ -39,6 +39,7 @@ dependencies = [
   "pydantic",
   "pyvista",
   "pyyaml >6",
+  "scipy",
 ]
 
 [project.optional-dependencies]
