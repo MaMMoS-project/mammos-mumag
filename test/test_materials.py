@@ -1,7 +1,8 @@
 """Check materials script."""
 
-import meshio
 import numpy as np
+import pyvista as pv
+
 from mammos_mumag.simulation import Simulation
 
 
@@ -14,11 +15,12 @@ def test_materials(DATA, tmp_path):
     )
 
     # run hmag
-    sim.run_materials(outdir=tmp_path / "materials")
+    sim.run_materials(outdir=tmp_path, name="cube")
 
     # check materials vtu
-    data = meshio.read(DATA / "materials" / "cube_mat.vtu")
-    assert np.allclose(data.cell_data["A"][0], sim.materials_fields.cell_data["A"][0])
-    assert np.allclose(data.cell_data["Js"][0], sim.materials_fields.cell_data["Js"][0])
-    assert np.allclose(data.cell_data["K"][0], sim.materials_fields.cell_data["K"][0])
-    assert np.allclose(data.cell_data["u"][0], sim.materials_fields.cell_data["u"][0])
+    sim_materials = pv.read(tmp_path / "cube_mat.vtu")
+    data = pv.read(DATA / "materials" / "cube_mat.vtu")
+    assert np.allclose(data.cell_data["A"][0], sim_materials.cell_data["A"][0])
+    assert np.allclose(data.cell_data["Js"][0], sim_materials.cell_data["Js"][0])
+    assert np.allclose(data.cell_data["K"][0], sim_materials.cell_data["K"][0])
+    assert np.allclose(data.cell_data["u"][0], sim_materials.cell_data["u"][0])

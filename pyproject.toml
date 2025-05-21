@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 name = "mammos-mumag"
-version = "0.2.7-1"
+version = "0.4.0"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -27,22 +27,22 @@ classifiers = [
   'Topic :: Scientific/Engineering :: Physics',
 ]
 
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 dependencies = [
-  "jax[cuda12]",
+  "jax",
   "jinja2 >=3.1.6,<4",
-  "meshio",
+  "mammos_entity >=0.2.1",
+  "mammos_units",
   "numpy",
   "psutil >=7",
   "pydantic",
+  "pyvista",
   "pyyaml >6",
+  "scipy",
 ]
 
 [project.optional-dependencies]
-format = [
-  "ruff==0.8",
-]
 docs = [
   "ipykernel",
   "jupyter",
@@ -50,10 +50,14 @@ docs = [
   "sphinx==8.1.3",
   "sphinx-rtd-theme==3.0.1",
   "numpy",
-  "polars ",
+]
+format = [
+  "ruff==0.8",
+]
+gpu = [
+  "jax[cuda12]",
 ]
 test = [
-  "polars",
   "pytest",
 ]
 
@@ -63,8 +67,8 @@ channels = ["conda-forge"]
 platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
-cuda = { version=">=12" }
 esys-escript = ">=5.10,<6"
+packaging = "<25"
 
 [tool.pixi.pypi-dependencies]
 mammos_mumag = { path = ".", editable = true }
@@ -78,8 +82,9 @@ pre-commit = "*"
 python = ">=3.8"
 
 [tool.pixi.environments]
-format = { features = ["format"], no-default-feature = true, solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
+format = { features = ["format"], no-default-feature = true, solve-group = "default" }
+gpu = { features = ["gpu"], solve-group = "default" }
 test = { features = ["test"], solve-group = "default" }
 dev = { features = ["dev"], no-default-feature = true }
 

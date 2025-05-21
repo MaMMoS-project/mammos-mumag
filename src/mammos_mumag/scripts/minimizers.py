@@ -99,7 +99,7 @@ def line_search(x,      # current magnetization
     rho=0.5
     c=1e-4
     delta=0.1
-    eps=1e-14
+    eps=1e-6                                                          # see section 5 of hager zhang paper  
     max_iter=20
     
     h  = compute_h(x, d)
@@ -112,15 +112,16 @@ def line_search(x,      # current magnetization
     
     def cond(state):
         i, gd1, f1, alpha, _, _, _, _ = state
-        wolfe = np.logical_and((2*delta-1)*gd >= gd1,f1 <= f + eps) # approximate Wolfe  SIAM J. OPTIM. Vol. 16, No. 1, pp. 170–192
-        done  = np.logical_or(wolfe, f1 <= f + c * alpha * gd)      # or armijo 
-        done  = np.logical_or(done, i > max_iter)                   # maximum iterations exceeded
+        eps_k = eps*np.abs(f)                                         # eq 4.3 in hager zhang paper 
+        wolfe = np.logical_and((2*delta-1)*gd >= gd1,f1 <= f + eps_k) # approximate Wolfe  SIAM J. OPTIM. Vol. 16, No. 1, pp. 170–192
+        done  = np.logical_or(wolfe, f1 <= f + c * alpha * gd)        # or armijo 
+        done  = np.logical_or(done, i > max_iter)   # maximum iterations exceeded
         return np.logical_not(done)
   
     def body(state):
         i, _, _, alpha, _, _, alt_args, stats = state
         alpha *= rho
-        jax.debug.print('STEP SIZE DECREASED to {alpha}',alpha=alpha)
+        jax.debug.print('STEP SIZE DECREASED to {alpha} {i}',alpha=alpha, i=i)
         x1 = update_x(x, alpha, d)
         f1, g1, alt_args, stats = func(x1, func_args, alt_args, stats)
         gd1 = np.dot(g1, d)         
@@ -143,8 +144,19 @@ def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_i
     f0 = np.finfo(x.dtype).max
     f, g, alt_args, stats = func(x, func_args, alt_args, stats)
     d = -M_inv(x, g, func_args, alt_args) # Initial search direction
-    k = 0
-    n_restarts = 0
+    k = 1
+    n_restart = 20
+
+    def print_restart_z1(_):
+        jax.debug.print("restart: -z1 is not a sufficient downhill direction")
+        return None
+
+    def print_restart_d(_):
+        jax.debug.print("restart:  d  is not a sufficient downhill direction")
+        return None
+
+    def no_op(_):
+        return None
 
     def cond(state):
         k, x0, f0, x, f, g, _, _, _ = state
@@ -156,11 +168,20 @@ def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_i
 
     def body(state):
         k, _, f0, x, f, g, d, alt_args, stats = state
+        condition = np.dot(d,g) > -0.001*np.linalg.norm(d)*np.linalg.norm(g)   # eq 2.15, Andrei, Open Problems in Nonlinear Conjugate Gradient ...
+        jax.lax.cond(condition, print_restart_z1, no_op, operand=None)
+        d = jax.lax.select(condition, -g, d)                                   # use -g, if d not downhill
         x1, f1, g1, alt_args, stats = line_search(x,f0, f,g,d, func, func_args, alt_args, stats, update_x) 
         z1 = M_inv(x, g1, func_args, alt_args)
         y = g1 - g
-        beta = np.maximum(np.dot(y,z1) / np.dot(y,d), 0.)  # Hager, Pacific journal of Optimization 2.1 (2006) 35, HS+ method
+        beta = np.maximum(np.dot(y,z1) / np.dot(y,d), 0.)  
+                                                          # HS+, Hager, Zhang, A SURVEY OF NONLINEAR CONJUGATE GRADIENT METHODS
+        # condition = (k % n_restart) == 0
+        # beta = jax.lax.select(condition, 0.0, beta)
         d = -z1 + beta * d
+        condition = np.dot(d,g) > -0.001*np.linalg.norm(d)*np.linalg.norm(g)   # eq 2.15, Andrei, Open Problems in Nonlinear Conjugate Gradient ...
+        jax.lax.cond(condition, print_restart_d, no_op, operand=None)
+        d = jax.lax.select(condition, -z1, d)                                  # use -z1, if d not downhill
         return k+1, x, f, x1, f1, g1, d, alt_args, stats
 
     state = k, x, f0, x, f, g, d, alt_args, stats

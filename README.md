@@ -4,7 +4,15 @@
 This package allows users to use the library `mammos_mumag` in Python and includes some useful scripts for the use and development of `mammos-mumag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
 
 
-# Installation with conda-pip (discouraged)
+# Installation
+
+Clone the repository and install with pip, i.e. run
+```console
+git clone https://github.com/MaMMoS-project/mammos-mumag
+pip install mammos-mumag
+```
+
+<!-- # Installation with conda-pip (discouraged)
 The package `esys-escript` must be installed from `conda-forge` (see [here](https://github.com/LutzGross/esys-escript.github.io/)) with
 ```console
  conda install esys-escript -c conda-forge
@@ -60,7 +68,7 @@ pixi shell -e pre-commit
 > *pre-commit* has to be installed after the first activation of the environment. To do this, run
 > ```console
 > pixi run pre-commit install
-> ```
+> ``` -->
 
 
 ## Working examples
@@ -68,4 +76,5 @@ Please refer to the examples:
 - [Materials i/o](docs/source/notebooks/materials_io.ipynb)
 - [Parameters i/o](docs/source/notebooks/parameters_io.ipynb)
 - [Using the pre-defined scripts](docs/source/notebooks/scripts.ipynb)
+- [Run a hysteresis loop with pre-defined meshes](docs/source/notebooks/hysteresis_loop.ipynb)
 - [Converting `unv` mesh to `fly`](docs/source/notebooks/unvtofly.ipynb)

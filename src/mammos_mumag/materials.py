@@ -1,17 +1,19 @@
 """Materials class."""
 
+from jinja2 import Environment, PackageLoader, select_autoescape
+import numbers
 import pathlib
-from pydantic import Field
+from pydantic import ConfigDict, Field, field_validator
 from pydantic.dataclasses import dataclass
 import yaml
 
-from math import pi
+import mammos_entity as me
+import mammos_units as u
 
-from .tools import check_path
-from jinja2 import Environment, PackageLoader, select_autoescape
+from mammos_mumag.tools import check_path
 
 
-@dataclass
+@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class MaterialDomain:
     r"""Uniform material domain.
 
@@ -29,9 +31,9 @@ class MaterialDomain:
     :param K2: Second magnetocrystalline anisotropy constant in
         :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
     :type K2: float
-    :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
+    :param Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
         Defaults to 0.
-    :type Js: float
+    :type Ms: float
     :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         Defaults to 0.
     :type A: float
@@ -39,10 +41,42 @@ class MaterialDomain:
 
     theta: float = 0.0
     phi: float = 0.0
-    K1: float = 0.0
-    K2: float = 0.0
-    Js: float = 0.0
-    A: float = 0.0
+    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    Ms: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    A: me.Entity = me.A(0.0, unit=u.J / u.m)
+
+    @field_validator("K1", mode="before")
+    @classmethod
+    def convert_K1(cls, K1):
+        """Convert K1."""
+        if isinstance(K1, (numbers.Real, u.Quantity)):
+            K1 = me.Ku(K1, unit=u.J / u.m**3)
+        return K1
+
+    @field_validator("K2", mode="before")
+    @classmethod
+    def convert_K2(cls, K2):
+        """Convert K2."""
+        if isinstance(K2, float) or isinstance(K2, int) or isinstance(K2, u.Quantity):
+            K2 = me.Ku(K2, unit=u.J / u.m**3)
+        return K2
+
+    @field_validator("A", mode="before")
+    @classmethod
+    def convert_A(cls, A):
+        """Convert A."""
+        if isinstance(A, float) or isinstance(A, int) or isinstance(A, u.Quantity):
+            A = me.A(A, unit=u.J / u.m)
+        return A
+
+    @field_validator("Ms", mode="before")
+    @classmethod
+    def convert_Ms(cls, Ms):
+        """Convert Ms."""
+        if isinstance(Ms, float) or isinstance(Ms, int) or isinstance(Ms, u.Quantity):
+            Ms = me.Ms(Ms, unit=u.A / u.m)
+        return Ms
 
 
 @dataclass
@@ -58,9 +92,9 @@ class Materials:
     """
 
     domains: list[MaterialDomain] = Field(default_factory=list)
-    filepath: pathlib.Path = Field(default=None, repr=False)
+    filepath: pathlib.Path | None = Field(default=None, repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize materials with a file.
 
         If the materials is initialized with an empty `domains` attribute
@@ -70,13 +104,15 @@ class Materials:
         if (len(self.domains) == 0) and (self.filepath is not None):
             self.read(self.filepath)
 
-    def add_domain(self, A, Js, K1, K2, phi, theta):
+    def add_domain(
+        self, A: float, Ms: float, K1: float, K2: float, phi: float, theta: float
+    ) -> None:
         r"""Append domain with specified parameters.
 
         :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         :type A: float
-        :param Js: Spontaneous magnetic polarisation in :math:`\mathrm{T}`.
-        :type Js: float
+        :param Ms: Spontaneous magnetisation in :math:`\mathrm{T}`.
+        :type Ms: float
         :param K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
         :type K1: float
@@ -95,12 +131,12 @@ class Materials:
             phi=phi,
             K1=K1,
             K2=K2,
-            Js=Js,
+            Ms=Ms,
             A=A,
         )
         self.domains.append(dom)
 
-    def read(self, fname):
+    def read(self, fname: str | pathlib.Path) -> None:
         """Read materials file.
 
         This function overwrites the current
@@ -125,7 +161,7 @@ class Materials:
                 f"{fpath.suffix} materials file is not supported."
             )
 
-    def write_krn(self, fname):
+    def write_krn(self, fname: str | pathlib.Path) -> None:
         """Write material `krn` file.
 
         Each domain in :py:attr:`~domains` is written on a single line
@@ -140,9 +176,17 @@ class Materials:
         )
         template = env.get_template("krn.jinja")
         with open(fname, "w") as file:
-            file.write(template.render({"domains": self.domains, "const": 4e-7 * pi}))
+            file.write(
+                template.render(
+                    {
+                        "domains": self.domains,
+                        "u": u,
+                        "eq": u.magnetic_flux_field(),
+                    }
+                )
+            )
 
-    def write_yaml(self, fname):
+    def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write material `yaml` file.
 
         :param fname: File path
@@ -152,10 +196,12 @@ class Materials:
             {
                 "theta": dom.theta,
                 "phi": dom.phi,
-                "K1": dom.K1 / (4e-7 * pi),
-                "K2": dom.K2 / (4e-7 * pi),
-                "Js": dom.Js,
-                "A": dom.A / (4e-7 * pi),
+                "K1": dom.K1.value.tolist(),
+                "K2": dom.K2.value.tolist(),
+                "Ms": dom.Ms.to(
+                    u.T, equivalencies=u.magnetic_flux_field()
+                ).value.tolist(),
+                "A": dom.A.value.tolist(),
             }
             for dom in self.domains
         ]
@@ -163,7 +209,7 @@ class Materials:
             yaml.dump(domains, file)
 
 
-def read_krn(fname):
+def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `krn` file and return as list of dictionaries.
 
     :param fname: File path
@@ -179,16 +225,20 @@ def read_krn(fname):
         MaterialDomain(
             theta=float(line[0]),
             phi=float(line[1]),
-            K1=4e-7 * pi * float(line[2]),
-            K2=4e-7 * pi * float(line[3]),
-            Js=float(line[4]),
-            A=4e-7 * pi * float(line[5]),
+            K1=me.Ku(float(line[2]), unit=u.J / u.m**3),
+            K2=me.Ku(float(line[3]), unit=u.J / u.m**3),
+            Ms=me.Ms(
+                (float(line[4]) * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                )
+            ),
+            A=me.A(float(line[5]), unit=u.J / u.m),
         )
         for line in lines
     ]
 
 
-def read_yaml(fname):
+def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `yaml` file.
 
     :param fname: File path
@@ -203,10 +253,14 @@ def read_yaml(fname):
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=4e-7 * pi * float(dom["K1"]),
-            K2=4e-7 * pi * float(dom["K2"]),
-            Js=float(dom["Js"]),
-            A=4e-7 * pi * float(dom["A"]),
+            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
+            K2=me.Ku(float(dom["K2"]), unit=u.J / u.m**3),
+            Ms=me.Ms(
+                (float(dom["Ms"]) * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                )
+            ),
+            A=me.A(float(dom["A"]), unit=u.J / u.m),
         )
         for dom in domains
     ]

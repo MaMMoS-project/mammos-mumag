@@ -1,7 +1,7 @@
 """Check exani script."""
 
 import numpy as np
-import polars as pl
+import pandas as pd
 from mammos_mumag.simulation import Simulation
 
 
@@ -16,11 +16,11 @@ def test_exani(DATA, tmp_path):
     sim.run_exani(outdir=tmp_path)
 
     # check vortex
-    data_vortex = pl.read_csv(DATA / "exani" / "cube_vortex.csv", skip_rows=1)
-    out_vortex = pl.read_csv(tmp_path / "out_vortex.csv", skip_rows=1)
+    data_vortex = pd.read_csv(DATA / "exani" / "cube_vortex.csv", skiprows=1)
+    out_vortex = pd.read_csv(tmp_path / "out_vortex.csv", skiprows=1)
     assert np.allclose(data_vortex["value"], out_vortex["value"])
 
     # check uniform
-    data_unif = pl.read_csv(DATA / "exani" / "cube_uniform.csv", skip_rows=1)
-    out_unif = pl.read_csv(tmp_path / "out_uniform.csv", skip_rows=1)
+    data_unif = pd.read_csv(DATA / "exani" / "cube_uniform.csv", skiprows=1)
+    out_unif = pd.read_csv(tmp_path / "out_uniform.csv", skiprows=1)
     assert np.allclose(data_unif["value"], out_unif["value"])
