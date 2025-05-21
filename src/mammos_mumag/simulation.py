@@ -1,38 +1,21 @@
 """Simulation class."""
 
-import meshio
+import datetime
+import json
+
 import os
 import shlex
 import shutil
 import subprocess
-import datetime
-import json
-from textwrap import dedent
 
 import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from .materials import MaterialDomain, Materials
-from .parameters import Parameters
-from .tools import check_dir
-from . import _run_escript_bin as run_escript
-from . import _scripts_directory as scripts_dir
-from . import __version__ as mumag_version
-
-
-if run_escript is None:
-    raise SystemError(
-        dedent(
-            """
-            esys-escript is not installed.
-            Consider installing esys-escript in your environment with
-            $ conda install esys-escript -c conda-forge
-            or, using pixi,
-            $ pixi add esys-escript
-            """
-        )
-    )
+import mammos_mumag
+from mammos_mumag.materials import MaterialDomain, Materials
+from mammos_mumag.parameters import Parameters
+from mammos_mumag.tools import check_dir, check_esys_escript
 
 IS_POSIX = os.name == "posix"
 
@@ -47,14 +30,14 @@ class Simulation:
     :type parameters: :py:class:`~mammos_mumag.parameters.Parameters`
     """
 
-    material_domain_list: list[MaterialDomain] = Field(default=None, repr=False)
-    mesh_filepath: pathlib.Path = Field(default=None)
-    materials_filepath: pathlib.Path = Field(default=None, repr=False)
-    parameters_filepath: pathlib.Path = Field(default=None, repr=False)
-    materials: Materials = Field(default=None)
-    parameters: Parameters = Field(default=None)
+    material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
+    mesh_filepath: pathlib.Path | None = Field(default=None)
+    materials_filepath: pathlib.Path | None = Field(default=None, repr=False)
+    parameters_filepath: pathlib.Path | None = Field(default=None, repr=False)
+    materials: Materials | None = Field(default=None)
+    parameters: Parameters | None = Field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post-initialization.
 
         Define `Materials` and `Parameters` instance if they have been defined.
@@ -66,7 +49,7 @@ class Simulation:
         if self.parameters_filepath is not None:
             self.parameters = Parameters(filepath=self.parameters_filepath)
 
-    def check_attribute(self, *args):
+    def check_attribute(self, *args) -> None:
         """Check existence of attributes.
 
         :raises AttributeError: Attribute has not been defined yet.
@@ -76,7 +59,9 @@ class Simulation:
                 raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
 
     @classmethod
-    def run_file(cls, file, outdir="out"):
+    def run_file(
+        cls, file: str | pathlib.Path, outdir: str | pathlib.Path = "out"
+    ) -> None:
         """Run python file using `esys.escript`.
 
         :param script: path of file.
@@ -84,14 +69,15 @@ class Simulation:
         :param outdir: Working directory. Defaults to "out"
         :type outdir: str or pathlib.Path, optional
         """
+        check_esys_escript()
         cmd = shlex.split(
-            f"{run_escript} {file}",
+            f"{mammos_mumag._run_escript_bin} {file}",
             posix=IS_POSIX,
         )
         run_subprocess(cmd, cwd=outdir)
 
     @classmethod
-    def run_script(cls, script, outdir, name):
+    def run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
         """Run pre-defined script.
 
         :param script: Name of pre-defined script.
@@ -101,8 +87,9 @@ class Simulation:
         :param name: System name
         :type name: str
         """
+        check_esys_escript()
         cmd = shlex.split(
-            f"{run_escript} {scripts_dir / script}.py {name}",
+            f"{mammos_mumag._run_escript_bin} {mammos_mumag._scripts_directory / script}.py {name}",
             posix=IS_POSIX,
         )
         run_subprocess(cmd, cwd=outdir)
@@ -112,12 +99,16 @@ class Simulation:
                     "datetime": datetime.datetime.now(datetime.UTC)
                     .astimezone()
                     .isoformat(timespec="seconds"),
-                    "mammos_mumag_version": mumag_version,
+                    "mammos_mumag_version": mammos_mumag.__version__,
                 },
                 file,
             )
 
-    def run_exani(self, outdir="exani", name="out"):
+    def run_exani(
+        self,
+        outdir: str | pathlib.Path = "exani",
+        name: str = "out",
+    ) -> None:
         r"""Run "exani" script.
 
         Test the computation of the exchange and anisotropy energy density.
@@ -159,7 +150,11 @@ class Simulation:
             name=name,
         )
 
-    def run_external(self, outdir="external", name="out"):
+    def run_external(
+        self,
+        outdir: str | pathlib.Path = "external",
+        name: str = "out",
+    ) -> None:
         r"""Run "external" script.
 
         Compute the Zeemann energy by finite elements and analytically.
@@ -192,7 +187,7 @@ class Simulation:
             name=name,
         )
 
-    def run_hmag(self, outdir="hmag", name="out"):
+    def run_hmag(self, outdir: str | pathlib.Path = "hmag", name: str = "out") -> None:
         r"""Run "hmag" script.
 
         This script evaluates the magnetostatic energy density
@@ -251,9 +246,8 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.hmag = meshio.read(outdir / f"{name}_hmag.vtu")
 
-    def run_loop(self, outdir="loop", name="out"):
+    def run_loop(self, outdir: str | pathlib.Path = "loop", name: str = "out") -> None:
         r"""Run "loop" script.
 
         Compute demagnetization curves.
@@ -301,13 +295,12 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.loop_vtu_list = [
-            meshio.read(outdir / fname)
-            for fname in os.listdir(outdir)
-            if "vtu" in fname
-        ]
 
-    def run_magnetization(self, outdir="magnetization", name="out"):
+    def run_magnetization(
+        self,
+        outdir: str | pathlib.Path = "magnetization",
+        name: str = "out",
+    ) -> None:
         """Run "magnetization" script.
 
         Creates the `vtk` file for the visualisation of the material properties.
@@ -329,7 +322,11 @@ class Simulation:
             name=name,
         )
 
-    def run_mapping(self, outdir="magnetization", name="out"):
+    def run_mapping(
+        self,
+        outdir: str | pathlib.Path = "magnetization",
+        name: str = "out",
+    ) -> None:
         """Run "mapping" script.
 
         Test the energy calculations with matrices.
@@ -353,7 +350,9 @@ class Simulation:
             name=name,
         )
 
-    def run_materials(self, outdir="materials", name="out"):
+    def run_materials(
+        self, outdir: str | pathlib.Path = "materials", name: str = "out"
+    ) -> None:
         """Run "materials" script.
 
         This script generates a `vtu` file that shows the material.
@@ -373,9 +372,10 @@ class Simulation:
             outdir=outdir,
             name=name,
         )
-        self.materials_fields = meshio.read(outdir / f"{name}_mat.vtu")
 
-    def run_store(self, outdir="magnetization", name="out"):
+    def run_store(
+        self, outdir: str | pathlib.Path = "magnetization", name: str = "out"
+    ) -> None:
         """Run "store" script.
 
         The sparse matrices used for computation can be stored
@@ -399,7 +399,7 @@ class Simulation:
         )
 
 
-def run_subprocess(cmd, cwd):
+def run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
     """Run command using `subprocess` in the specified directory.
 
     :param cmd: command to execute

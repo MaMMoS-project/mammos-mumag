@@ -1,8 +1,13 @@
 """Test materials file i/o."""
 
 import numpy as np
+import pytest
+from pydantic import ValidationError
 
-from mammos_mumag.materials import Materials
+import mammos_entity as me
+import mammos_units as u
+
+from mammos_mumag.materials import MaterialDomain, Materials
 
 
 def test_materials_file(DATA, tmp_path):
@@ -19,28 +24,28 @@ def test_materials_file(DATA, tmp_path):
     mat = Materials(
         domains=[
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 4e-7 * np.pi * 4.9e06,
-                "K2": 0.0,
-                "Js": 1.61,
-                "A": 4e-7 * np.pi * 8.0e-11,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(4.9e06, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(1.61, unit=u.A / u.m),
+                "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 0.0,
-                "K2": 0.0,
-                "Js": 0.0,
-                "A": 0.0,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
             },
             {
-                "theta": 0.0,
-                "phi": 0.0,
-                "K1": 0.0,
-                "K2": 0.0,
-                "Js": 0.0,
-                "A": 0.0,
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
             },
         ]
     )
@@ -54,8 +59,40 @@ def test_materials_file(DATA, tmp_path):
 
     mat_2 = Materials()
     mat_2.read(tmp_path / "mat.yaml")
-    print(f"{type(mat.domains[0])=}")
     assert are_domains_equal(mat.domains, mat_2.domains)
+
+    mat_3 = Materials()
+    assert not are_domains_equal(mat.domains, mat_3.domains)
+
+    mat_4 = Materials(
+        domains=[
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(1, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(2, unit=u.A / u.m),
+                "A": me.A(3, unit=u.J / u.m),
+            },
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
+            },
+            {
+                "theta": 0,
+                "phi": 0,
+                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K2": me.Ku(0, unit=u.J / u.m**3),
+                "Ms": me.Ms(0, unit=u.A / u.m),
+                "A": me.A(0, unit=u.J / u.m),
+            },
+        ]
+    )
+    assert not are_domains_equal(mat.domains, mat_4.domains)
 
 
 def are_domains_equal(d1, d2):
@@ -66,17 +103,73 @@ def are_domains_equal(d1, d2):
     """
     if len(d1) != len(d2):
         return False
-    diff = 0.0
     for i, d1_i in enumerate(d1):
         d2_i = d2[i]
-        diff += np.linalg.norm(
-            [
-                d1_i.theta - d2_i.theta,
-                d1_i.phi - d2_i.phi,
-                d1_i.K1 - d2_i.K1,
-                d1_i.K2 - d2_i.K2,
-                d1_i.Js - d2_i.Js,
-                d1_i.A - d2_i.A,
-            ]
-        )
-    return diff < 1.0e-8
+        if not (
+            np.allclose(d1_i.theta, d2_i.theta)
+            and np.allclose(d1_i.phi, d2_i.phi)
+            and np.allclose(d1_i.K1, d2_i.K1)
+            and np.allclose(d1_i.K2, d2_i.K2)
+            and np.allclose(d1_i.Ms, d2_i.Ms)
+            and np.allclose(d1_i.A, d2_i.A)
+        ):
+            return False
+    return True
+
+
+def test_materials_types():
+    """Test MaterialDomain instances initialized with different types.
+
+    The instances are initialized with the same value, so we expect
+    them to be defined as equal.
+    """
+    dom_1 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=me.Ku(1, unit=u.J / u.m**3),
+        K2=me.Ku(2, unit=u.J / u.m**3),
+        Ms=me.Ms(3, unit=u.A / u.m),
+        A=me.A(4, unit=u.J / u.m),
+    )
+
+    dom_2 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=1,
+        K2=2,
+        Ms=3,
+        A=4,
+    )
+
+    dom_3 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=1 * u.J / u.m**3,
+        K2=2 * u.J / u.m**3,
+        Ms=3 * u.A / u.m,
+        A=4 * u.J / u.m,
+    )
+
+    dom_4 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=me.Ku(1, unit=u.J / u.m**3).value,
+        K2=me.Ku(2, unit=u.J / u.m**3).value,
+        Ms=me.Ms(3, unit=u.A / u.m).value,
+        A=me.A(4, unit=u.J / u.m).value,
+    )
+
+    assert are_domains_equal([dom_1], [dom_2])
+    assert are_domains_equal([dom_1], [dom_3])
+    assert are_domains_equal([dom_1], [dom_4])
+
+
+def test_wrong_domains():
+    """Use wrong types in definition.
+
+    All tests are supposed to raise `ValidationError`.
+    """
+    with pytest.raises(ValidationError):
+        MaterialDomain(K1="K1")
+    with pytest.raises(ValidationError):
+        MaterialDomain(theta=0 * u.rad)

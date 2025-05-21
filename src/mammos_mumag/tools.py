@@ -1,9 +1,11 @@
 """Tool functions."""
 
+import mammos_mumag
 import pathlib
+from textwrap import dedent
 
 
-def check_path(fname):
+def check_path(fname: str | pathlib.Path) -> pathlib.Path:
     """Check that file exists.
 
     :param fname: File path.
@@ -18,7 +20,7 @@ def check_path(fname):
     return path
 
 
-def check_dir(outdir):
+def check_dir(outdir: str | pathlib.Path) -> pathlib.Path:
     """Check that directory exists.
 
     :param outdir: Directory path.
@@ -29,3 +31,23 @@ def check_dir(outdir):
     outdir = pathlib.Path(outdir)
     outdir.mkdir(exist_ok=True, parents=True)
     return outdir
+
+
+def check_esys_escript() -> None:
+    """Check if esys_escript is found in PATH.
+
+    :raises SystemError: esys-escript is not found
+    """
+    if mammos_mumag._run_escript_bin is None:
+        raise SystemError(
+            dedent(
+                """
+                esys-escript is not found.
+                Is it correctly installed?
+                Consider installing esys-escript in your environment with
+                $ conda install esys-escript -c conda-forge
+                or, using pixi,
+                $ pixi add esys-escript
+                """
+            )
+        )

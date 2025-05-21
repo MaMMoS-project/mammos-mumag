@@ -7,7 +7,7 @@ from pydantic import Field
 from pydantic.dataclasses import dataclass
 import yaml
 
-from .tools import check_path
+from mammos_mumag.tools import check_path
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -85,9 +85,9 @@ class Parameters:
     tol_hmag_factor: float = 1.0
     tol_u: float = 1e-10
     verbose: int = 0
-    filepath: pathlib.Path = Field(default=None, repr=False)
+    filepath: pathlib.Path | None = Field(default=None, repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize parameters with a file.
 
         If the parameters is initialized with a not-`None` `filepath`
@@ -97,26 +97,26 @@ class Parameters:
             self.read(self.filepath)
 
     @property
-    def m(self):
+    def m(self) -> list[float]:
         """Return list m."""
         return normalize(self.m_vect)
 
     @m.setter
-    def m(self, value):
+    def m(self, value: list[float]) -> None:
         """Assign normalized m."""
         self.m_vect = normalize(value)
 
     @property
-    def h(self):
+    def h(self) -> list[float]:
         """Return list h."""
         return normalize(self.h_vect)
 
     @h.setter
-    def h(self, value):
+    def h(self, value: list[float]) -> None:
         """Assign normalized h."""
         self.h_vect = normalize(value)
 
-    def read(self, fname):
+    def read(self, fname: str | pathlib.Path) -> None:
         """Read parameter file in `yaml` or `p2` format.
 
         Simulation parameters are read and stored.
@@ -186,7 +186,7 @@ class Parameters:
         if "verbose" in minimizer:
             self.verbose = int(minimizer["verbose"])
 
-    def write_p2(self, fname):
+    def write_p2(self, fname: str | pathlib.Path) -> None:
         """Write parameter `p2` file.
 
         :param fname: File path
@@ -209,7 +209,7 @@ class Parameters:
         with open(fname, "w") as file:
             file.write(template.render(parameters_dict))
 
-    def write_yaml(self, fname):
+    def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write parameter `yaml` file.
 
         :param fname: File path
@@ -247,7 +247,7 @@ class Parameters:
             yaml.dump(parameters_dict, file)
 
 
-def normalize(v):
+def normalize(v: list[float]) -> list[float]:
     """Normalize list.
 
     :param v: list to normalize

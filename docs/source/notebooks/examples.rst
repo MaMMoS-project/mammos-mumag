@@ -6,5 +6,6 @@ Notebook Examples
 
    materials_io
    parameters_io
+   hysteresis_loop
    scripts
    unvtofly

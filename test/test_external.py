@@ -1,7 +1,7 @@
 """Check external script."""
 
 import numpy as np
-import polars as pl
+import pandas as pd
 from mammos_mumag.simulation import Simulation
 
 
@@ -18,6 +18,6 @@ def test_external(DATA, tmp_path):
     sim.run_external(outdir=tmp_path)
 
     # check Zeeman energy
-    data = pl.read_csv(DATA / "external" / "cube.csv", skip_rows=1)
-    out = pl.read_csv(tmp_path / "out.csv", skip_rows=1)
+    data = pd.read_csv(DATA / "external" / "cube.csv", skiprows=1)
+    out = pd.read_csv(tmp_path / "out.csv", skiprows=1)
     assert np.allclose(data["value"], out["value"])

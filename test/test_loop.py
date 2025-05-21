@@ -1,7 +1,8 @@
 """Check loop script."""
 
-import meshio
 import numpy as np
+import pyvista as pv
+
 from mammos_mumag.simulation import Simulation
 
 
@@ -14,14 +15,16 @@ def test_loop(DATA, tmp_path):
     )
 
     # run loop
-    sim.run_loop(outdir=tmp_path)
+    sim.run_loop(outdir=tmp_path, name="cube")
 
     # check hysteresis loop
-    loop_data = np.loadtxt(DATA / "loop" / "cube.dat")
-    loop_out = np.loadtxt(tmp_path / "out.dat")
-    assert np.allclose(loop_data, loop_out)
+    data_loop = np.loadtxt(DATA / "loop" / "cube.dat")
+    sim_loop = np.loadtxt(tmp_path / "cube.dat")
+    assert np.allclose(data_loop, sim_loop)
 
     # check generated vtus
-    for i, m_out_i in enumerate(sim.loop_vtu_list):
-        m_data_i = meshio.read(DATA / "loop" / f"cube_{i:04}.vtu")
-        assert np.allclose(m_out_i.point_data["m"], m_data_i.point_data["m"])
+    vtu_list = [i.name for i in tmp_path.iterdir() if i.suffix == ".vtu"]
+    for vtu_name in vtu_list:
+        mesh_data = pv.read(DATA / "loop" / vtu_name)
+        mesh_sim = pv.read(tmp_path / vtu_name)
+        assert np.allclose(mesh_data.point_data["m"], mesh_sim.point_data["m"])
