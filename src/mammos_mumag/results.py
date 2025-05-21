@@ -35,13 +35,21 @@ class LoopResults:
 
     def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
         """Plot hysteresis loop."""
+        fig, ax = plt.subplots()
         plt.plot(self.dataframe["mu0_Hext"], self.dataframe["polarisation"])
         j = 0
         if configuration_marks:
-            for i, r in self.dataframe.iterrows():
-                if r["idx"] != j:
+            for _, r in self.dataframe.iterrows():
+                idx = int(r["idx"])
+                if idx != j:
                     plt.plot(r["mu0_Hext"], r["polarisation"], "rx")
-                    j = r["idx"]
+                    j = idx
+                    ax.annotate(
+                        j,
+                        xy=(r["mu0_Hext"], r["polarisation"]),
+                        xytext=(-2, -10),
+                        textcoords="offset points",
+                    )
         if duplicate:
             plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["polarisation"])
 
