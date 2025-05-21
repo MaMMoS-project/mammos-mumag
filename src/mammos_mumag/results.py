@@ -15,8 +15,8 @@ import mammos_units as u
 
 
 @dataclass(frozen=True)
-class ResultsLoop:
-    """Class ResultsLoop."""
+class LoopResults:
+    """Class LoopResults."""
 
     dataframe: pd.DataFrame
     configurations: list[pathlib.Path] | None = None

@@ -8,7 +8,7 @@ from textwrap import dedent
 from mammos_mumag.materials import Materials
 from mammos_mumag import mesh
 from mammos_mumag.parameters import Parameters
-from mammos_mumag.results import ResultsLoop
+from mammos_mumag.results import LoopResults
 from mammos_mumag.simulation import Simulation
 import mammos_entity as me
 import mammos_units as u
@@ -28,7 +28,7 @@ def run(
     hstep: float | u.Quantity | None = None,
     hnsteps: int = 20,
     outdir: str | pathlib.Path = "hystloop",
-) -> ResultsLoop:
+) -> LoopResults:
     """Run hysteresis loop."""
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
@@ -86,7 +86,7 @@ def run(
         ),
     )
     sim.run_loop(outdir=outdir, name="hystloop")
-    res = ResultsLoop(
+    res = LoopResults(
         pd.read_csv(
             f"{outdir}/hystloop.dat",
             delimiter=" ",
