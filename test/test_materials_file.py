@@ -28,7 +28,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(4.9e06, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(1.61, unit=u.A / u.m),
+                "Ms": me.Ms(1.61, unit=u.A / u.m),
                 "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
@@ -36,7 +36,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(0, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(0, unit=u.A / u.m),
+                "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
@@ -44,7 +44,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(0, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(0, unit=u.A / u.m),
+                "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
         ]
@@ -71,7 +71,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(1, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(2, unit=u.A / u.m),
+                "Ms": me.Ms(2, unit=u.A / u.m),
                 "A": me.A(3, unit=u.J / u.m),
             },
             {
@@ -79,7 +79,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(0, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(0, unit=u.A / u.m),
+                "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
@@ -87,7 +87,7 @@ def test_materials_file(DATA, tmp_path):
                 "phi": 0,
                 "K1": me.Ku(0, unit=u.J / u.m**3),
                 "K2": me.Ku(0, unit=u.J / u.m**3),
-                "Js": me.Ms(0, unit=u.A / u.m),
+                "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
         ]
@@ -110,7 +110,7 @@ def are_domains_equal(d1, d2):
             and np.allclose(d1_i.phi, d2_i.phi)
             and np.allclose(d1_i.K1, d2_i.K1)
             and np.allclose(d1_i.K2, d2_i.K2)
-            and np.allclose(d1_i.Js, d2_i.Js)
+            and np.allclose(d1_i.Ms, d2_i.Ms)
             and np.allclose(d1_i.A, d2_i.A)
         ):
             return False
@@ -128,7 +128,7 @@ def test_materials_types():
         phi=0,
         K1=me.Ku(1, unit=u.J / u.m**3),
         K2=me.Ku(2, unit=u.J / u.m**3),
-        Js=me.Ms(3, unit=u.A / u.m),
+        Ms=me.Ms(3, unit=u.A / u.m),
         A=me.A(4, unit=u.J / u.m),
     )
 
@@ -137,7 +137,7 @@ def test_materials_types():
         phi=0,
         K1=1,
         K2=2,
-        Js=3,
+        Ms=3,
         A=4,
     )
 
@@ -146,7 +146,7 @@ def test_materials_types():
         phi=0,
         K1=1 * u.J / u.m**3,
         K2=2 * u.J / u.m**3,
-        Js=3 * u.A / u.m,
+        Ms=3 * u.A / u.m,
         A=4 * u.J / u.m,
     )
 
@@ -155,7 +155,7 @@ def test_materials_types():
         phi=0,
         K1=me.Ku(1, unit=u.J / u.m**3).value,
         K2=me.Ku(2, unit=u.J / u.m**3).value,
-        Js=me.Ms(3, unit=u.A / u.m).value,
+        Ms=me.Ms(3, unit=u.A / u.m).value,
         A=me.A(4, unit=u.J / u.m).value,
     )
 
