@@ -14,29 +14,28 @@ jobs:
     needs: test
     uses: ./.github/workflows/build.yml
 
-  # publish-to-pypi:
-  #   name: Publish to PyPI
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: pypi
-  #     url: https://pypi.org/p/mammos-mumag
-  #   permissions:
-  #     id-token: write # mandatory for trusted publishing
-  #   steps:
-  #   - name: Download the artifact
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: python-package-distributions
-  #       path: dist/
-  #   - name: Publish distribution to PyPI
-  #     uses: pypa/gh-action-pypi-publish@release/v1
+  publish-to-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mammos-mumag
+    permissions:
+      id-token: write # mandatory for trusted publishing
+    steps:
+    - name: Download the artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
 
   github-release:
     name: Publish GitHub Release
     needs:
-      - build
-      # - publish-to-pypi
+      - publish-to-pypi
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -71,7 +70,6 @@ jobs:
 
   latest-tag:
     needs:
-      # - publish-to-pypi
       - github-release
     name: Update latest tag
     runs-on: ubuntu-latest
