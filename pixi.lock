@@ -3402,8 +3402,8 @@ packages:
   requires_python: '>=3.8'
 - pypi: .
   name: mammos-mumag
-  version: 0.4.3
-  sha256: bf72f0323d8f35f437995ed95549adce46b6bb28df81cd0035ff147f7e52d0f4
+  version: 0.4.4
+  sha256: 8f54c1c38e19f831bc77c26331c6b66107987cd07d5464a4c791bc2051c685e1
   requires_dist:
   - jax
   - jinja2>=3.1.6,<4
