@@ -1,4 +1,4 @@
-name: Test package and publish on TestPyPI
+name: Test package, publish on PyPI, and release on GitHub
 
 on:
   push:
