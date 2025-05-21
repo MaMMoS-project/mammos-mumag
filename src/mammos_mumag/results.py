@@ -23,9 +23,14 @@ class LoopResults:
 
     @property
     def entity_map(self) -> dict:
+        """Evaluate entity map."""
         return {
             "mu0_Hext": self.dataframe["mu0_Hext"].to_numpy() * u.T,
-            "polarisation": me.Entity("SpontaneousMagneticPolarisation", self.dataframe["polarisation"], unit=u.T),
+            "polarisation": me.Entity(
+                "SpontaneousMagneticPolarisation",
+                self.dataframe["polarisation"],
+                unit=u.T,
+            ),
         }
 
     def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
