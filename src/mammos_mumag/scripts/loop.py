@@ -99,7 +99,7 @@ def solve(name, m0, pars, max_steps):
         energy, m, cg_iter, alt_args, stats = minimize(m, hext, pars, alt_args, stats)
         u, _ = alt_args
         mh = compute_mh(m, (hdir, pars['meas'], pars['volume']))
-        jax.debug.print("--> demag {hext} {mh}", hext=hext, mh=mh)
+        # jax.debug.print("--> demag {hext} {mh}", hext=hext, mh=mh)
         should_save = (last_saved_mh - mh) > mstep
       
         def true_fun(_):
@@ -137,7 +137,7 @@ def loop(name,m,pars):
     hmag_iter = 0
     
     function_calls = stats
-    write_stats('done',total_time,cg_iter,function_calls,hmag_iter)
+    # write_stats('done',total_time,cg_iter,function_calls,hmag_iter)
                 
     write_mh(name,rec[:idx])
 
