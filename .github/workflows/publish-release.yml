@@ -81,4 +81,14 @@ jobs:
 
   publish-documentation:
     needs: latest-tag
-    uses: ./.github/workflows/documentation.yml
+    name: Publish documentation
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    steps:
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
