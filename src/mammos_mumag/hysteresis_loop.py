@@ -90,7 +90,7 @@ def run(
         pd.read_csv(
             f"{outdir}/hystloop.dat",
             delimiter=" ",
-            names=["idx", "mu0_Hext", "pol", "E"],
+            names=["idx", "mu0_Hext", "polarisation", "E"],
         ),
         [
             fname

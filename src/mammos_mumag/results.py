@@ -21,16 +21,17 @@ class LoopResults:
     dataframe: pd.DataFrame
     configurations: list[pathlib.Path] | None = None
 
-    def plot(self, duplicate: bool = True) -> None:
+    def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
         """Plot hysteresis loop."""
-        plt.plot(self.dataframe["mu0_Hext"], self.dataframe["pol"])
+        plt.plot(self.dataframe["mu0_Hext"], self.dataframe["polarisation"])
         j = 0
-        for i, r in self.dataframe.iterrows():
-            if r["idx"] != j:
-                plt.plot(r["mu0_Hext"], r["pol"], "rx")
-                j = r["idx"]
+        if configuration_marks:
+            for i, r in self.dataframe.iterrows():
+                if r["idx"] != j:
+                    plt.plot(r["mu0_Hext"], r["polarisation"], "rx")
+                    j = r["idx"]
         if duplicate:
-            plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["pol"])
+            plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["polarisation"])
 
     def plot_configuration(self, idx: int) -> None:
         """Plot configuration with index `idx`."""
@@ -40,7 +41,7 @@ class LoopResults:
     def get_extrinsic_properties(self) -> tuple:
         """Evaluate extrinsic properties."""
         h = self.dataframe["mu0_Hext"]
-        m = self.dataframe["pol"]
+        m = self.dataframe["polarisation"]
 
         sign_changes_m = np.where(np.diff(np.sign(m)))[0]
         sign_changes_h = np.where(np.diff(np.sign(h)))[0]
