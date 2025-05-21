@@ -21,6 +21,13 @@ class LoopResults:
     dataframe: pd.DataFrame
     configurations: list[pathlib.Path] | None = None
 
+    @property
+    def entity_map(self) -> dict:
+        return {
+            "mu0_Hext": self.dataframe["mu0_Hext"].to_numpy() * u.T,
+            "polarisation": me.Entity("SpontaneousMagneticPolarisation", self.dataframe["polarisation"], unit=u.T),
+        }
+
     def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
         """Plot hysteresis loop."""
         plt.plot(self.dataframe["mu0_Hext"], self.dataframe["polarisation"])
