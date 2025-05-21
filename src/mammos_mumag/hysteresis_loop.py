@@ -1,12 +1,9 @@
 """Functions for evaluating and processin the hysteresis loop."""
 
-import matplotlib.pyplot as plt
 import pandas as pd
 import pathlib
-from textwrap import dedent
 
 from mammos_mumag.materials import Materials
-from mammos_mumag import mesh
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.results import LoopResults
 from mammos_mumag.simulation import Simulation
@@ -99,18 +96,3 @@ def run(
         ],
     )
     return res
-
-
-def plot(
-    hl: pd.DataFrame,
-    duplicate: bool = True,
-):
-    """Plot hysteresis loop."""
-    plt.plot(hl["mu0_Hext"], hl["pol"])
-    j = 0
-    for i, r in hl.iterrows():
-        if r["idx"] != j:
-            plt.plot(r["mu0_Hext"], r["pol"], "rx")
-            j = r["idx"]
-    if duplicate:
-        plt.plot(-hl["mu0_Hext"], -hl["pol"])
