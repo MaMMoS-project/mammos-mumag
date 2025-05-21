@@ -47,7 +47,7 @@ class LoopResults:
             scalars=glyphs["GlyphVector"][:, 2],
             lighting=False,
             cmap="coolwarm",
-            scalar_bar_args={"title": "m_z"}
+            scalar_bar_args={"title": "m_z"},
         )
         pl.show_axes()
         pl.show(jupyter_backend=jupyter_backend)
