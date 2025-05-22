@@ -8,6 +8,7 @@ import pathlib
 import shutil
 
 from mammos_mumag import (
+    hysteresis,
     materials,
     mesh,
     parameters,
@@ -16,6 +17,7 @@ from mammos_mumag import (
 )
 
 __all__ = [
+    "hysteresis",
     "materials",
     "mesh",
     "parameters",
