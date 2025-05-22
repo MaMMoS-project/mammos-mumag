@@ -369,13 +369,12 @@ def convert(
 ) -> None:
     """Convert mesh file from `unv` to `fly`.
 
-    :param unv_path: Input `unv` file path.
-    :type unv_path: str or pathlib.Path
-    :param fly_path: Output `fly` file path.
-    :type fly_path: str or pathlib.Path
-    :param exclude: List of dimensions to be excluded.
-        Defaults to [1,2], so it will exclude 1D and 2D elements.
-    :type exclude: list[int]
+    Args:
+        unv_path: Input `unv` file path.
+        fly_path: Output `fly` file path.
+        exclude_list: List of dimensions to be excluded. Defaults to [1,2], so it will
+            exclude 1D and 2D elements.
+
     """
     infile = open(unv_path, "r")
     pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)

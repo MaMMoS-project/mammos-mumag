@@ -1,20 +1,19 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-    -   id: check-added-large-files
-        args: ['--maxkb=10000']
-    -   id: check-case-conflict
-    -   id: check-toml
-    -   id: check-yaml
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v5.0.0
+  hooks:
+  - id: check-merge-conflict  # checks for files that contain merge conflict strings
+  - id: check-toml  # checks toml files for parseable syntax
+  - id: debug-statements  # checks for debugger imports and py37+ `breakpoint()` calls in python source
+  - id: check-added-large-files
+    args: ['--maxkb=10000']
+  - id: check-yaml
 
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
-    hooks:
-    # Run the linter.
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.11.10
+  hooks:
     - id: ruff
-      args: [ --fix ]
-    # Run the formatter.
+      types_or: [python, pyi]
+      args: [--fix, --exit-non-zero-on-fix]
     - id: ruff-format
+      types_or: [python, pyi]

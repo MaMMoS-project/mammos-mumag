@@ -6,12 +6,26 @@ import pandas as pd
 import pathlib
 import pyvista as pv
 from scipy.optimize import minimize
-from typing import NamedTuple
 from dataclasses import dataclass
 
 
 import mammos_entity as me
 import mammos_units as u
+
+
+@dataclass
+class ExtrinsicProperties:
+    """Extrinsic properties extracted from hysteresis loop.
+
+    Args:
+        Hc: Coercive field.
+        Mr: Remanent magnetization.
+        BHmax: Energy product.
+    """
+
+    Hc: me.Entity
+    Mr: me.Entity
+    BHmax: me.Entity
 
 
 @dataclass(frozen=True)
@@ -34,7 +48,13 @@ class LoopResults:
         }
 
     def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
-        """Plot hysteresis loop."""
+        """Plot hysteresis loop.
+
+        Args:
+            duplicate: Also plot loop with -M and -H to simulate full hysteresis.
+            configuration_marks: Show markers where a configuration has been saved.
+
+        """
         fig, ax = plt.subplots()
         plt.plot(self.dataframe["mu0_Hext"], self.dataframe["polarisation"])
         j = 0
@@ -53,13 +73,38 @@ class LoopResults:
         if duplicate:
             plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["polarisation"])
 
-    def plot_configuration(self, idx: int) -> None:
-        """Plot configuration with index `idx`."""
-        conf = pv.read(self.configurations[idx])
-        conf.plot()
+    def plot_configuration(self, idx: int, jupyter_backend: str = "trame") -> None:
+        """Plot configuration with index `idx`.
 
-    def get_extrinsic_properties(self) -> tuple:
-        """Evaluate extrinsic properties."""
+        Args:
+            idx: Index of the configuration.
+            jupyter_backend: Plotting backend.
+
+        """
+        config = pv.read(self.configurations[idx])
+        config["m_norm"] = np.linalg.norm(config["m"], axis=1)
+        glyphs = config.glyph(
+            orient="m",
+            scale="m_norm",
+        )
+        pl = pv.Plotter()
+        pl.add_mesh(
+            glyphs,
+            scalars=glyphs["GlyphVector"][:, 2],
+            lighting=False,
+            cmap="coolwarm",
+            scalar_bar_args={"title": "m_z"},
+        )
+        pl.show_axes()
+        pl.show(jupyter_backend=jupyter_backend)
+
+    def get_extrinsic_properties(self) -> ExtrinsicProperties:
+        """Evaluate extrinsic properties.
+
+        Returns:
+            Extrinsic properties Hc, Mr and BHmax.
+
+        """
         h = self.dataframe["mu0_Hext"]
         m = self.dataframe["polarisation"]
 
@@ -86,10 +131,6 @@ class LoopResults:
             0,
             [h[index_before], h[index_after]],
             [m[index_before], m[index_after]],
-        )
-        ExtrinsicProperties = NamedTuple(
-            "ExtrinsicProperties",
-            [("Hc", me.Entity), ("Mr", me.Entity), ("BHmax", me.Entity)],
         )
         extrprops = ExtrinsicProperties(
             me.Hc((Hc * u.T).to("A/m", equivalencies=u.magnetic_flux_field())),

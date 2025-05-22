@@ -26,7 +26,24 @@ def run(
     hnsteps: int = 20,
     outdir: str | pathlib.Path = "hystloop",
 ) -> LoopResults:
-    """Run hysteresis loop."""
+    r"""Run hysteresis loop.
+
+    Args:
+        Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
+        A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
+        K1: First magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
+        mesh_filepath: TODO
+        hstart: TODO
+        hfinal: TODO
+        hstep: TODO
+        hnsteps: TODO
+        outdir: TODO
+
+    Returns:
+       TODO
+
+    """
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
 
