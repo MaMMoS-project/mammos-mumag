@@ -1,5 +1,6 @@
 """Materials class."""
 
+from typing import Any
 from jinja2 import Environment, PackageLoader, select_autoescape
 import numbers
 import pathlib
@@ -19,24 +20,18 @@ class MaterialDomain:
 
     It collects material parameters, constant in a certain domain.
 
-    :param theta: Angle of the magnetocrystalline anisotropy axis
-        from the :math:`z`-direction in radians. Defaults to 0.
-    :type theta: float
-    :param phi: Angle of the magnetocrystalline anisotropy axis
-        from the :math:`x`-direction in radians. Defaults to 0.
-    :type phi: float
-    :param K1: First magnetocrystalline anisotropy constant in
-        :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
-    :type K1: float
-    :param K2: Second magnetocrystalline anisotropy constant in
-        :math:`\mathrm{J}/\mathrm{m}^3`. Defaults to 0.
-    :type K2: float
-    :param Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
-        Defaults to 0.
-    :type Ms: float
-    :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        Defaults to 0.
-    :type A: float
+    Args:
+        theta: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`z`-direction in radians.
+        phi: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`x`-direction in radians.
+        K1: First magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
+        K2: Second magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
+        Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
+        A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
+
     """
 
     theta: float = 0.0
@@ -48,32 +43,32 @@ class MaterialDomain:
 
     @field_validator("K1", mode="before")
     @classmethod
-    def convert_K1(cls, K1):
-        """Convert K1."""
+    def _convert_K1(cls, K1: Any) -> Any:
+        """Convert number or Quantity to Entity."""
         if isinstance(K1, (numbers.Real, u.Quantity)):
             K1 = me.Ku(K1, unit=u.J / u.m**3)
         return K1
 
     @field_validator("K2", mode="before")
     @classmethod
-    def convert_K2(cls, K2):
-        """Convert K2."""
+    def _convert_K2(cls, K2: Any) -> Any:
+        """Convert number or Quantity to Entity."""
         if isinstance(K2, float) or isinstance(K2, int) or isinstance(K2, u.Quantity):
             K2 = me.Ku(K2, unit=u.J / u.m**3)
         return K2
 
     @field_validator("A", mode="before")
     @classmethod
-    def convert_A(cls, A):
-        """Convert A."""
+    def _convert_A(cls, A: Any) -> Any:
+        """Convert number or Quantity to Entity."""
         if isinstance(A, float) or isinstance(A, int) or isinstance(A, u.Quantity):
             A = me.A(A, unit=u.J / u.m)
         return A
 
     @field_validator("Ms", mode="before")
     @classmethod
-    def convert_Ms(cls, Ms):
-        """Convert Ms."""
+    def _convert_Ms(cls, Ms: Any) -> Any:
+        """Convert number or Quantity to Entity."""
         if isinstance(Ms, float) or isinstance(Ms, int) or isinstance(Ms, u.Quantity):
             Ms = me.Ms(Ms, unit=u.A / u.m)
         return Ms
@@ -83,12 +78,11 @@ class MaterialDomain:
 class Materials:
     """This class stores, reads, and writes material parameters.
 
-    :param domains: list of domains. Each domain is a MaterialDomain
-        class of material parameters, constant in each region.
-        It defaults to an empty list.
-    :type domains: list[MaterialDomain]
-    :param filepath: material file path
-    :type filepath: pathlib.Path
+    Args:
+        domains: list of domains. Each domain is a MaterialDomain class of material
+            parameters, constant in each region.
+        filepath: material file path
+
     """
 
     domains: list[MaterialDomain] = Field(default_factory=list)
@@ -109,22 +103,18 @@ class Materials:
     ) -> None:
         r"""Append domain with specified parameters.
 
-        :param A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        :type A: float
-        :param Ms: Spontaneous magnetisation in :math:`\mathrm{T}`.
-        :type Ms: float
-        :param K1: First magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
-        :type K1: float
-        :param K2: Second magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
-        :type K2: float
-        :param phi: Angle of the magnetocrystalline anisotropy axis
-            from the :math:`x`-direction in radians.
-        :type phi: float
-        :param theta: Angle of the magnetocrystalline anisotropy axis
-            from the :math:`z`-direction in radians.
-        :type theta: float
+        Args:
+            A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
+            Ms: Spontaneous magnetisation in :math:`\mathrm{T}`.
+            K1: First magnetocrystalline anisotropy constant in
+                :math:`\mathrm{J}/\mathrm{m}^3`.
+            K2: Second magnetocrystalline anisotropy constant in
+                :math:`\mathrm{J}/\mathrm{m}^3`.
+            phi: Angle of the magnetocrystalline anisotropy axis
+                from the :math:`x`-direction in radians.
+            theta: Angle of the magnetocrystalline anisotropy axis
+                from the :math:`z`-direction in radians.
+
         """
         dom = MaterialDomain(
             theta=theta,
@@ -144,9 +134,12 @@ class Materials:
 
         Currently accepted formats: ``krn`` and ``yaml``.
 
-        :param fname: File name.
-        :type fname: str or pathlib.Path
-        :raises NotImplementedError: Wrong file format.
+        Args:
+            fname: File name.
+
+        Raises:
+            NotImplementedError: Wrong file format.
+
         """
         fpath = check_path(fname)
 
@@ -167,8 +160,9 @@ class Materials:
         Each domain in :py:attr:`~domains` is written on a single line
         with spaces as separators.
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
+        Args:
+            fname: File path
+
         """
         env = Environment(
             loader=PackageLoader("mammos_mumag"),
@@ -189,8 +183,9 @@ class Materials:
     def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write material `yaml` file.
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
+        Args:
+            fname: File path
+
         """
         domains = [
             {
@@ -212,11 +207,13 @@ class Materials:
 def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `krn` file and return as list of dictionaries.
 
-    :param fname: File path
-    :type fname: str or pathlib.Path
-    :return: Domains as list of dictionaries, with each dictionary defining
+    Args:
+        fname: File path
+
+    Returns:
+        Domains as list of dictionaries, with each dictionary defining
         the material constant in a specific region.
-    :rtype: list[dict]
+
     """
     with open(fname, "r") as file:
         lines = file.readlines()
@@ -241,11 +238,13 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
 def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
     """Read material `yaml` file.
 
-    :param fname: File path
-    :type fname: str or pathlib.Path
-    :return: Domains as list of dictionaries, with each dictionary defining
+    Args:
+        fname: File path
+
+    Returns:
+        Domains as list of dictionaries, with each dictionary defining
         the material constant in a specific region.
-    :rtype: list[dict]
+
     """
     with open(fname, "r") as file:
         domains = yaml.safe_load(file)

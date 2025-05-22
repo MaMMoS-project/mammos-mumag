@@ -1,8 +1,8 @@
-Notebook Examples
-=================
+MaMMoS mumag Examples
+=====================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    materials_io
    parameters_io

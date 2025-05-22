@@ -16,48 +16,27 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 class Parameters:
     r"""Class storing simulation parameters.
 
-    :param size: Size of the mesh, defaults to 1e-9.
-    :type size: float
-    :param scale: Scale of the mesh, defaults to 0.
-    :type scale: float
-    :param state: Name of the state. Scripts recognize the strings `flower`, `vortex`,
-        `twisted`, and `random`. Other strings are interpreted as the default case.
-        Defaults to "mxyz".
-    :type state: str
-    :param m_vect: Magnetization field :math:`\mathbf{m}`.
-        Defaults to [0,0,0].
-    :type m_vect: list[float]
-    :param hmag_on: 1 or 0 indicating whether the external field is on (1) or off (0).
-        Defaults to 1.
-    :type hmag_on: int
-    :param hstart: Initial external field. Defaults to 0.
-    :type hstart: float
-    :param hfinal: Final external field. Defaults to 0.
-    :type hfinal: float
-    :param hstep: External field step. Defaults to 0.
-    :type hstep: float
-    :param h_vect: External field vector :math:`\mathbf{h}`.
-        Defaults to [0,0,0].
-    :type h_vect: list[float]
-    :param mstep: TODO. Defaults to 1.0.
-    :type mstep: float
-    :param mfinal: TODO. Defaults to -0.8.
-    :type mfinal: float
-    :param iter_max: Max number of iterations of optimizer.
-        TODO NOT USED AT THE MOMENT. Defaults to 1000.
-    :type iter_max: int
-    :param precond_iter: conjugate gradient iterations for inverse
-        Hessian approximation. Defaults to 10.
-    :type precond_iter: int
-    :param tol_fun: Tolerance of the total energy. Defaults to 1e-10.
-    :type tol_fun: float
-    :param tol_hmag_factor: Factor defining the tolerance for the
-        magnetostatic scalar potential. Defaults to 1.
-    :type tol_hmag_factor: float
-    :param tol_u: TODO. Defaults to 1e-10.
-    :type tol_u: float
-    :param verbose: verbosity. Defaults to 0
-    :type verbose: int
+    Args:
+        size: Size of the mesh.
+        scale: Scale of the mesh.
+        state: Name of the state. Scripts recognize the strings `flower`, `vortex`,
+            `twisted`, and `random`. Other strings are interpreted as the default case.
+        m_vect: Magnetization field :math:`\mathbf{m}`.
+        hmag_on: 1 or 0 indicating whether the external field is on (1) or off (0).
+        hstart: Initial external field.
+        hfinal: Final external field.
+        hstep: External field step.
+        h_vect: External field vector :math:`\mathbf{h}`.
+        mstep: TODO
+        mfinal: TODO
+        iter_max: Max number of iterations of optimizer. TODO NOT USED AT THE MOMENT.
+        precond_iter: conjugate gradient iterations for inverse Hessian approximation.
+        tol_fun: Tolerance of the total energy.
+        tol_hmag_factor: Factor defining the tolerance for the magnetostatic scalar
+            potential.
+        tol_u: TODO
+        verbose: verbosity
+        filepath: TODO
     """
 
     size: float = 1.0e-09
@@ -98,32 +77,33 @@ class Parameters:
 
     @property
     def m(self) -> list[float]:
-        """Return list m."""
-        return normalize(self.m_vect)
+        """Normalized magnetization."""
+        return _normalize(self.m_vect)
 
     @m.setter
     def m(self, value: list[float]) -> None:
-        """Assign normalized m."""
-        self.m_vect = normalize(value)
+        self.m_vect = _normalize(value)
 
     @property
     def h(self) -> list[float]:
-        """Return list h."""
-        return normalize(self.h_vect)
+        """Direction of the external field."""
+        return _normalize(self.h_vect)
 
     @h.setter
     def h(self, value: list[float]) -> None:
-        """Assign normalized h."""
-        self.h_vect = normalize(value)
+        self.h_vect = _normalize(value)
 
     def read(self, fname: str | pathlib.Path) -> None:
         """Read parameter file in `yaml` or `p2` format.
 
         Simulation parameters are read and stored.
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
-        :raises NotImplementedError: Wrong file format.
+        Args:
+            fname: File path
+
+        Raises:
+            NotImplementedError: Wrong file format.
+
         """
         fpath = check_path(fname)
 
@@ -189,8 +169,9 @@ class Parameters:
     def write_p2(self, fname: str | pathlib.Path) -> None:
         """Write parameter `p2` file.
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
+        Args:
+            fname: File path
+
         """
         env = Environment(
             loader=PackageLoader("mammos_mumag"),
@@ -212,8 +193,9 @@ class Parameters:
     def write_yaml(self, fname: str | pathlib.Path) -> None:
         """Write parameter `yaml` file.
 
-        :param fname: File path
-        :type fname: str or pathlib.Path
+        Args:
+            fname: File path
+
         """
         parameters_dict = {
             "mesh": {
@@ -247,11 +229,12 @@ class Parameters:
             yaml.dump(parameters_dict, file)
 
 
-def normalize(v: list[float]) -> list[float]:
+def _normalize(v: list[float]) -> list[float]:
     """Normalize list.
 
-    :param v: list to normalize
-    :type v: list
+    Args:
+        v: list to normalize
+
     """
     s = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
     if s <= 1.0e-13:
