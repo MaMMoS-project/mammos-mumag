@@ -8,11 +8,15 @@ from textwrap import dedent
 def check_path(fname: str | pathlib.Path) -> pathlib.Path:
     """Check that file exists.
 
-    :param fname: File path.
-    :type fname: str or pathlib.Path
-    :raises FileNotFoundError: File not found.
-    :return: File path.
-    :rtype: pathlib.Path
+    Args:
+        fname: File path.
+
+    Returns:
+        File path.
+
+    Raises:
+        FileNotFoundError: File not found.
+
     """
     path = pathlib.Path(fname).resolve()
     if not path.is_file():
@@ -23,10 +27,12 @@ def check_path(fname: str | pathlib.Path) -> pathlib.Path:
 def check_dir(outdir: str | pathlib.Path) -> pathlib.Path:
     """Check that directory exists.
 
-    :param outdir: Directory path.
-    :type outdir: str or pathlib.Path
-    :return: Checked directory path.
-    :rtype: pathlib.Path
+    Args:
+        outdir: Directory path.
+
+    Returns:
+        Checked directory path.
+
     """
     outdir = pathlib.Path(outdir)
     outdir.mkdir(exist_ok=True, parents=True)
@@ -36,7 +42,9 @@ def check_dir(outdir: str | pathlib.Path) -> pathlib.Path:
 def check_esys_escript() -> None:
     """Check if esys_escript is found in PATH.
 
-    :raises SystemError: esys-escript is not found
+    Raises:
+        SystemError: esys-escript is not found
+
     """
     if mammos_mumag._run_escript_bin is None:
         raise SystemError(

@@ -24,10 +24,14 @@ IS_POSIX = os.name == "posix"
 class Simulation:
     """Simulation class.
 
-    :param materials: class managing materials.
-    :type materials: :py:class:`~mammos_mumag.materials.Materials`
-    :param parameters: class managing parameters.
-    :type parameters: :py:class:`~mammos_mumag.parameters.Parameters`
+    Args:
+        material_domain_list: TODO
+        mesh_filepath: TODO
+        paretials_filepath: TODO
+        parameters_filepath: TODO
+        materials: class managing materials.
+        parameters: class managing parameters.
+
     """
 
     material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
@@ -52,7 +56,12 @@ class Simulation:
     def check_attribute(self, *args) -> None:
         """Check existence of attributes.
 
-        :raises AttributeError: Attribute has not been defined yet.
+        Args:
+            *args: Attribtes to check.
+
+        Raises:
+            AttributeError: Attribute has not been defined yet.
+
         """
         for attr in args:
             if self.__getattribute__(attr) is None:
@@ -64,35 +73,34 @@ class Simulation:
     ) -> None:
         """Run python file using `esys.escript`.
 
-        :param script: path of file.
-        :type script: str or pathlib.Path
-        :param outdir: Working directory. Defaults to "out"
-        :type outdir: str or pathlib.Path, optional
+        Args:
+            file: Path to simulation script.
+            outdir: Working directory.
+
         """
         check_esys_escript()
         cmd = shlex.split(
             f"{mammos_mumag._run_escript_bin} {file}",
             posix=IS_POSIX,
         )
-        run_subprocess(cmd, cwd=outdir)
+        _run_subprocess(cmd, cwd=outdir)
 
     @classmethod
     def run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
         """Run pre-defined script.
 
-        :param script: Name of pre-defined script.
-        :type script: str
-        :param outdir: Working directory
-        :type outdir: str or pathlib.Path
-        :param name: System name
-        :type name: str
+        Args:
+            script: Name of pre-defined script.
+            outdir: Working directory
+            name: System name
+
         """
         check_esys_escript()
         cmd = shlex.split(
             f"{mammos_mumag._run_escript_bin} {mammos_mumag._scripts_directory / script}.py {name}",
             posix=IS_POSIX,
         )
-        run_subprocess(cmd, cwd=outdir)
+        _run_subprocess(cmd, cwd=outdir)
         with open(outdir / "info.json", "w") as file:
             json.dump(
                 {
@@ -134,10 +142,10 @@ class Simulation:
           the exchange anisotropy energy evaluated with different
           methods on a vortex.
 
-        :param outdir: Working directory, defaults to "exani".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials")
@@ -170,10 +178,10 @@ class Simulation:
         * `<name>.csv`: table containing information about
           the Zeeman energy evaluated with different methods.
 
-        :param outdir: Working directory, defaults to "external".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials", "parameters")
@@ -231,10 +239,10 @@ class Simulation:
 
             E_{\mathsf{analytic}} := J_s^2 / (6 \mu_0)
 
-        :param outdir: Working directory, defaults to "hmag".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials")
@@ -279,10 +287,10 @@ class Simulation:
 
           * the energy density (:math:`\mathrm{J}/\mathrm{m}^3`) of the current state.
 
-        :param outdir: Working directory, defaults to "loop".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials", "parameters")
@@ -305,10 +313,10 @@ class Simulation:
 
         Creates the `vtk` file for the visualisation of the material properties.
 
-        :param outdir: Working directory, defaults to "magnetization".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials", "parameters")
@@ -333,10 +341,10 @@ class Simulation:
         The module mapping.py contains the tools for mapping from the finite element
         bilinear forms to sparse matrices. We use sparse matrix methods from ``jax``.
 
-        :param outdir: Working directory, defaults to "magnetization".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials", "parameters")
@@ -357,10 +365,10 @@ class Simulation:
 
         This script generates a `vtu` file that shows the material.
 
-        :param outdir: Working directory, defaults to "materials".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials")
@@ -381,10 +389,10 @@ class Simulation:
         The sparse matrices used for computation can be stored
         and reused for simulations with the same finite element mesh.
 
-        :param outdir: Working directory, defaults to "magnetization".
-        :type outdir: str or pathlib.Path, optional
-        :param name: System name, defaults to "out".
-        :type name: str, optional.
+        Args:
+            outdir: Working directory.
+            name: System name.
+
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh_filepath", "materials", "parameters")
@@ -399,14 +407,16 @@ class Simulation:
         )
 
 
-def run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
+def _run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
     """Run command using `subprocess` in the specified directory.
 
-    :param cmd: command to execute
-    :type cmd: list
-    :param cwd: working directory
-    :type cwd: str or pathlib.Path
-    :raises RuntimeError: Simulation has failed.
+    Args:
+        cmd: command to execute
+        cwd: working directory
+
+    Raises:
+        RuntimeError: Simulation has failed.
+
     """
     res = subprocess.run(
         cmd,
