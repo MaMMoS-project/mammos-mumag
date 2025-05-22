@@ -53,15 +53,30 @@ class LoopResults:
         if duplicate:
             plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["polarisation"])
 
-    def plot_configuration(self, idx: int) -> None:
+    def plot_configuration(self, idx: int, jupyter_backend: str = "trame") -> None:
         """Plot configuration with index `idx`.
 
         Args:
             idx: Index of the configuration.
+            jupyter_backend: Plotting backend.
 
         """
-        conf = pv.read(self.configurations[idx])
-        conf.plot()
+        config = pv.read(self.configurations[idx])
+        config["m_norm"] = np.linalg.norm(config["m"], axis=1)
+        glyphs = config.glyph(
+            orient="m",
+            scale="m_norm",
+        )
+        pl = pv.Plotter()
+        pl.add_mesh(
+            glyphs,
+            scalars=glyphs["GlyphVector"][:, 2],
+            lighting=False,
+            cmap="coolwarm",
+            scalar_bar_args={"title": "m_z"},
+        )
+        pl.show_axes()
+        pl.show(jupyter_backend=jupyter_backend)
 
     def get_extrinsic_properties(self) -> ExtrinsicProperties:
         """Evaluate extrinsic properties.
