@@ -107,53 +107,51 @@ def run(
         ),
     )
     sim.run_loop(outdir=outdir, name="hystloop")
-    res = Result(
-        pd.read_csv(
-            f"{outdir}/hystloop.dat",
-            delimiter=" ",
-            names=["idx", "mu0_Hext", "polarisation", "E"],
+    df = pd.read_csv(
+        f"{outdir}/hystloop.dat",
+        delimiter=" ",
+        names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
+    )
+    return Result(
+        H=me.Entity(
+            "ExternalMagneticField",
+            value=(df["mu0_Hext"].to_numpy() * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
         ),
-        [
+        M=me.Ms(
+            (df["polarisation"].to_numpy() * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
+        ),
+        energy_density=me.Entity("EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3),
+        configurations=[
             fname
             for fname in pathlib.Path(outdir).resolve().iterdir()
             if fname.suffix == ".vtu"
         ],
+        configuration_type=df["configuration_type"].to_numpy(),
     )
-    return res
 
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True, frozen=True))
 class Result:
     """Hysteresis loop Result."""
 
-    dataframe: pd.DataFrame
+    H: me.Entity
+    M: me.Entity
+    energy_density: me.Entity | None = None
+    configuration_type: np.ndarray | None = None
     configurations: list[pathlib.Path] | None = None
 
     @property
-    def H(self) -> me.Entity:
-        """External field."""
-        u.set_enabled_equivalencies(u.magnetic_flux_field())
-        return me.Entity(
-            "ExternalMagneticField",
-            value=(self.dataframe["mu0_Hext"].to_numpy() * u.T),
-            unit=u.A / u.m,
-        )
-
-    @property
-    def M(self) -> me.Entity:
-        """Spontaneous Magnetisation."""
-        return me.Ms(
-            self.dataframe["polarisation"],
-            unit=u.T,
-        )
-
-    @property
-    def EnergyDensity(self) -> me.Entity:
-        """External field."""
-        return me.Entity(
-            "EnergyDensity",
-            value=self.dataframe["E"],
-            unit=u.J / u.m**3,
+    def dataframe(self) -> pandas.DataFrame:
+        """Dataframe containing the result data of the hysteresis loop."""
+        return pd.DataFrame(
+            {
+                "configuration_type": self.configuration_type,
+                "H": self.H,
+                "M": self.M,
+                "energy_density": self.energy_density,
+            }
         )
 
     def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
