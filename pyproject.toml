@@ -15,7 +15,8 @@ authors = [
   { name = "Martin Lang" },
   { name = "Hans Fangohr" },
 ]
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 
 classifiers = [
   'Programming Language :: Python',
@@ -60,6 +61,13 @@ gpu = [
 test = [
   "pytest",
 ]
+
+[project.urls]
+Homepage = "https://mammos-project.github.io"
+Documentation = "https://mammos-project.github.io/mammos"
+Repository = "https://github.com/MaMMoS-project/mammos-mumag"
+Issues = "https://github.com/MaMMoS-project/mammos-mumag/issues"
+Changelog = "https://mammos-project.github.io/mammos/changelog"
 
 # pixi
 [tool.pixi.project]
