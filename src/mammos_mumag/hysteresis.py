@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import pandas as pd
-import pathlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas
+import pandas as pd
+import pathlib
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 import pyvista as pv
@@ -115,14 +116,20 @@ def run(
     return Result(
         H=me.Entity(
             "ExternalMagneticField",
-            value=(df["mu0_Hext"].to_numpy() * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            value=(df["mu0_Hext"].to_numpy() * u.T).to(
+                u.A / u.m, equivalencies=u.magnetic_flux_field()
+            ),
             unit=u.A / u.m,
         ),
         M=me.Ms(
-            (df["polarisation"].to_numpy() * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            (df["polarisation"].to_numpy() * u.T).to(
+                u.A / u.m, equivalencies=u.magnetic_flux_field()
+            ),
             unit=u.A / u.m,
         ),
-        energy_density=me.Entity("EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3),
+        energy_density=me.Entity(
+            "EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3
+        ),
         configurations=[
             fname
             for fname in pathlib.Path(outdir).resolve().iterdir()
