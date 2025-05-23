@@ -62,6 +62,13 @@ test = [
   "pytest",
 ]
 
+[project.urls]
+Homepage = "https://mammos-project.github.io"
+Documentation = "https://mammos-project.github.io/mammos"
+Repository = "https://github.com/MaMMoS-project/mammos-mumag"
+Issues = "https://github.com/MaMMoS-project/mammos-mumag/issues"
+Changelog = "https://mammos-project.github.io/mammos/changelog"
+
 # pixi
 [tool.pixi.project]
 channels = ["conda-forge"]
