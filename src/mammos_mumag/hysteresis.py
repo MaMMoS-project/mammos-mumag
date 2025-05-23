@@ -163,22 +163,27 @@ class Result:
 
         """
         fig, ax = plt.subplots()
-        plt.plot(self.dataframe["mu0_Hext"], self.dataframe["polarisation"])
+        plt.plot(self.dataframe.H, self.dataframe.M)
         j = 0
         if configuration_marks:
-            for _, r in self.dataframe.iterrows():
-                idx = int(r["idx"])
+            for _, row in self.dataframe.iterrows():
+                idx = int(row.configuration_type)
                 if idx != j:
-                    plt.plot(r["mu0_Hext"], r["polarisation"], "rx")
+                    plt.plot(row.H, row.M, "rx")
                     j = idx
                     ax.annotate(
                         j,
-                        xy=(r["mu0_Hext"], r["polarisation"]),
+                        xy=(row.H, row.M),
                         xytext=(-2, -10),
                         textcoords="offset points",
                     )
+        ax.set_title("Hysteresis Loop")
+        # ax.set_xlabel("External Magnetic Field [A/m]")
+        ax.set_xlabel(f"{self.H.ontology_label} [{self.H.unit}]")
+        # ax.set_ylabel("Spontaneous Magnetisation [A/m]")
+        ax.set_ylabel(f"{self.M.ontology_label} [{self.M.unit}]")
         if duplicate:
-            plt.plot(-self.dataframe["mu0_Hext"], -self.dataframe["polarisation"])
+            plt.plot(-self.dataframe.H, -self.dataframe.M)
 
     def plot_configuration(self, idx: int, jupyter_backend: str = "trame") -> None:
         """Plot configuration with index `idx`.
