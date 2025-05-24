@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
+import pathlib
+
+import mammos_entity as me
+import mammos_units as u
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 import pandas as pd
-import pathlib
+import pyvista as pv
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
-import pyvista as pv
 
-
-import mammos_entity as me
-import mammos_units as u
 from mammos_mumag.materials import Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
@@ -132,8 +132,7 @@ def run(
         ),
         configurations={
             i + 1: fname
-            for i, fname in enumerate(pathlib.Path(outdir).resolve().iterdir())
-            if fname.suffix == ".vtu"
+            for i, fname in enumerate(list(pathlib.Path(outdir).glob("*.vtu")).sort())
         },
         configuration_type=df["configuration_type"].to_numpy(),
     )
