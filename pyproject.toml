@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 name = "mammos-mumag"
-version = "0.5.0-dev.202505240934"
+version = "0.5.0-dev.202505241011"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -37,7 +37,7 @@ dependencies = [
   "numpy",
   "psutil >=7",
   "pydantic",
-  "pyvista",
+  "pyvista[all]",
   "pyyaml >6",
   "scipy",
 ]
