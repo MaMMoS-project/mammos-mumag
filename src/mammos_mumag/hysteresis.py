@@ -131,7 +131,7 @@ def run(
             "EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3
         ),
         configurations={
-            i+1: fname
+            i + 1: fname
             for i, fname in enumerate(pathlib.Path(outdir).resolve().iterdir())
             if fname.suffix == ".vtu"
         },
