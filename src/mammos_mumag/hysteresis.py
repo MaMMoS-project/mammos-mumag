@@ -132,7 +132,9 @@ def run(
         ),
         configurations={
             i + 1: fname
-            for i, fname in enumerate(list(pathlib.Path(outdir).glob("*.vtu")).sort())
+            for i, fname in enumerate(
+                sorted(pathlib.Path(outdir).resolve().glob("*.vtu"))
+            )
         },
         configuration_type=df["configuration_type"].to_numpy(),
     )
