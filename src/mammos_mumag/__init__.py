@@ -8,21 +8,19 @@ import pathlib
 import shutil
 
 from mammos_mumag import (
-    hysteresis_loop,
+    hysteresis,
     materials,
     mesh,
     parameters,
-    results,
     simulation,
     tofly,
 )
 
 __all__ = [
-    "hysteresis_loop",
+    "hysteresis",
     "materials",
     "mesh",
     "parameters",
-    "results",
     "simulation",
     "tofly",
 ]
