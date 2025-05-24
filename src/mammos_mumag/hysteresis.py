@@ -130,11 +130,11 @@ def run(
         energy_density=me.Entity(
             "EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3
         ),
-        configurations=[
-            fname
-            for fname in pathlib.Path(outdir).resolve().iterdir()
+        configurations={
+            i+1: fname
+            for i, fname in enumerate(pathlib.Path(outdir).resolve().iterdir())
             if fname.suffix == ".vtu"
-        ],
+        },
         configuration_type=df["configuration_type"].to_numpy(),
     )
 
@@ -147,7 +147,7 @@ class Result:
     M: me.Entity
     energy_density: me.Entity | None = None
     configuration_type: np.ndarray | None = None
-    configurations: list[pathlib.Path] | None = None
+    configurations: dict[int, pathlib.Path] | None = None
 
     @property
     def dataframe(self) -> pandas.DataFrame:
