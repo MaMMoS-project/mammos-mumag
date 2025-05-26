@@ -204,11 +204,11 @@ class Result:
         ax.set_title("Hysteresis Loop")
         ax.set_xlabel(
             re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.H.ontology_label}")
-            + " [{self.H.unit}]"
+            + f" [{self.H.unit}]"
         )
         ax.set_ylabel(
             re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.M.ontology_label}")
-            + " [{self.M.unit}]"
+            + f" [{self.M.unit}]"
         )
         if duplicate:
             plt.plot(-self.dataframe.H, -self.dataframe.M)
