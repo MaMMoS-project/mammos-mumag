@@ -4,7 +4,7 @@ requires = ["hatchling"]
 
 [project]
 name = "mammos-mumag"
-version = "0.5.0-dev.202505241100"
+version = "0.5.0-dev.202505260940"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
