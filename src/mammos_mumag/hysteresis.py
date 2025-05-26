@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import pathlib
+import re
+from typing import TYPE_CHECKING
 
 import mammos_entity as me
 import mammos_units as u
@@ -17,6 +19,9 @@ from pydantic.dataclasses import dataclass
 from mammos_mumag.materials import Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
+
+if TYPE_CHECKING:
+    import matplotlib
 
 
 def run(
@@ -162,15 +167,26 @@ class Result:
             }
         )
 
-    def plot(self, duplicate: bool = True, configuration_marks: bool = False) -> None:
+    def plot(
+        self,
+        duplicate: bool = True,
+        configuration_marks: bool = False,
+        axes: matplotlib.axes.Axes | None = None,
+    ) -> matplotlib.axes.Axes:
         """Plot hysteresis loop.
 
         Args:
             duplicate: Also plot loop with -M and -H to simulate full hysteresis.
             configuration_marks: Show markers where a configuration has been saved.
 
+        Returns:
+            The `matplotlib.axes.Axes` object which was used to plot the hysteresis loop
+
         """
-        fig, ax = plt.subplots()
+        if axes:
+            ax = axes
+        else:
+            _, ax = plt.subplots()
         plt.plot(self.dataframe.H, self.dataframe.M)
         j = 0
         if configuration_marks:
@@ -186,12 +202,18 @@ class Result:
                         textcoords="offset points",
                     )
         ax.set_title("Hysteresis Loop")
-        # ax.set_xlabel("External Magnetic Field [A/m]")
-        ax.set_xlabel(f"{self.H.ontology_label} [{self.H.unit}]")
-        # ax.set_ylabel("Spontaneous Magnetisation [A/m]")
-        ax.set_ylabel(f"{self.M.ontology_label} [{self.M.unit}]")
+        ax.set_xlabel(
+            re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.H.ontology_label}")
+            + " [{self.H.unit}]"
+        )
+        ax.set_ylabel(
+            re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.M.ontology_label}")
+            + " [{self.M.unit}]"
+        )
         if duplicate:
             plt.plot(-self.dataframe.H, -self.dataframe.M)
+
+        return ax
 
     def plot_configuration(self, idx: int, jupyter_backend: str = "trame") -> None:
         """Plot configuration with index `idx`.
