@@ -3854,8 +3854,8 @@ packages:
   requires_python: '>=3.8'
 - pypi: ./
   name: mammos-mumag
-  version: 0.5.0.dev202505260945
-  sha256: 5b3f4809322a7b38081ccf5a6b74c1a2eb610f0d5473f7dfb1933c5915b46554
+  version: 0.5.1
+  sha256: 18a3d7c547059a59a01001019288a04c17d36b57d580a56d92eac4c11f2247fc
   requires_dist:
   - jax
   - jinja2>=3.1.6,<4
@@ -3863,7 +3863,7 @@ packages:
   - mammos-units
   - numpy
   - psutil>=7
-  - pydantic
+  - pydantic>=2.11
   - pyvista[all]
   - pyyaml>6
   - scipy
