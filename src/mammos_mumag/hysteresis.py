@@ -171,7 +171,7 @@ class Result:
         self,
         duplicate: bool = True,
         configuration_marks: bool = False,
-        axes: matplotlib.axes.Axes | None = None,
+        ax: matplotlib.axes.Axes | None = None,
         label: str | None = None,
     ) -> matplotlib.axes.Axes:
         """Plot hysteresis loop.
@@ -184,8 +184,8 @@ class Result:
             The `matplotlib.axes.Axes` object which was used to plot the hysteresis loop
 
         """
-        if axes:
-            ax = axes
+        if ax:
+            ax = ax
         else:
             _, ax = plt.subplots()
         if label:
