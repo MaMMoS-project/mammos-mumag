@@ -36,7 +36,7 @@ dependencies = [
   "mammos_units",
   "numpy",
   "psutil >=7",
-  "pydantic",
+  "pydantic >= 2.11",
   "pyvista[all]",
   "pyyaml >6",
   "scipy",
