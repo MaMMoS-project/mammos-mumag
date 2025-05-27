@@ -172,6 +172,7 @@ class Result:
         duplicate: bool = True,
         configuration_marks: bool = False,
         axes: matplotlib.axes.Axes | None = None,
+        label: str | None = None,
     ) -> matplotlib.axes.Axes:
         """Plot hysteresis loop.
 
@@ -187,7 +188,10 @@ class Result:
             ax = axes
         else:
             _, ax = plt.subplots()
-        plt.plot(self.dataframe.H, self.dataframe.M)
+        if label:
+            ax.plot(self.dataframe.H, self.dataframe.M, label=label)
+        else:
+            ax.plot(self.dataframe.H, self.dataframe.M)
         j = 0
         if configuration_marks:
             for _, row in self.dataframe.iterrows():
@@ -210,8 +214,10 @@ class Result:
             re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.M.ontology_label}")
             + f" [{self.M.unit}]"
         )
+        if label:
+            ax.legend()
         if duplicate:
-            plt.plot(-self.dataframe.H, -self.dataframe.M)
+            ax.plot(-self.dataframe.H, -self.dataframe.M)
 
         return ax
 
