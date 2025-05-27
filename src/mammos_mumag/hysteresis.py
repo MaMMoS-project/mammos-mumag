@@ -241,6 +241,7 @@ class Result:
             scalars=glyphs["GlyphVector"][:, 2],
             lighting=False,
             cmap="coolwarm",
+            clim=[-1, 1],
             scalar_bar_args={"title": "m_z"},
         )
         pl.show_axes()
