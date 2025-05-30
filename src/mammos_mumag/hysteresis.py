@@ -170,15 +170,21 @@ class Result:
     def plot(
         self,
         duplicate: bool = True,
+        duplicate_change_color: bool = True,
         configuration_marks: bool = False,
         ax: matplotlib.axes.Axes | None = None,
         label: str | None = None,
+        **kwargs,
     ) -> matplotlib.axes.Axes:
         """Plot hysteresis loop.
 
         Args:
             duplicate: Also plot loop with -M and -H to simulate full hysteresis.
             configuration_marks: Show markers where a configuration has been saved.
+            ax: Matplotlib axes object to which the plot is added. A new one is create
+                if not passed.
+            kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
+                hysteresis lines.
 
         Returns:
             The `matplotlib.axes.Axes` object which was used to plot the hysteresis loop
@@ -189,9 +195,9 @@ class Result:
         else:
             _, ax = plt.subplots()
         if label:
-            ax.plot(self.dataframe.H, self.dataframe.M, label=label)
+            (line,) = ax.plot(self.dataframe.H, self.dataframe.M, label=label, **kwargs)
         else:
-            ax.plot(self.dataframe.H, self.dataframe.M)
+            (line,) = ax.plot(self.dataframe.H, self.dataframe.M, **kwargs)
         j = 0
         if configuration_marks:
             for _, row in self.dataframe.iterrows():
@@ -217,7 +223,9 @@ class Result:
         if label:
             ax.legend()
         if duplicate:
-            ax.plot(-self.dataframe.H, -self.dataframe.M)
+            color = None if duplicate_change_color else line.get_color()
+            kwargs.update(color=color)
+            ax.plot(-self.dataframe.H, -self.dataframe.M, **kwargs)
 
         return ax
 
