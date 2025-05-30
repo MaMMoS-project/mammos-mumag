@@ -69,6 +69,7 @@ platforms = ["linux-64"]
 [tool.pixi.dependencies]
 esys-escript = ">=5.10,<6"
 packaging = "<25"
+jupyterlab = "*"
 
 [tool.pixi.pypi-dependencies]
 mammos_mumag = { path = ".", editable = true }
@@ -96,7 +97,7 @@ clean = "ruff clean && py3clean ."
 [tool.pixi.feature.docs.tasks]
 docs = "cd docs && make html"
 docs-clean = "cd docs && make clean"
-examples = "jupyter-lab docs/source/notebooks/"
+examples = "jupyter-lab examples"
 
 [tool.pixi.feature.test.tasks]
 test = "pytest -v"
@@ -115,6 +116,7 @@ respect-gitignore = true
 exclude = [
   "src/mammos_mumag/scripts/*.py", # scripts
   "examples", # to be checked
+  "dev",
 ]
 
 [tool.ruff.lint.per-file-ignores]

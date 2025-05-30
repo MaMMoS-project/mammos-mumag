@@ -1,11 +1,7 @@
-MaMMoS mumag Examples
-=====================
+mammos-mumag
+============
 
 .. toctree::
    :maxdepth: 1
 
-   materials_io
-   parameters_io
-   hysteresis_loop
-   scripts
-   unvtofly
+   quickstart
