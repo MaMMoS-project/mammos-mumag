@@ -223,8 +223,8 @@ class Result:
         if label:
             ax.legend()
         if duplicate:
-            color = None if duplicate_change_color else line.get_color()
-            kwargs.update(color=color)
+            if not duplicate_change_color:
+                kwargs.setdefault("color", line.get_color())
             ax.plot(-self.dataframe.H, -self.dataframe.M, **kwargs)
 
         return ax
