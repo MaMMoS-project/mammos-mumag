@@ -222,14 +222,15 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
         MaterialDomain(
             theta=float(line[0]),
             phi=float(line[1]),
-            K1=me.Ku(float(line[2]), unit=u.J / u.m**3),
-            K2=me.Ku(float(line[3]), unit=u.J / u.m**3),
+            K1=me.Ku(float(line[2]), unit="J/m3"),
+            K2=me.Ku(float(line[3]), unit="J/m3"),
             Ms=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
-                )
+                ),
+                unit="A/m",
             ),
-            A=me.A(float(line[5]), unit=u.J / u.m),
+            A=me.A(float(line[5]), unit="J/m"),
         )
         for line in lines
     ]
