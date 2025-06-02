@@ -1,7 +1,4 @@
-"""mammos_mumag.
-
-MaMMoS micromagnetic simulation software.
-"""
+"""Finite-element micromagnetic simulations (hysteresis)."""
 
 import importlib.metadata
 import pathlib
