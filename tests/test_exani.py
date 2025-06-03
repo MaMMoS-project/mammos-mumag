@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+
 from mammos_mumag.simulation import Simulation
 
 

@@ -1,6 +1,7 @@
 """Test configuration."""
 
 import pathlib
+
 import pytest
 
 

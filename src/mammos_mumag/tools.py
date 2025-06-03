@@ -1,8 +1,9 @@
 """Tool functions."""
 
-import mammos_mumag
 import pathlib
 from textwrap import dedent
+
+import mammos_mumag
 
 
 def check_path(fname: str | pathlib.Path) -> pathlib.Path:

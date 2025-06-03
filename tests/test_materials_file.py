@@ -1,11 +1,10 @@
 """Test materials file i/o."""
 
+import mammos_entity as me
+import mammos_units as u
 import numpy as np
 import pytest
 from pydantic import ValidationError
-
-import mammos_entity as me
-import mammos_units as u
 
 from mammos_mumag.materials import MaterialDomain, Materials
 

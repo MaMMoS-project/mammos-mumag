@@ -1,15 +1,15 @@
 """Materials class."""
 
-from typing import Any
-from jinja2 import Environment, PackageLoader, select_autoescape
 import numbers
 import pathlib
-from pydantic import ConfigDict, Field, field_validator
-from pydantic.dataclasses import dataclass
-import yaml
+from typing import Any
 
 import mammos_entity as me
 import mammos_units as u
+import yaml
+from jinja2 import Environment, PackageLoader, select_autoescape
+from pydantic import ConfigDict, Field, field_validator
+from pydantic.dataclasses import dataclass
 
 from mammos_mumag.tools import check_path
 
@@ -45,7 +45,7 @@ class MaterialDomain:
     @classmethod
     def _convert_K1(cls, K1: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(K1, (numbers.Real, u.Quantity)):
+        if isinstance(K1, numbers.Real | u.Quantity):
             K1 = me.Ku(K1, unit=u.J / u.m**3)
         return K1
 
@@ -53,7 +53,7 @@ class MaterialDomain:
     @classmethod
     def _convert_K2(cls, K2: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(K2, float) or isinstance(K2, int) or isinstance(K2, u.Quantity):
+        if isinstance(K2, float | int | u.Quantity):
             K2 = me.Ku(K2, unit=u.J / u.m**3)
         return K2
 
@@ -61,7 +61,7 @@ class MaterialDomain:
     @classmethod
     def _convert_A(cls, A: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(A, float) or isinstance(A, int) or isinstance(A, u.Quantity):
+        if isinstance(A, float | int | u.Quantity):
             A = me.A(A, unit=u.J / u.m)
         return A
 
@@ -69,7 +69,7 @@ class MaterialDomain:
     @classmethod
     def _convert_Ms(cls, Ms: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(Ms, float) or isinstance(Ms, int) or isinstance(Ms, u.Quantity):
+        if isinstance(Ms, float | int | u.Quantity):
             Ms = me.Ms(Ms, unit=u.A / u.m)
         return Ms
 
@@ -215,7 +215,7 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
         the material constant in a specific region.
 
     """
-    with open(fname, "r") as file:
+    with open(fname) as file:
         lines = file.readlines()
     lines = [line.split() for line in lines]
     return [
@@ -247,7 +247,7 @@ def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
         the material constant in a specific region.
 
     """
-    with open(fname, "r") as file:
+    with open(fname) as file:
         domains = yaml.safe_load(file)
     return [
         MaterialDomain(

@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 import pyvista as pv
+
 from mammos_mumag.simulation import Simulation
 
 

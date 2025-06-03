@@ -1,15 +1,15 @@
 """Parameters class."""
 
+import configparser
 import math
 import pathlib
-import configparser
+
+import yaml
+from jinja2 import Environment, PackageLoader, select_autoescape
 from pydantic import Field
 from pydantic.dataclasses import dataclass
-import yaml
 
 from mammos_mumag.tools import check_path
-
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 @dataclass
@@ -108,7 +108,7 @@ class Parameters:
         fpath = check_path(fname)
 
         if fpath.suffix == ".yaml":
-            with open(fpath, "r") as file:
+            with open(fpath) as file:
                 pars = yaml.safe_load(file)
 
         elif fpath.suffix == ".p2":
