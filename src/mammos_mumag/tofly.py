@@ -376,7 +376,7 @@ def convert(
             exclude 1D and 2D elements.
 
     """
-    infile = open(unv_path, "r")
+    infile = open(unv_path)
     pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
     outfile = open(fly_path, "w")
     exclude_set = get_exclude_set(exclude_list)

@@ -1,6 +1,7 @@
 """Check mesh conversion."""
 
 import filecmp
+
 from mammos_mumag.tofly import convert
 
 

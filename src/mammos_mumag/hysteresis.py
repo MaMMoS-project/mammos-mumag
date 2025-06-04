@@ -29,12 +29,8 @@ def run(
     A: float | u.Quantity | me.Entity,
     K1: float | u.Quantity | me.Entity,
     mesh_filepath: pathlib.Path,
-    hstart: float | u.Quantity = (2 * u.T).to(
-        u.A / u.m, equivalencies=u.magnetic_flux_field()
-    ),
-    hfinal: float | u.Quantity = (-2 * u.T).to(
-        u.A / u.m, equivalencies=u.magnetic_flux_field()
-    ),
+    hstart: float | u.Quantity,
+    hfinal: float | u.Quantity,
     hstep: float | u.Quantity | None = None,
     hnsteps: int = 20,
     outdir: str | pathlib.Path = "hystloop",

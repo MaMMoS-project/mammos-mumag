@@ -1,20 +1,59 @@
-name: Test Python distribution
+name: Test package
 
 on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
   workflow_call:
+
+env:
+  PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]  # [ubuntu-latest, macos-latest, windows-latest]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Set up Pixi
+    - name: Setup Pixi
       uses: prefix-dev/setup-pixi@v0.8.8
+    - name: unit tests
+      run: pixi run test-unittest
+    - name: doc tests
+      run: pixi run test-docstrings
+      if: ${{ false }}
+    - name: Test examples
+      run: pixi run test-notebooks
+      if: ${{ false }}
+    - name: Keep pixi.lock artifact for debugging
+      uses: actions/upload-artifact@v4
       with:
-        pixi-version: v0.41.4
-        cache: true
-    - name: Run lint and format
-      run: pixi run pre-commit-all-files
-    - name: Run tests
-      run: pixi run test
+        path: pixi.lock
+      if: ${{ matrix.os == 'ubuntu-latest' && !cancelled() }}
+
+  build:
+    needs: test
+    name: Build sdist and wheel
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    - name: Install pypa/build
+      run: python -m pip install --user build
+    - name: Build wheel and source tarball
+      run: python -m build
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/

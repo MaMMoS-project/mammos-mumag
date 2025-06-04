@@ -2,13 +2,12 @@
 
 import datetime
 import json
-
 import os
+import pathlib
 import shlex
 import shutil
 import subprocess
 
-import pathlib
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -97,7 +96,8 @@ class Simulation:
         """
         check_esys_escript()
         cmd = shlex.split(
-            f"{mammos_mumag._run_escript_bin} {mammos_mumag._scripts_directory / script}.py {name}",
+            f"{mammos_mumag._run_escript_bin} "
+            f"{mammos_mumag._scripts_directory / script}.py {name}",
             posix=IS_POSIX,
         )
         _run_subprocess(cmd, cwd=outdir)

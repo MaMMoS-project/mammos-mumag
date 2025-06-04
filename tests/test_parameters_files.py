@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 from pydantic import ValidationError
+
 from mammos_mumag.parameters import Parameters
 
 
@@ -78,13 +79,13 @@ def are_parameters_equal(d1, d2):
     for k, val in d1.__dict__.items():
         if k not in dict_2:
             return False
-        if isinstance(val, (str, int)):
-            if dict_2[k] != val:
-                return False
-        if isinstance(val, float):
-            if abs(dict_2[k] - val) > 1.0e-11:
-                return False
-        if isinstance(val, list):
-            if sum([abs(val[i] - dict_2[k][i]) for i in range(len(val))]) > 1:
-                return False
+        if isinstance(val, str | int) and dict_2[k] != val:
+            return False
+        if isinstance(val, float) and abs(dict_2[k] - val) > 1.0e-11:
+            return False
+        if (
+            isinstance(val, list)
+            and sum([abs(val[i] - dict_2[k][i]) for i in range(len(val))]) > 1
+        ):
+            return False
     return True

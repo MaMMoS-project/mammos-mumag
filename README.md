@@ -1,80 +1,44 @@
-# Info
+# mammos-mumag
+
 `mammos-mumag` is a finite-element micromagnetic simulation tool capable of simulating hysteresis loops of magnetic materials with multiple grains, developed and maintained by Thomas Schrefl at Zentrum für Modellierung und Simulation, Universität für Weiterbildung Krems.
 
 This package allows users to use the library `mammos_mumag` in Python and includes some useful scripts for the use and development of `mammos-mumag`. On way to install the package would be to execute `pip install .`, but we recommend using [pixi](https://prefix.dev).
 
-
-# Installation
-
-Clone the repository and install with pip, i.e. run
-```console
-git clone https://github.com/MaMMoS-project/mammos-mumag
-pip install mammos-mumag
-```
-
-<!-- # Installation with conda-pip (discouraged)
-The package `esys-escript` must be installed from `conda-forge` (see [here](https://github.com/LutzGross/esys-escript.github.io/)) with
-```console
- conda install esys-escript -c conda-forge
- ```
-
-`cuda` must be installed from the `nvidia` channeel with
-```console
-conda install cuda -c nvidia
-```
-
-Then, in the same environment where the two previous packages have been installed, we can install `mammos_mumag` with pip by running
-```console
-pip install .
-```
-
-> To install optional dependencies, run e.g. `pip install .[test]` or `pip install .'[test]'` (for example on zsh).
+| Description   | Badge                                                                                                                                                                                    |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Tests         | [![Test package](https://github.com/MaMMoS-project/mammos-mumag/actions/workflows/test.yml/badge.svg)](https://github.com/MaMMoS-project/mammos-mumag/actions/workflows/test.yml)        |
+| Linting       | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MaMMoS-project/mammos-mumag/main.svg)](https://results.pre-commit.ci/latest/github/MaMMoS-project/mammos-mumag/main) |
+| Releases      | [![PyPI version](https://badge.fury.io/py/mammos-mumag.svg)](https://badge.fury.io/py/mammos-mumag)                                                                                      |
+| Documentation | [![Documentation](https://img.shields.io/badge/Docs-mammos--project.github.io%2Fmammos-blue)](https://mammos-project.github.io/mammos/index.html)                                        |
+| Binder        | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mammos-project/mammos-mumag/latest?urlpath=lab%2Ftree%2Fexamples)                                       |
+| License       | [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)                                                                                     |
+| DOI           | TODO                                                                                                                                                                                     |
 
 
-# Installation & usage with Pixi (recommended)
-Run `pixi shell` in any subdirectory to activate a container where this package is installed.
-This package comes with several pixi tasks (in alphabetical order):
-- `clean`
-- `docs`
-- `docs-clean`
-- `format`
-- `lint`
-- `pre-commit`
-- `test`
+## Try it in the cloud
+Try `mammos-mumag` without installing it locally by directly accessing it directly in the cloud
+via Binder.
 
-To run a task, execute `pixi run <task_name>` or `pixi r <task_name>`.
+Simply click the badge in the table above to get started.
 
+Sessions are temporary and may time out after a period of inactivity, and any files
+created or modified during your session will not be saved.
+To avoid losing your work, please remember to download any files you create or edit
+before your session ends.
 
-## Style tasks
-These tasks (`clean`, `format`, and `lint`) use [Ruff](https://docs.astral.sh/ruff/) to lint and format the code with the rules specified in [`pyproject.toml`](pyproject.toml)
+## Documentation
 
+APIs and tutorials are available in the documentation. To access the documentation, use the badge in the table above.
 
-## Test tasks
-The task (`test`) executes tests found in the [`test`](test/) directory.
+## Installation
 
+To install `mammos-mumag`, you can use `pip install mammos-mumag` inside a Python environment.
+For more details refer to the documentation.
 
-## Docs tasks
-The tasks (`docs`, `docs-clean`) manage the documentation. In particular, `docs` builds the html docs, while `docs-clean` cleans the current build.
+## How to cite
 
+TODO
 
-## Pre-commit task
-The task to execute pre-commit can be run by the user to check that committed changes adhere to the formatting and linting rules.
-If the pre-commit hook is installed, the command `pre-commit` is also executed automatically every time `git commit` is called, but one needs to activate the right environment first.
-This is done with
-```console
-pixi shell -e pre-commit
-```
+## Acknowledgements
 
-> *pre-commit* has to be installed after the first activation of the environment. To do this, run
-> ```console
-> pixi run pre-commit install
-> ``` -->
-
-
-## Working examples
-Please refer to the examples:
-- [Materials i/o](docs/source/notebooks/materials_io.ipynb)
-- [Parameters i/o](docs/source/notebooks/parameters_io.ipynb)
-- [Using the pre-defined scripts](docs/source/notebooks/scripts.ipynb)
-- [Run a hysteresis loop with pre-defined meshes](docs/source/notebooks/hysteresis_loop.ipynb)
-- [Converting `unv` mesh to `fly`](docs/source/notebooks/unvtofly.ipynb)
+This software has been supported by the European Union’s Horizon Europe research and innovation programme under grant agreement No 101135546 [MaMMoS](https://mammos-project.github.io/).

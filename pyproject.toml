@@ -1,6 +1,6 @@
 [build-system]
-build-backend = "hatchling.build"
 requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "mammos-mumag"
@@ -15,20 +15,16 @@ authors = [
   { name = "Martin Lang" },
   { name = "Hans Fangohr" },
 ]
-license = { file = "LICENSE" }
-
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers = [
-  'Programming Language :: Python',
-  'Programming Language :: Python :: 3',
-  'Intended Audience :: Science/Research',
-  'License :: OSI Approved :: BSD License',
-  'Operating System :: POSIX',
-  'Operating System :: Microsoft :: Windows',
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3 :: Only",
   'Topic :: Scientific/Engineering :: Physics',
 ]
-
 requires-python = ">=3.11"
-
 dependencies = [
   "jax",
   "jinja2 >=3.1.6,<4",
@@ -42,99 +38,62 @@ dependencies = [
   "scipy",
 ]
 
-[project.optional-dependencies]
-docs = [
-  "ipykernel",
-  "jupyter",
-  "nbsphinx",
-  "sphinx==8.1.3",
-  "sphinx-rtd-theme==3.0.1",
-  "numpy",
-]
-format = [
-  "ruff==0.8",
-]
-gpu = [
-  "jax[cuda12]",
-]
-test = [
-  "pytest",
-]
+[project.urls]
+Homepage = "https://mammos-project.github.io"
+Documentation = "https://mammos-project.github.io/mammos"
+Repository = "https://github.com/MaMMoS-project/mammos-mumag"
+Issues = "https://github.com/MaMMoS-project/mammos-mumag/issues"
+Changelog = "https://mammos-project.github.io/mammos/changelog"
 
-# pixi
-[tool.pixi.project]
-channels = ["conda-forge"]
-platforms = ["linux-64"]
-
-[tool.pixi.dependencies]
-esys-escript = ">=5.10,<6"
-packaging = "<25"
-jupyterlab = "*"
-
-[tool.pixi.pypi-dependencies]
-mammos_mumag = { path = ".", editable = true }
-
-[tool.pixi.feature.dev.dependencies]
-hatch = "*"
-git = "*"
-pre-commit = "*"
-
-[tool.pixi.feature.format.dependencies]
-python = ">=3.8"
-
-[tool.pixi.environments]
-docs = { features = ["docs"], solve-group = "default" }
-format = { features = ["format"], no-default-feature = true, solve-group = "default" }
-gpu = { features = ["gpu"], solve-group = "default" }
-test = { features = ["test"], solve-group = "default" }
-dev = { features = ["dev"], no-default-feature = true }
-
-[tool.pixi.feature.format.tasks]
-lint = "ruff check"
-format = "ruff format"
-clean = "ruff clean && py3clean ."
-
-[tool.pixi.feature.docs.tasks]
-docs = "cd docs && make html"
-docs-clean = "cd docs && make clean"
-examples = "jupyter-lab examples"
-
-[tool.pixi.feature.test.tasks]
-test = "pytest -v"
-
-[tool.pixi.feature.dev.tasks]
-build = "hatch build"
-pre-commit-all-files ="pre-commit run --all-files"
-tag-version = "git tag -s -a $(hatch version)"
-
-# ruff
 [tool.ruff]
-target-version = "py39"
-line-length = 88
-indent-width = 4
-respect-gitignore = true
+target-version = "py311"
 exclude = [
-  "src/mammos_mumag/scripts/*.py", # scripts
-  "examples", # to be checked
   "dev",
+  "src/mammos_mumag/scripts/*.py", # scripts
+  "src/mammos_mumag/tofly.py",
 ]
+[tool.ruff.lint]
+select = [
+  "B",   # flake8-bugbear
+  "D",   # pydocstyle
+  "E",   # pycodestyle
+  "F",   # Pyflakes
+  "I",   # isort
+  "SIM", # flake8-simplify
+  "UP",  # pyupgrade
+]
+isort.known-local-folder = [ "src/mammos_units" ]
+pydocstyle.convention = "pep257"
 
 [tool.ruff.lint.per-file-ignores]
-"src/mammos_mumag/tofly.py" = [
-  "D101", # undocumented-public-class
-  "D103", # undocumented-public-function
-]
+"*.ipynb" = ["B018"]  # "Found useless expression. Either assign it to a variable or remove it."; false positives when using implicit __repr__ in the notebook
+"tests/*" = ["D100", "D103"]  # do not enforce docstrings in tests
 
-[tool.ruff.lint]
-# Ruff default rules, pydocstyle, and pycodestyle warnings
-select = ["D", "E4", "E7", "E9", "F", "W"]
-ignore = []
+[tool.pixi.workspace]
+channels = [ "conda-forge" ]
+platforms = [ "osx-arm64", "linux-64", "osx-64", "win-64" ]
 
-[tool.ruff.lint.pycodestyle]
-max-doc-length = 88
+[tool.pixi.dependencies]
+python = "==3.11"
+hatch = "*"
+ipython = "*"
+jupyterlab = ">3"
+nbval = "*"
+packaging = "<25"
+pre-commit = "*"
+pytest = "*"
+ruff = "*"
 
-[tool.ruff.lint.pydocstyle]
-convention = "pep257"
+[tool.pixi.target.linux-64.dependencies]
+esys-escript = ">=5.10,<6"
 
-[tool.ruff.format]
-quote-style = "double"
+[tool.pixi.pypi-dependencies]
+mammos-mumag = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+examples = "jupyter-lab examples"
+test-unittest = "pytest -v tests"
+test-docstrings = "pytest -v --doctest-modules src/mammos_mumag"
+test-notebooks = "pytest -v --nbval-lax examples"
+test-all = { depends-on = ["test-unittest", "test-docstrings", "test-notebooks"] }
+style = "pre-commit run --all-files"
