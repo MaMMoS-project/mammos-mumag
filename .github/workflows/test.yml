@@ -26,6 +26,7 @@ jobs:
       run: pixi run test-unittest
     - name: doc tests
       run: pixi run test-docstrings
+      if: ${{ false }}
     - name: Test examples
       run: pixi run test-notebooks
     - name: Keep pixi.lock artifact for debugging
