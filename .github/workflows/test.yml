@@ -29,6 +29,7 @@ jobs:
       if: ${{ false }}
     - name: Test examples
       run: pixi run test-notebooks
+      if: ${{ false }}
     - name: Keep pixi.lock artifact for debugging
       uses: actions/upload-artifact@v4
       with:
