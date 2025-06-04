@@ -43,14 +43,14 @@ def run(
         K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
         mesh_filepath: TODO
-        hstart: TODO
-        hfinal: TODO
-        hstep: TODO
-        hnsteps: TODO
-        outdir: TODO
+        hstart: Initial strength of the external field.
+        hfinal: Final strength of the external field.
+        hstep: Step size.
+        hnsteps: Number of steps in the field sweep.
+        outdir: Directory where simulation results are written to.
 
     Returns:
-       TODO
+       Result object.
 
     """
     if hstep is None:
@@ -146,10 +146,15 @@ class Result:
     """Hysteresis loop Result."""
 
     H: me.Entity
+    """Array of external field strengths."""
     M: me.Entity
+    """Array of spontaneous magnetization values for the field strengths."""
     energy_density: me.Entity | None = None
+    """Array of energy densities for the field strengths."""
     configuration_type: np.ndarray | None = None
+    """Array of indices of representative configurations for the field strengths."""
     configurations: dict[int, pathlib.Path] | None = None
+    """Mapping of configuration indices to file paths."""
 
     @property
     def dataframe(self) -> pandas.DataFrame:

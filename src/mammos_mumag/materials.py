@@ -16,30 +16,27 @@ from mammos_mumag.tools import check_path
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class MaterialDomain:
-    r"""Uniform material domain.
+    """Uniform material domain.
 
     It collects material parameters, constant in a certain domain.
-
-    Args:
-        theta: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`z`-direction in radians.
-        phi: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`x`-direction in radians.
-        K1: First magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
-        K2: Second magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
-        Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
-        A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-
     """
 
     theta: float = 0.0
+    """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction in
+    radians."""
     phi: float = 0.0
+    """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
+    radians."""
     K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    r"""First magnetocrystalline anisotropy constant in
+    :math:`\mathrm{J}/\mathrm{m}^3`."""
     K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    r"""Second magnetocrystalline anisotropy constant in
+    :math:`\mathrm{J}/\mathrm{m}^3`."""
     Ms: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
     A: me.Entity = me.A(0.0, unit=u.J / u.m)
+    r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
 
     @field_validator("K1", mode="before")
     @classmethod
@@ -76,17 +73,13 @@ class MaterialDomain:
 
 @dataclass
 class Materials:
-    """This class stores, reads, and writes material parameters.
-
-    Args:
-        domains: list of domains. Each domain is a MaterialDomain class of material
-            parameters, constant in each region.
-        filepath: material file path
-
-    """
+    """This class stores, reads, and writes material parameters."""
 
     domains: list[MaterialDomain] = Field(default_factory=list)
+    """Each domain is a MaterialDomain class of material parameters, constant in each
+    region."""
     filepath: pathlib.Path | None = Field(default=None, repr=False)
+    """Material file path."""
 
     def __post_init__(self) -> None:
         """Initialize materials with a file.
