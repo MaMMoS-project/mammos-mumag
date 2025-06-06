@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pathlib
-import re
 from typing import TYPE_CHECKING
 
 import mammos_entity as me
@@ -213,14 +212,8 @@ class Result:
                         textcoords="offset points",
                     )
         ax.set_title("Hysteresis Loop")
-        ax.set_xlabel(
-            re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.H.ontology_label}")
-            + f" [{self.H.unit}]"
-        )
-        ax.set_ylabel(
-            re.sub(r"(?<!^)(?=[A-Z])", " ", f"{self.M.ontology_label}")
-            + f" [{self.M.unit}]"
-        )
+        ax.set_xlabel(self.H.axis_label)
+        ax.set_ylabel(self.M.axis_label)
         if label:
             ax.legend()
         if duplicate:
