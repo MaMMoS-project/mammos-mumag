@@ -21,6 +21,7 @@ from mammos_mumag.simulation import Simulation
 
 if TYPE_CHECKING:
     import matplotlib
+    import pyvista
 
 
 def run(
@@ -223,12 +224,24 @@ class Result:
 
         return ax
 
-    def plot_configuration(self, idx: int, jupyter_backend: str = "trame") -> None:
+    def plot_configuration(
+        self,
+        idx: int,
+        jupyter_backend: str = "trame",
+        plotter: pyvista.Plotter | None = None,
+    ) -> None:
         """Plot configuration with index `idx`.
+
+        This method does only directly show the plot if no plotter is passed in.
+        Otherwise, the caller must call ``plotter.show()`` separately. This behavior
+        is based on the assumption that the user will want to further modify the plot
+        before displaying/saving it when passing a plotter.
 
         Args:
             idx: Index of the configuration.
             jupyter_backend: Plotting backend.
+            plotter: Pyvista plotter to which glyphs will be added. A new plotter is
+                created if no plotter is passed.
 
         """
         config = pv.read(self.configurations[idx])
@@ -237,7 +250,7 @@ class Result:
             orient="m",
             scale="m_norm",
         )
-        pl = pv.Plotter()
+        pl = plotter or pv.Plotter()
         pl.add_mesh(
             glyphs,
             scalars=glyphs["GlyphVector"][:, 2],
@@ -247,4 +260,5 @@ class Result:
             scalar_bar_args={"title": "m_z"},
         )
         pl.show_axes()
-        pl.show(jupyter_backend=jupyter_backend)
+        if plotter is None:
+            pl.show(jupyter_backend=jupyter_backend)
