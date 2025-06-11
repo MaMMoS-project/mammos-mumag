@@ -123,7 +123,7 @@ class Materials:
         """Read materials file.
 
         This function overwrites the current
-        :py:attr:`~materials.Materials.domains` attribute.
+        :py:attr:`~mammos_mumag.materials.Materials.domains` attribute.
 
         Currently accepted formats: ``krn`` and ``yaml``.
 
