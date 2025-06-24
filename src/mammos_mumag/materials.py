@@ -161,6 +161,11 @@ class Materials:
         Args:
             fname: File path
 
+        Examples:
+            >>> from mammos_mumag.materials import Materials
+            >>> mat = Materials()
+            >>> mat.write_krn("materials.krn")
+
         """
         env = Environment(
             loader=PackageLoader("mammos_mumag"),
@@ -183,6 +188,11 @@ class Materials:
 
         Args:
             fname: File path
+
+        Examples:
+            >>> from mammos_mumag.materials import Materials
+            >>> mat = Materials()
+            >>> mat.write_yaml("materials.yaml")
 
         """
         domains = [
