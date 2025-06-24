@@ -108,6 +108,11 @@ class Materials:
             theta: Angle of the magnetocrystalline anisotropy axis
                 from the :math:`z`-direction in radians.
 
+        Examples:
+            >>> from mammos_mumag.materials import Materials
+            >>> mat = Materials()
+            >>> mat.add_domain(A=1, Ms=2, K1=3, K2=0, phi=0, theta=0)
+
         """
         dom = MaterialDomain(
             theta=theta,
