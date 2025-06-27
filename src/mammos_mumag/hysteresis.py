@@ -162,9 +162,9 @@ class Result:
         return pd.DataFrame(
             {
                 "configuration_type": self.configuration_type,
-                "H": self.H,
-                "M": self.M,
-                "energy_density": self.energy_density,
+                "H": self.H.q,
+                "M": self.M.q,
+                "energy_density": self.energy_density.q,
             }
         )
 

@@ -27,15 +27,15 @@ class MaterialDomain:
     phi: float = 0.0
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
-    K1: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    K1: me.Entity = Field(default_factory=me.Ku())
     r"""First magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
-    K2: me.Entity = me.Ku(0.0, unit=u.J / u.m**3)
+    K2: me.Entity = Field(default_factory=me.Ku())
     r"""Second magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
-    Ms: me.Entity = me.Ms(0.0, unit=u.A / u.m)
+    Ms: me.Entity = Field(default_factory=me.Ms())
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
-    A: me.Entity = me.A(0.0, unit=u.J / u.m)
+    A: me.Entity = Field(default_factory=me.A())
     r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
 
     @field_validator("K1", mode="before")
@@ -113,7 +113,7 @@ class Materials:
             >>> mat = Materials()
             >>> mat.add_domain(A=1, Ms=2, K1=3, K2=0, phi=0, theta=0)
             >>> mat
-            Materials(domains=[MaterialDomain(theta=0.0, phi=0.0, K1=UniaxialAnisotropyConstant(value=3.0, unit=J / m3), K2=UniaxialAnisotropyConstant(value=0.0, unit=J / m3), Ms=SpontaneousMagnetization(value=2.0, unit=A / m), A=ExchangeStiffnessConstant(value=1.0, unit=J / m))])
+            Materials(domains=[MaterialDomain(theta=..., phi=..., K1=..., K2=..., Ms=..., A=...)])
 
         """  # noqa: E501
         dom = MaterialDomain(
@@ -193,7 +193,7 @@ class Materials:
                 "phi": dom.phi,
                 "K1": dom.K1.value.tolist(),
                 "K2": dom.K2.value.tolist(),
-                "Ms": dom.Ms.to(
+                "Ms": dom.Ms.q.to(
                     u.T, equivalencies=u.magnetic_flux_field()
                 ).value.tolist(),
                 "A": dom.A.value.tolist(),
