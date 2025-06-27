@@ -4,7 +4,6 @@ import mammos_entity as me
 import mammos_units as u
 import numpy as np
 import pytest
-from pydantic import ValidationError
 
 from mammos_mumag.materials import MaterialDomain, Materials
 
@@ -107,10 +106,10 @@ def are_domains_equal(d1, d2):
         if not (
             np.allclose(d1_i.theta, d2_i.theta)
             and np.allclose(d1_i.phi, d2_i.phi)
-            and np.allclose(d1_i.K1, d2_i.K1)
-            and np.allclose(d1_i.K2, d2_i.K2)
-            and np.allclose(d1_i.Ms, d2_i.Ms)
-            and np.allclose(d1_i.A, d2_i.A)
+            and d1_i.K1 == d2_i.K1
+            and d1_i.K2 == d2_i.K2
+            and d1_i.Ms == d2_i.Ms
+            and d1_i.A == d2_i.A
         ):
             return False
     return True
@@ -168,7 +167,7 @@ def test_wrong_domains():
 
     All tests are supposed to raise `ValidationError`.
     """
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         MaterialDomain(K1="K1")
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         MaterialDomain(theta=0 * u.rad)
