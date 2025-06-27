@@ -172,6 +172,11 @@ class Parameters:
         Args:
             fname: File path
 
+        Examples:
+            >>> from mammos_mumag.parameters import Parameters
+            >>> par = Parameters()
+            >>> par.write_p2("parameters.p2")
+
         """
         env = Environment(
             loader=PackageLoader("mammos_mumag"),
@@ -195,6 +200,11 @@ class Parameters:
 
         Args:
             fname: File path
+
+        Examples:
+            >>> from mammos_mumag.parameters import Parameters
+            >>> par = Parameters()
+            >>> par.write_yaml("parameters.yaml")
 
         """
         parameters_dict = {
