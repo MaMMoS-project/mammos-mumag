@@ -113,7 +113,7 @@ class Materials:
             >>> mat = Materials()
             >>> mat.add_domain(A=1, Ms=2, K1=3, K2=0, phi=0, theta=0)
             >>> mat
-            Materials(domains=[MaterialDomain(theta=0.0, phi=0.0, K1=Entity(ontology_label='UniaxialAnisotropyConstant', value=3.0, unit='J / m3'), K2=Entity(ontology_label='UniaxialAnisotropyConstant', value=0.0, unit='J / m3'), Ms=Entity(ontology_label='SpontaneousMagnetization', value=2.0, unit='A / m'), A=Entity(ontology_label='ExchangeStiffnessConstant', value=1.0, unit='J / m'))])
+            Materials(domains=[MaterialDomain(theta=0.0, phi=0.0, K1=UniaxialAnisotropyConstant(value=3.0, unit=J / m3), K2=UniaxialAnisotropyConstant(value=0.0, unit=J / m3), Ms=SpontaneousMagnetization(value=2.0, unit=A / m), A=ExchangeStiffnessConstant(value=1.0, unit=J / m))])
 
         """  # noqa: E501
         dom = MaterialDomain(
