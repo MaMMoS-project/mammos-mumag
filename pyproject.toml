@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mammos-mumag"
-version = "0.7.0"
+version = "0.7.1"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -28,7 +28,7 @@ requires-python = ">=3.11"
 dependencies = [
   "jax",
   "jinja2>=3.1.6",
-  "mammos_entity>=0.5.0",
+  "mammos_entity>=0.8.0",
   "mammos_units",
   "numpy",
   "psutil>=7",
