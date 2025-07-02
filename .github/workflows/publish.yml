@@ -19,15 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.8
       - name: Read version from pyproject.toml
-        run: echo VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])") >> "$GITHUB_ENV"
+        run: echo VERSION=$(pixi run hatch version) >> "$GITHUB_ENV"
       - run: echo $GITHUB_REF_NAME
       - run: echo $VERSION
       - name: Check that version and tag are identical
         run: test $GITHUB_REF_NAME = $VERSION
+      - name: Check that the correct version is pinned in the binder configuration
+        run: grep "mammos-mumag==$VERSION" .binder/environment.yml
 
   publish-to-pypi:
     name: Publish to PyPI

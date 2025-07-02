@@ -5,4 +5,4 @@ dependencies:
   - python=3.11
   - pip
   - pip:
-      - mammos-mumag
+      - mammos-mumag==0.7.1
