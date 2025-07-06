@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from mammos_mumag.materials import MaterialDomain, Materials
+from pydantic import ValidationError
 
 
 def test_materials_file(DATA, tmp_path):
@@ -161,13 +162,24 @@ def test_materials_types():
     assert are_domains_equal([dom_1], [dom_3])
     assert are_domains_equal([dom_1], [dom_4])
 
+    dom_5 = MaterialDomain()
+    dom_6 = MaterialDomain(
+        theta=0,
+        phi=0,
+        K1=0,
+        K2=0,
+        Ms=0,
+        A=0,
+    )
+    assert are_domains_equal([dom_5], [dom_6])
+
 
 def test_wrong_domains():
     """Use wrong types in definition.
 
     All tests are supposed to raise `ValidationError`.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(ValidationError):
         MaterialDomain(K1="K1")
-    with pytest.raises(TypeError):
+    with pytest.raises(ValidationError):
         MaterialDomain(theta=0 * u.rad)
