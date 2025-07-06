@@ -4,9 +4,9 @@ import mammos_entity as me
 import mammos_units as u
 import numpy as np
 import pytest
+from pydantic import ValidationError
 
 from mammos_mumag.materials import MaterialDomain, Materials
-from pydantic import ValidationError
 
 
 def test_materials_file(DATA, tmp_path):
