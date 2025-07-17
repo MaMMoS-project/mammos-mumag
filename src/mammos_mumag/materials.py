@@ -21,10 +21,10 @@ class MaterialDomain:
     It collects material parameters, constant in a certain domain.
     """
 
-    theta: float = 0.0
+    theta: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
     """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction in
     radians."""
-    phi: float = 0.0
+    phi: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
     K1: me.Entity = Field(default_factory=me.Ku)
@@ -37,6 +37,26 @@ class MaterialDomain:
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
     A: me.Entity = Field(default_factory=me.A)
     r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
+
+    @field_validator("theta", mode="before")
+    @classmethod
+    def _convert_theta(cls, theta: Any) -> Any:
+        """Convert number or Quantity to Entity."""
+        if isinstance(theta, numbers.Real | u.Quantity):
+            if isinstance(theta, u.Quantity) and theta.unit == u.rad:
+                theta = theta / u.rad # Angle needs to be without units
+            theta = me.Entity("Angle", unit=None)
+        return theta
+
+    @field_validator("phi", mode="before")
+    @classmethod
+    def _convert_phi(cls, phi: Any) -> Any:
+        """Convert number or Quantity to Entity."""
+        if isinstance(phi, numbers.Real | u.Quantity):
+            if isinstance(phi, u.Quantity) and phi.unit == u.rad:
+                phi = phi / u.rad # Angle needs to be without units
+            phi = me.Entity("Angle", unit=None)
+        return phi
 
     @field_validator("K1", mode="before")
     @classmethod
@@ -189,8 +209,8 @@ class Materials:
         """
         domains = [
             {
-                "theta": dom.theta,
-                "phi": dom.phi,
+                "theta": dom.theta.value.tolist(),
+                "phi": dom.phi.value.tolist(),
                 "K1": dom.K1.value.tolist(),
                 "K2": dom.K2.value.tolist(),
                 "Ms": dom.Ms.q.to(
@@ -220,8 +240,8 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
     lines = [line.split() for line in lines]
     return [
         MaterialDomain(
-            theta=float(line[0]),
-            phi=float(line[1]),
+            theta=me.Entity("Angle", float(line[0])),
+            phi=me.Entity("Angle", float(line[1])),
             K1=me.Ku(float(line[2]), unit="J/m3"),
             K2=me.Ku(float(line[3]), unit="J/m3"),
             Ms=me.Ms(
