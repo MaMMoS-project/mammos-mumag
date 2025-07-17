@@ -17,7 +17,10 @@ Defining the function space
 ```math
 V = \{ v \in H^1(\Omega) : \ v(0)=0, \ v(1)=10 \},
 ```
-where $H^1(\Omega)$ is the Sobolev space $H^1(\Omega) = W^{1,1} (\Omega) := \{ u \in L^2(\Omega) : \ u' \in L^2(\Omega) \}$.
+where $H^1(\Omega)$ is the Sobolev space
+```math
+H^1(\Omega) = W^{1,1} (\Omega) := \{ u \in L^2(\Omega) : \ u' \in L^2(\Omega) \}.
+```
 
 The weak formulation reads: find $u \in V$ satisfying
 $$\int_\Omega \sigma(x) u'(x) v'(x) \mathrm{d}x = 0  \qquad \forall \, v \in V.$$
