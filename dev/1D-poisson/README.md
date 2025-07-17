@@ -23,7 +23,9 @@ H^1(\Omega) = W^{1,1} (\Omega) := \{ u \in L^2(\Omega) : \ u' \in L^2(\Omega) \}
 ```
 
 The weak formulation reads: find $u \in V$ satisfying
-$$\int_\Omega \sigma(x) u'(x) v'(x) \mathrm{d}x = 0  \qquad \forall \, v \in V.$$
+```math
+\int_\Omega \sigma(x) u'(x) v'(x) \mathrm{d}x = 0  \qquad \forall \, v \in V.
+```
 
 The analytical solution is
 ```math
