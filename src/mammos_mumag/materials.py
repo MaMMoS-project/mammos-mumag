@@ -44,7 +44,7 @@ class MaterialDomain:
         """Convert number or Quantity to Entity."""
         if isinstance(theta, numbers.Real | u.Quantity):
             if isinstance(theta, u.Quantity) and theta.unit == u.rad:
-                theta = theta / u.rad # Angle needs to be without units
+                theta = theta / u.rad  # Angle needs to be without units
             theta = me.Entity("Angle", unit=None)
         return theta
 
@@ -54,7 +54,7 @@ class MaterialDomain:
         """Convert number or Quantity to Entity."""
         if isinstance(phi, numbers.Real | u.Quantity):
             if isinstance(phi, u.Quantity) and phi.unit == u.rad:
-                phi = phi / u.rad # Angle needs to be without units
+                phi = phi / u.rad  # Angle needs to be without units
             phi = me.Entity("Angle", unit=None)
         return phi
 

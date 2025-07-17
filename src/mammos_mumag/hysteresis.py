@@ -83,8 +83,11 @@ def run(
                 Ms=me.Ms(Ms_i),
                 A=me.A(A_i),
             )
-            for Ms_i, A_i, K1_i, theta_i, phi_i in zip(Ms, A, K1, theta, phi, strict=True)
-        ] + [MaterialDomain()] * 2 # empty loops for air and shell regions
+            for Ms_i, A_i, K1_i, theta_i, phi_i in zip(
+                Ms, A, K1, theta, phi, strict=True
+            )
+        ]
+        + [MaterialDomain()] * 2  # empty loops for air and shell regions
     )
 
     sim = Simulation(
@@ -140,8 +143,10 @@ def run(
 
 def _listify_material_parameter(name, parameter, label):
     if isinstance(parameter, list):
-        if isinstance(parameter, me.Entity) and not all([p.ontology_label == label for p in parameter]):
-                raise ValueError(f"All items of {name} must be {label} entities")
+        if isinstance(parameter, me.Entity) and not all(
+            [p.ontology_label == label for p in parameter]
+        ):
+            raise ValueError(f"All items of {name} must be {label} entities")
     else:
         if isinstance(parameter, me.Entity) and parameter.q.size > 1:
             parameter = [me.Entity(label, p) for p in parameter.q]
