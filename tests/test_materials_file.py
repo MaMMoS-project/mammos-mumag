@@ -105,8 +105,8 @@ def are_domains_equal(d1, d2):
     for i, d1_i in enumerate(d1):
         d2_i = d2[i]
         if not (
-            np.allclose(d1_i.theta, d2_i.theta)
-            and np.allclose(d1_i.phi, d2_i.phi)
+            d1_i.theta == d2_i.theta
+            and d1_i.phi == d2_i.phi
             and d1_i.K1 == d2_i.K1
             and d1_i.K2 == d2_i.K2
             and d1_i.Ms == d2_i.Ms
@@ -181,5 +181,13 @@ def test_wrong_domains():
     """
     with pytest.raises(ValidationError):
         MaterialDomain(K1="K1")
-    with pytest.raises(ValidationError):
-        MaterialDomain(theta=0 * u.rad)
+
+
+def test_angles_in_rad():
+    """Test definition of angles in radians.
+
+    The Entity Angle only supports angles without units,
+    so a modification was made to allow angles in radians.
+    """
+    MaterialDomain(theta=0 * u.rad)
+    MaterialDomain(phi=1 * u.rad)
