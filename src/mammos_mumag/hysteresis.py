@@ -45,11 +45,16 @@ def run(
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
-        mesh_filepath: TODO
+        theta: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`z`-direction in radians.
+        phi: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`x`-direction in radians.
+        mesh_filepath: Location of the mesh file.
         hstart: Initial strength of the external field.
         hfinal: Final strength of the external field.
         hstep: Step size.
         hnsteps: Number of steps in the field sweep.
+        mfinal: TODO
         outdir: Directory where simulation results are written to.
 
     Returns:
