@@ -35,6 +35,7 @@ def run(
     hfinal: float | u.Quantity,
     hstep: float | u.Quantity | None = None,
     hnsteps: int = 20,
+    mfinal: float = -2.0,
     outdir: str | pathlib.Path = "hystloop",
 ) -> Result:
     r"""Run hysteresis loop.
@@ -93,7 +94,7 @@ def run(
             hstep=hstep.to(u.T, equivalencies=u.magnetic_flux_field()).value,
             h_vect=[0.01745, 0, 0.99984],
             mstep=0.4,
-            mfinal=-1.2,
+            mfinal=mfinal,
             tol_fun=1e-10,
             tol_hmag_factor=1,
             precond_iter=10,
