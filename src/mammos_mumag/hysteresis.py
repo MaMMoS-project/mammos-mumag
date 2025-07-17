@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numbers
 import pathlib
 from typing import TYPE_CHECKING
 
@@ -15,7 +16,7 @@ import pyvista as pv
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 
-from mammos_mumag.materials import Materials
+from mammos_mumag.materials import MaterialDomain, Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
 
@@ -27,14 +28,17 @@ if TYPE_CHECKING:
 
 
 def run(
-    Ms: float | u.Quantity | me.Entity,
-    A: float | u.Quantity | me.Entity,
-    K1: float | u.Quantity | me.Entity,
+    Ms: numbers.Real | u.Quantity | me.Entity,
+    A: numbers.Real | u.Quantity | me.Entity,
+    K1: numbers.Real | u.Quantity | me.Entity,
+    theta: numbers.Real | u.Quantity | me.Entity,
+    phi: numbers.Real | u.Quantity | me.Entity,
     mesh: mammos_mumag.mesh.Mesh | pathlib.Path | str,
-    hstart: float | u.Quantity,
-    hfinal: float | u.Quantity,
-    hstep: float | u.Quantity | None = None,
+    hstart: u.Quantity = 10 * u.T,
+    hfinal: u.Quantity = -10 * u.T,
+    hstep: numbers.Real | u.Quantity | None = None,
     hnsteps: int = 20,
+    mfinal: numbers.Real = -2.0,
     outdir: str | pathlib.Path = "hystloop",
 ) -> mammos_mumag.hysteresis.Result:
     r"""Run hysteresis loop.
@@ -44,6 +48,10 @@ def run(
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
+        theta: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`z`-direction in radians.
+        phi: Angle of the magnetocrystalline anisotropy axis from the
+            :math:`x`-direction in radians.
         mesh: The mesh can either be given as a :py:class:`~mammos_mumag.mesh.Mesh`
             instance (for meshes available through `mammos_mumag`) or its path can be
             specified. The only possible mesh format is `.fly`.
@@ -51,6 +59,7 @@ def run(
         hfinal: Final strength of the external field.
         hstep: Step size.
         hnsteps: Number of steps in the field sweep.
+        mfinal: TODO
         outdir: Directory where simulation results are written to.
 
     Returns:
@@ -60,57 +69,74 @@ def run(
     if hstep is None:
         hstep = (hfinal - hstart) / hnsteps
 
-    if not isinstance(A, u.Quantity) or A.unit != u.J / u.m:
-        A = me.A(A, unit=u.J / u.m)
-    if not isinstance(K1, u.Quantity) or K1.unit != u.J / u.m**3:
-        K1 = me.Ku(K1, unit=u.J / u.m**3)
-    if not isinstance(Ms, u.Quantity) or Ms.unit != u.A / u.m:
-        Ms = me.Ms(Ms, unit=u.A / u.m)
+    if not isinstance(A, me.Entity):
+        A = me.A(A)
+    if not isinstance(K1, me.Entity):
+        K1 = me.Ku(K1)
+    if not isinstance(Ms, me.Entity):
+        Ms = me.Ms(Ms)
+    if not isinstance(theta, me.Entity):
+        theta = me.Entity("Angle", theta)
+    if not isinstance(phi, me.Entity):
+        phi = me.Entity("Angle", phi)
+
+    if (
+        len(set(e.q.size for e in [Ms, A, K1, theta, phi])) != 1
+        or len(set(e.q.shape for e in [Ms, A, K1, theta, phi])) != 1
+    ):
+        raise ValueError("All material parameters must have the same length.")
+
+    materials = Materials()
+    if Ms.q.shape:  # More than zero dimensions
+        for Ms_i, A_i, K1_i, theta_i, phi_i in zip(
+            Ms.q.flatten(),
+            A.q.flatten(),
+            K1.q.flatten(),
+            theta.q.flatten(),
+            phi.q.flatten(),
+            strict=True,
+        ):
+            materials.domains.append(
+                MaterialDomain(
+                    theta=theta_i,
+                    phi=phi_i,
+                    K1=K1_i,
+                    Ms=Ms_i,
+                    A=A_i,
+                )
+            )
+    else:  # entities are zero dimensions
+        materials.domains.append(
+            MaterialDomain(
+                theta=theta,
+                phi=phi,
+                K1=K1,
+                Ms=Ms,
+                A=A,
+            )
+        )
+    materials.domains.append(MaterialDomain())  # empty domain for air
+    materials.domains.append(MaterialDomain())  # empty domain for shell
+
+    parameters = Parameters(
+        size=1.0e-9,
+        scale=0,
+        m_vect=[0, 0, 1],
+        hstart=hstart.to(u.T, equivalencies=u.magnetic_flux_field()).value,
+        hfinal=hfinal.to(u.T, equivalencies=u.magnetic_flux_field()).value,
+        hstep=hstep.to(u.T, equivalencies=u.magnetic_flux_field()).value,
+        h_vect=[0.01745, 0, 0.99984],
+        mstep=0.4,
+        mfinal=mfinal,
+        tol_fun=1e-10,
+        tol_hmag_factor=1,
+        precond_iter=10,
+    )
 
     sim = Simulation(
         mesh=mesh,
-        materials=Materials(
-            domains=[
-                {
-                    "theta": 0,
-                    "phi": 0.0,
-                    "K1": K1,
-                    "K2": me.Ku(0),
-                    "Ms": Ms,
-                    "A": A,
-                },
-                {
-                    "theta": 0.0,
-                    "phi": 0.0,
-                    "K1": me.Ku(0),
-                    "K2": me.Ku(0),
-                    "Ms": me.Ms(0),
-                    "A": me.A(0),
-                },
-                {
-                    "theta": 0.0,
-                    "phi": 0.0,
-                    "K1": me.Ku(0),
-                    "K2": me.Ku(0),
-                    "Ms": me.Ms(0),
-                    "A": me.A(0),
-                },
-            ],
-        ),
-        parameters=Parameters(
-            size=1.0e-9,
-            scale=0,
-            m_vect=[0, 0, 1],
-            hstart=hstart.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-            hfinal=hfinal.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-            hstep=hstep.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-            h_vect=[0.01745, 0, 0.99984],
-            mstep=0.4,
-            mfinal=-1.2,
-            tol_fun=1e-10,
-            tol_hmag_factor=1,
-            precond_iter=10,
-        ),
+        materials=materials,
+        parameters=parameters,
     )
     sim.run_loop(outdir=outdir, name="hystloop")
     return read_result(outdir=outdir, name="hystloop")
