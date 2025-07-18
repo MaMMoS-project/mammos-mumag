@@ -164,12 +164,20 @@ def _listify_material_parameter(name, parameter, label):
         ):
             raise ValueError(f"All items of {name} must be {label} entities")
     else:
-        if isinstance(parameter, me.Entity) and parameter.q.size > 1:
-            parameter = [me.Entity(label, p) for p in parameter.q]
-        elif isinstance(parameter, np.ndarray) and parameter.size > 1:
-            parameter = [me.Entity(label, p) for p in parameter]
-        else:  # either scalar me.Entity, u.Quantity, numbers.Real
-            parameter = [parameter]
+        if isinstance(parameter, me.Entity):
+            parameter = (
+                [me.Entity(label, p) for p in parameter.q]
+                if parameter.q.size > 1
+                else [parameter.q.item()]
+            )
+        elif isinstance(parameter, np.ndarray):
+            parameter = (
+                [me.Entity(label, p) for p in parameter]
+                if parameter.size > 1
+                else [parameter.item()]
+            )
+        else:  # either scalar me.Entity, u.Quantity, or numbers.Real
+            parameter = [me.Entity(label, parameter)]
     return parameter
 
 
