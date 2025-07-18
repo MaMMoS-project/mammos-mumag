@@ -21,11 +21,11 @@ def test_hysteresis_run_inputs_python(DATA, tmp_path):
         outdir=tmp_path,
     )
     run(
-        Ms=0.,
-        A=0.,
-        K1=0.,
-        theta=0.,
-        phi=0.,
+        Ms=0.0,
+        A=0.0,
+        K1=0.0,
+        theta=0.0,
+        phi=0.0,
         mesh_filepath=DATA / "cube.fly",
         hnsteps=1,
         outdir=tmp_path,
