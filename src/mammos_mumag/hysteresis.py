@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numbers
 import pathlib
 from typing import TYPE_CHECKING
 
@@ -25,17 +26,32 @@ if TYPE_CHECKING:
 
 
 def run(
-    Ms: float | u.Quantity | me.Entity | list[float | u.Quantity | me.Entity],
-    A: float | u.Quantity | me.Entity | list[float | u.Quantity | me.Entity],
-    K1: float | u.Quantity | me.Entity | list[float | u.Quantity | me.Entity],
-    theta: float | u.Quantity | me.Entity | list[float | u.Quantity | me.Entity],
-    phi: float | u.Quantity | me.Entity | list[float | u.Quantity | me.Entity],
+    Ms: numbers.Real
+    | u.Quantity
+    | me.Entity
+    | list[numbers.Real | u.Quantity | me.Entity],
+    A: numbers.Real
+    | u.Quantity
+    | me.Entity
+    | list[numbers.Real | u.Quantity | me.Entity],
+    K1: numbers.Real
+    | u.Quantity
+    | me.Entity
+    | list[numbers.Real | u.Quantity | me.Entity],
+    theta: numbers.Real
+    | u.Quantity
+    | me.Entity
+    | list[numbers.Real | u.Quantity | me.Entity],
+    phi: numbers.Real
+    | u.Quantity
+    | me.Entity
+    | list[numbers.Real | u.Quantity | me.Entity],
     mesh_filepath: pathlib.Path,
-    hstart: float | u.Quantity,
-    hfinal: float | u.Quantity,
-    hstep: float | u.Quantity | None = None,
+    hstart: numbers.Real | u.Quantity,
+    hfinal: numbers.Real | u.Quantity,
+    hstep: numbers.Real | u.Quantity | None = None,
     hnsteps: int = 20,
-    mfinal: float = -2.0,
+    mfinal: numbers.Real = -2.0,
     outdir: str | pathlib.Path = "hystloop",
 ) -> Result:
     r"""Run hysteresis loop.
@@ -65,7 +81,7 @@ def run(
     A = _listify_material_parameter("A", A, "ExchangeStiffnessConstant")
     K1 = _listify_material_parameter("K1", K1, "UniaxialAnisotropyConstant")
     theta = _listify_material_parameter("theta", theta, "Angle")
-    phi = _listify_material_parameter("theta", theta, "Angle")
+    phi = _listify_material_parameter("phi", phi, "Angle")
 
     if len({len(e) for e in [Ms, A, K1, theta, phi]}) != 1:
         print(theta)
@@ -150,8 +166,10 @@ def _listify_material_parameter(name, parameter, label):
     else:
         if isinstance(parameter, me.Entity) and parameter.q.size > 1:
             parameter = [me.Entity(label, p) for p in parameter.q]
-        if isinstance(parameter, np.ndarray) and parameter.size > 1:
+        elif isinstance(parameter, np.ndarray) and parameter.size > 1:
             parameter = [me.Entity(label, p) for p in parameter]
+        else:  # either scalar me.Entity, u.Quantity, numbers.Real
+            parameter = [parameter]
     return parameter
 
 
