@@ -47,8 +47,8 @@ def run(
     | me.Entity
     | list[numbers.Real | u.Quantity | me.Entity],
     mesh_filepath: pathlib.Path,
-    hstart: numbers.Real | u.Quantity,
-    hfinal: numbers.Real | u.Quantity,
+    hstart: u.Quantity = 10 * u.T,
+    hfinal: u.Quantity = -10 * u.T,
     hstep: numbers.Real | u.Quantity | None = None,
     hnsteps: int = 20,
     mfinal: numbers.Real = -2.0,
