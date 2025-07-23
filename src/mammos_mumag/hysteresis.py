@@ -109,11 +109,37 @@ def run(
         ),
     )
     sim.run_loop(outdir=outdir, name="hystloop")
-    df = pd.read_csv(
-        f"{outdir}/hystloop.dat",
-        delimiter=" ",
-        names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
-    )
+    return read_result(outdir=outdir, name="hystloop")
+
+
+def read_result(
+    outdir: pathlib.Path,
+    name: str = "out",
+) -> Result:
+    r"""Read hysteresis loop output from directory.
+
+    Args:
+        outdir: Path of output directory where the results of the hysteresis loop are
+            stored.
+        name: System name with which the loop output files are stored.
+
+    Returns:
+       Result object.
+
+    Raises:
+        FileNotFoundError: hysteresis loop .dat file not found.
+
+    """
+    try:
+        df = pd.read_csv(
+            f"{outdir}/{name}.dat",
+            delimiter=" ",
+            names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Hysteresis {name}.dat file not found in outdir='{outdir}'."
+        ) from None
     return Result(
         H=me.Entity(
             "ExternalMagneticField",
