@@ -7,3 +7,5 @@ mammos-mumag
    :maxdepth: 1
 
    quickstart
+   hysteresis
+   additional-functionality
