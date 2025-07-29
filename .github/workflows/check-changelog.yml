@@ -2,6 +2,7 @@ name: check-changelog
 
 on:
   pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
 
 jobs:
   validate-fragment:
