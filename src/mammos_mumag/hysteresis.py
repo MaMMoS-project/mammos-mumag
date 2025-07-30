@@ -23,6 +23,8 @@ if TYPE_CHECKING:
     import matplotlib
     import pyvista
 
+    import mammos_mumag
+
 
 def run(
     Ms: float | u.Quantity | me.Entity,
@@ -34,7 +36,7 @@ def run(
     hstep: float | u.Quantity | None = None,
     hnsteps: int = 20,
     outdir: str | pathlib.Path = "hystloop",
-) -> Result:
+) -> mammos_mumag.hysteresis.Result:
     r"""Run hysteresis loop.
 
     Args:
@@ -109,11 +111,37 @@ def run(
         ),
     )
     sim.run_loop(outdir=outdir, name="hystloop")
-    df = pd.read_csv(
-        f"{outdir}/hystloop.dat",
-        delimiter=" ",
-        names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
-    )
+    return read_result(outdir=outdir, name="hystloop")
+
+
+def read_result(
+    outdir: str | pathlib.Path,
+    name: str = "out",
+) -> mammos_mumag.hysteresis.Result:
+    r"""Read hysteresis loop output from directory.
+
+    Args:
+        outdir: Path of output directory where the results of the hysteresis loop are
+            stored.
+        name: System name with which the loop output files are stored.
+
+    Returns:
+       Result object.
+
+    Raises:
+        FileNotFoundError: hysteresis loop .dat file not found.
+
+    """
+    try:
+        df = pd.read_csv(
+            pathlib.Path(outdir) / f"{name}.dat",
+            delimiter=" ",
+            names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Hysteresis {name}.dat file not found in outdir='{outdir}'."
+        ) from None
     return Result(
         H=me.Entity(
             "ExternalMagneticField",
