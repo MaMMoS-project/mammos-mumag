@@ -181,9 +181,13 @@ class Result:
 
         Args:
             duplicate: Also plot loop with -M and -H to simulate full hysteresis.
+            duplicate_change_color: If set to false use the same color for both branches
+                of the hysteresis plot.
             configuration_marks: Show markers where a configuration has been saved.
             ax: Matplotlib axes object to which the plot is added. A new one is create
                 if not passed.
+            label: Label shown in the legend. A legend is automatically added to the
+                plot if this argument is not None.
             kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
                 hysteresis lines.
 

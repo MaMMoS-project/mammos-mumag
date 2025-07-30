@@ -62,8 +62,8 @@ select = [
   "SIM", # flake8-simplify
   "UP",  # pyupgrade
 ]
-isort.known-local-folder = [ "src/mammos_units" ]
-pydocstyle.convention = "pep257"
+isort.known-local-folder = [ "src/mammos_mumag" ]
+pydocstyle.convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = ["B018"]  # "Found useless expression. Either assign it to a variable or remove it."; false positives when using implicit __repr__ in the notebook
