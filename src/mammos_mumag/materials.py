@@ -27,15 +27,15 @@ class MaterialDomain:
     phi: float = 0.0
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
-    K1: me.Entity = Field(default_factory=me.Ku())
+    K1: me.Entity = Field(default_factory=me.Ku)
     r"""First magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
-    K2: me.Entity = Field(default_factory=me.Ku())
+    K2: me.Entity = Field(default_factory=me.Ku)
     r"""Second magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
-    Ms: me.Entity = Field(default_factory=me.Ms())
+    Ms: me.Entity = Field(default_factory=me.Ms)
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
-    A: me.Entity = Field(default_factory=me.A())
+    A: me.Entity = Field(default_factory=me.A)
     r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
 
     @field_validator("K1", mode="before")

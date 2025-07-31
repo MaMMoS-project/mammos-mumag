@@ -1,0 +1,44 @@
+name: check-changelog
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+jobs:
+  validate-fragment:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-changelog-entry-required') }}
+    runs-on: ubuntu-latest
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for towncrier to find the default branch
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install towncrier
+      - name: Make sure exactly one valid Towncrier fragment exists
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          dir=changes
+
+          mapfile -t fragments < <(find ${dir} -type f -name "${PR_NUMBER}.*.md" -printf '%P\n')
+
+          count=${#fragments[@]}
+
+          if [ "$count" -eq 1 ]; then
+              echo "Found changelog fragment: ${fragments[0]}"
+          elif [ "$count" -eq 0 ]; then
+              echo "::error::No fragment named '${PR_NUMBER}.*.md' found in '${dir}/'."
+              echo "See changes/README.md for instructions: https://github.com/MaMMoS-project/mammos-mumag/blob/main/changes/README.md"
+              exit 1
+          else
+              echo "::error::Multiple fragments for PR #${PR_NUMBER} found; expected exactly one."
+              printf 'Matches:\n%s\n' "${fragments[*]}"
+              exit 1
+          fi
+      - name: Check if a changelog fragment has allowed type
+        run: towncrier check

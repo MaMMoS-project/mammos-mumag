@@ -1,0 +1,21 @@
+[workspace]
+authors = ["Swapneel the Fool"]
+channels = ["conda-forge"]
+name = "1D-poisson"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+fenics-dolfinx = "*"
+python = ">=3.13.3,<3.14"
+jupyterlab = ">=4.4.3,<5"
+meshio = ">=5.3.5,<6"
+mpich = "*"
+python-gmsh = "*"
+pyvista = "*"
+scikit-fem = ">=11.0.0,<12"
+scipy = "*"
+
+[pypi-dependencies]
