@@ -7,3 +7,4 @@ mammos-mumag
    :maxdepth: 1
 
    quickstart
+   meshes
