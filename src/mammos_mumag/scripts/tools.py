@@ -2,30 +2,51 @@ import configparser
 import math
 
 import scipy
+from textwrap import dedent
 
 import psutil
 import os
+
+import mammos_entity as me
+import mammos_mumag
+import mammos_units as u
 
 def get_memory_usage():
     process = psutil.Process(os.getpid())
     return process.memory_info().rss / (1024 * 1024)  # in MB
 
-def write_stats(header, total_time, cg_iter,function_calls,hmag_iter):
+def write_stats(header, total_time, cg_iter, function_calls, hmag_iter):
     print(f'\n--> {header}')
     print('elaplsed time            ', total_time)
     print('iterations               ', cg_iter)
     print('  function calls         ', function_calls)
     # print('  iterations (hmag)      ', hmag_iter)
-      
-def write_mh(name,mh):
-    with open(name + ".dat","w") as f:
-        mu0 = get_mu0()
-        for vtk_number,hext,m,energy in mh:
-            f.write(f'{int(vtk_number)} {hext} {m} {energy/mu0}\n')
-            
+
+def write_mh(name, mh):
+    me.io.entities_to_file(
+        f"{name}.csv",
+        dedent(
+            f"""\
+            Hysteresis loop.
+            Generated from mammos_mumag {mammos_mumag.__version__}.
+            `configuration_type` is the name of the corresponding vtu file containing the magnetization.
+            `B_ext` is the applied magnetic flux density.
+            `J` is the polarisation in the direction of the applied magnetic flux.
+            `Jx`, `Jy`, `Jz` are the components of the spontaneous polarisation.
+            `energy_density` is the energy density."""
+        ),
+        configuration_type=mh[:,0].astype(int),
+        B_ext=me.Entity("MagneticFluxDensity", mh[:,1], u.T),
+        J=me.Js(mh[:,2], u.T),
+        Jx=me.Js(mh[:,3], u.T),
+        Jy=me.Js(mh[:,4], u.T),
+        Jz=me.Js(mh[:,5], u.T),
+        energy_density=me.Entity("EnergyDensity", mh[:,6] / get_mu0(), u.J / u.m**3),
+    )
+
 def get_mu0():
     return scipy.constants.mu_0
-          
+
 def normalize(v):
     a = v[0]
     b = v[1]

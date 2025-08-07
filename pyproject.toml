@@ -28,7 +28,7 @@ requires-python = ">=3.11"
 dependencies = [
   "jax",
   "jinja2>=3.1.6",
-  "mammos_entity>=0.8.0",
+  "mammos_entity>=0.10.0",
   "mammos_units",
   "numpy",
   "psutil>=7",
