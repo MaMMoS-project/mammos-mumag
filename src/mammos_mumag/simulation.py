@@ -5,27 +5,28 @@ import json
 import os
 import pathlib
 import shlex
-import shutil
 import subprocess
+from typing import Any
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic.dataclasses import dataclass
 
 import mammos_mumag
 from mammos_mumag.materials import MaterialDomain, Materials
+from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.tools import check_dir, check_esys_escript
 
 IS_POSIX = os.name == "posix"
 
 
-@dataclass
+@dataclass(config={"arbitrary_types_allowed": True})
 class Simulation:
     """Simulation class.
 
     Args:
         material_domain_list: TODO
-        mesh_filepath: TODO
+        mesh: Mesh object.
         paretials_filepath: TODO
         parameters_filepath: TODO
         materials: class managing materials.
@@ -33,12 +34,20 @@ class Simulation:
 
     """
 
+    mesh: mammos_mumag.mesh.Mesh
     material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
-    mesh_filepath: pathlib.Path | None = Field(default=None)
     materials_filepath: pathlib.Path | None = Field(default=None, repr=False)
     parameters_filepath: pathlib.Path | None = Field(default=None, repr=False)
     materials: Materials | None = Field(default=None)
     parameters: Parameters | None = Field(default=None)
+
+    @field_validator("mesh", mode="before")
+    @classmethod
+    def _convert_mesh(cls, mesh: Any) -> Any:
+        """Convert  string or path to local Mesh instance."""
+        if isinstance(mesh, str | pathlib.Path):
+            mesh = Mesh(mesh)
+        return mesh
 
     def __post_init__(self) -> None:
         """Post-initialization.
@@ -148,8 +157,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -184,8 +193,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials", "parameters")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials", "parameters")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -245,8 +254,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -293,8 +302,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials", "parameters")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials", "parameters")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -319,8 +328,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials", "parameters")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials", "parameters")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -347,8 +356,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials", "parameters")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials", "parameters")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
@@ -371,8 +380,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
         self.run_script(
@@ -395,8 +404,8 @@ class Simulation:
 
         """
         outdir = check_dir(outdir)
-        self.check_attribute("mesh_filepath", "materials", "parameters")
-        shutil.copyfile(self.mesh_filepath, outdir / f"{name}.fly")
+        self.check_attribute("mesh", "materials", "parameters")
+        self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 

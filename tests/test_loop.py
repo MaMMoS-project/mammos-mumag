@@ -9,7 +9,7 @@ from mammos_mumag.simulation import Simulation
 def test_loop(DATA, tmp_path):
     """Test loop."""
     sim = Simulation(
-        mesh_filepath=DATA / "cube.fly",
+        mesh=DATA / "cube.fly",
         materials_filepath=DATA / "cube.krn",
         parameters_filepath=DATA / "cube.p2",
     )

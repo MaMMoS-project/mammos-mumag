@@ -10,7 +10,7 @@ def test_mapping(DATA, tmp_path):
     """Test mapping."""
     # initialize + load parameters
     sim = Simulation(
-        mesh_filepath=DATA / "cube.fly",
+        mesh=DATA / "cube.fly",
         materials_filepath=DATA / "cube.krn",
         parameters_filepath=DATA / "cube.p2",
     )

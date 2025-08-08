@@ -30,7 +30,7 @@ def run(
     Ms: float | u.Quantity | me.Entity,
     A: float | u.Quantity | me.Entity,
     K1: float | u.Quantity | me.Entity,
-    mesh_filepath: pathlib.Path,
+    mesh: mammos_mumag.mesh.Mesh | pathlib.Path | str,
     hstart: float | u.Quantity,
     hfinal: float | u.Quantity,
     hstep: float | u.Quantity | None = None,
@@ -44,7 +44,9 @@ def run(
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
-        mesh_filepath: TODO
+        mesh: The mesh can either be given as a :py:class:`~mammos_mumag.mesh.Mesh`
+            instance (for meshes available through `mammos_mumag`) or its path can be
+            specified. The only possible mesh format is `.fly`.
         hstart: Initial strength of the external field.
         hfinal: Final strength of the external field.
         hstep: Step size.
@@ -66,7 +68,7 @@ def run(
         Ms = me.Ms(Ms, unit=u.A / u.m)
 
     sim = Simulation(
-        mesh_filepath=mesh_filepath,
+        mesh=mesh,
         materials=Materials(
             domains=[
                 {
