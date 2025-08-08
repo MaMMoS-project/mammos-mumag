@@ -135,39 +135,41 @@ def read_result(
 
     """
     try:
-        df = pd.read_csv(
-            pathlib.Path(outdir) / f"{name}.dat",
-            delimiter=" ",
-            names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
-        )
+        res = me.io.entities_from_file(pathlib.Path(outdir) / f"{name}.csv")
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"Hysteresis {name}.dat file not found in outdir='{outdir}'."
+            f"Hysteresis file {name}.csv not found in outdir='{outdir}'."
         ) from None
     return Result(
         H=me.Entity(
             "ExternalMagneticField",
-            value=(df["mu0_Hext"].to_numpy() * u.T).to(
-                u.A / u.m, equivalencies=u.magnetic_flux_field()
-            ),
+            value=res.B_ext.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
         M=me.Ms(
-            (df["polarisation"].to_numpy() * u.T).to(
-                u.A / u.m, equivalencies=u.magnetic_flux_field()
-            ),
+            res.J.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        energy_density=me.Entity(
-            "EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3
+        Mx=me.Ms(
+            res.Jx.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
         ),
+        My=me.Ms(
+            res.Jy.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
+        ),
+        Mz=me.Ms(
+            res.Jz.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
+        ),
+        energy_density=res.energy_density,
         configurations={
             i + 1: fname
             for i, fname in enumerate(
                 sorted(pathlib.Path(outdir).resolve().glob("*.vtu"))
             )
         },
-        configuration_type=df["configuration_type"].to_numpy(),
+        configuration_type=res.configuration_type,
     )
 
 
@@ -178,7 +180,14 @@ class Result:
     H: me.Entity
     """Array of external field strengths."""
     M: me.Entity
-    """Array of spontaneous magnetization values for the field strengths."""
+    """Array of spontaneous magnetization values for the field strengths in the
+    direction of H."""
+    Mx: me.Entity
+    """Component x of the spontaneous magnetization."""
+    My: me.Entity
+    """Component y of the spontaneous magnetization."""
+    Mz: me.Entity
+    """Component z of the spontaneous magnetization."""
     energy_density: me.Entity | None = None
     """Array of energy densities for the field strengths."""
     configuration_type: np.ndarray | None = None
@@ -194,6 +203,9 @@ class Result:
                 "configuration_type": self.configuration_type,
                 "H": self.H.q,
                 "M": self.M.q,
+                "Mx": self.Mx.q,
+                "My": self.My.q,
+                "Mz": self.Mz.q,
                 "energy_density": self.energy_density.q,
             }
         )
