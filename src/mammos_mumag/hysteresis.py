@@ -169,7 +169,7 @@ def read_result(
                 sorted(pathlib.Path(outdir).resolve().glob("*.vtu"))
             )
         },
-        configuration_type=res.configuration_type,
+        configuration_type=np.asarray(res.configuration_type),
     )
 
 
