@@ -6,6 +6,13 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.8.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.8.1) – 2025-08-13
+
+### Fixed
+
+- Fixed a small bug that occurred when the inputs to `hysteresis.run` were zero. ([#64](https://github.com/MaMMoS-project/mammos-mumag/pull/64))
+
+
 ## [mammos-mumag 0.8.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.8.0) – 2025-08-12
 
 ### Added
