@@ -8,3 +8,5 @@ mammos-mumag
 
    quickstart
    meshes
+   hysteresis
+   additional-functionality
