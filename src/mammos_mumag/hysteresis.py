@@ -30,7 +30,7 @@ def run(
     Ms: float | u.Quantity | me.Entity,
     A: float | u.Quantity | me.Entity,
     K1: float | u.Quantity | me.Entity,
-    mesh_filepath: pathlib.Path,
+    mesh: mammos_mumag.mesh.Mesh | pathlib.Path | str,
     hstart: float | u.Quantity,
     hfinal: float | u.Quantity,
     hstep: float | u.Quantity | None = None,
@@ -44,7 +44,9 @@ def run(
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
         K1: First magnetocrystalline anisotropy constant in
             :math:`\mathrm{J}/\mathrm{m}^3`.
-        mesh_filepath: TODO
+        mesh: The mesh can either be given as a :py:class:`~mammos_mumag.mesh.Mesh`
+            instance (for meshes available through `mammos_mumag`) or its path can be
+            specified. The only possible mesh format is `.fly`.
         hstart: Initial strength of the external field.
         hfinal: Final strength of the external field.
         hstep: Step size.
@@ -66,7 +68,7 @@ def run(
         Ms = me.Ms(Ms, unit=u.A / u.m)
 
     sim = Simulation(
-        mesh_filepath=mesh_filepath,
+        mesh=mesh,
         materials=Materials(
             domains=[
                 {
@@ -133,39 +135,41 @@ def read_result(
 
     """
     try:
-        df = pd.read_csv(
-            pathlib.Path(outdir) / f"{name}.dat",
-            delimiter=" ",
-            names=["configuration_type", "mu0_Hext", "polarisation", "energy_density"],
-        )
+        res = me.io.entities_from_file(pathlib.Path(outdir) / f"{name}.csv")
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"Hysteresis {name}.dat file not found in outdir='{outdir}'."
+            f"Hysteresis file {name}.csv not found in outdir='{outdir}'."
         ) from None
     return Result(
         H=me.Entity(
             "ExternalMagneticField",
-            value=(df["mu0_Hext"].to_numpy() * u.T).to(
-                u.A / u.m, equivalencies=u.magnetic_flux_field()
-            ),
+            value=res.B_ext.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
         M=me.Ms(
-            (df["polarisation"].to_numpy() * u.T).to(
-                u.A / u.m, equivalencies=u.magnetic_flux_field()
-            ),
+            res.J.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        energy_density=me.Entity(
-            "EnergyDensity", value=df["energy_density"], unit=u.J / u.m**3
+        Mx=me.Ms(
+            res.Jx.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
         ),
+        My=me.Ms(
+            res.Jy.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
+        ),
+        Mz=me.Ms(
+            res.Jz.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+            unit=u.A / u.m,
+        ),
+        energy_density=res.energy_density,
         configurations={
             i + 1: fname
             for i, fname in enumerate(
                 sorted(pathlib.Path(outdir).resolve().glob("*.vtu"))
             )
         },
-        configuration_type=df["configuration_type"].to_numpy(),
+        configuration_type=np.asarray(res.configuration_type),
     )
 
 
@@ -176,7 +180,14 @@ class Result:
     H: me.Entity
     """Array of external field strengths."""
     M: me.Entity
-    """Array of spontaneous magnetization values for the field strengths."""
+    """Array of spontaneous magnetization values for the field strengths in the
+    direction of H."""
+    Mx: me.Entity
+    """Component x of the spontaneous magnetization."""
+    My: me.Entity
+    """Component y of the spontaneous magnetization."""
+    Mz: me.Entity
+    """Component z of the spontaneous magnetization."""
     energy_density: me.Entity | None = None
     """Array of energy densities for the field strengths."""
     configuration_type: np.ndarray | None = None
@@ -192,6 +203,9 @@ class Result:
                 "configuration_type": self.configuration_type,
                 "H": self.H.q,
                 "M": self.M.q,
+                "Mx": self.Mx.q,
+                "My": self.My.q,
+                "Mz": self.Mz.q,
                 "energy_density": self.energy_density.q,
             }
         )

@@ -10,7 +10,7 @@ def test_materials(DATA, tmp_path):
     """Test materials."""
     # initialize + load parameters
     sim = Simulation(
-        mesh_filepath=DATA / "cube.fly",
+        mesh=DATA / "cube.fly",
         materials_filepath=DATA / "cube.krn",
     )
 

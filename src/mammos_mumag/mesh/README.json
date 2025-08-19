@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "description": "mammos_mumag meshes.",
+    "keeper_url": "https://keeper.mpdl.mpg.de/d/2d6e6df11f5b458face4/",
+    "zenodo_url": "https://zenodo.org/records/16761275"
+  },
+  "meshes": {
+    "cube20_singlegrain_msize1": {
+      "description": "Cube of side length 20 with a single grain. Mesh size  is 1.",
+      "geometry": "cube",
+      "length": 20,
+      "ngrains": 1,
+      "mesh_size": 1
+    },
+    "cube20_singlegrain_msize2": {
+      "description": "Cube of side length 20 with a single grain. Mesh size  is 2.",
+      "geometry": "cube",
+      "length": 20,
+      "ngrains": 1,
+      "mesh_size": 2
+    },
+    "cube50_singlegrain_msize1": {
+      "description": "Cube of side length 50 with a single grain. Mesh size  is 1.",
+      "geometry": "cube",
+      "length": 50,
+      "ngrains": 1,
+      "mesh_size": 1
+    },
+    "cube50_singlegrain_msize2": {
+      "description": "Cube of side length 50 with a single grain. Mesh size  is 2.",
+      "geometry": "cube",
+      "length": 50,
+      "ngrains": 1,
+      "mesh_size": 2
+    },
+    "cube40_equi_grains8_gsize20": {
+      "description": "Cube of side length 40 with 8 grains of size 20 generated uniformly.",
+      "geometry": "cube",
+      "length": 40,
+      "ngrains": 8,
+      "grain_size": 20
+    },
+    "cube80_equi_grains8_gsize40": {
+      "description": "Cube of side length 80 with 8 grains of size 40 generated uniformly.",
+      "geometry": "cube",
+      "length": 80,
+      "ngrains": 8,
+      "grain_size": 40
+    },
+    "cube160_equi_grains8_gsize80": {
+      "description": "Cube of side length 160 with 8 grains of size 80 generated uniformly.",
+      "geometry": "cube",
+      "length": 160,
+      "ngrains": 8,
+      "grain_size": 80
+    },
+    "cube40_colu_grains8_gsize20": {
+      "description": "Cube of side length 40 with 8 grains of size 20 generated on a 2D face and extruded in the third dimension.",
+      "geometry": "cube",
+      "length": 40,
+      "ngrains": 8,
+      "grain_size": 20
+    },
+    "cube80_colu_grains8_gsize40": {
+      "description": "Cube of side length 80 with 8 grains of size 40 generated on a 2D face and extruded in the third dimension.",
+      "geometry": "cube",
+      "length": 80,
+      "ngrains": 8,
+      "grain_size": 40
+    },
+    "cube160_colu_grains8_gsize80": {
+      "description": "Cube of side length 160 with 8 grains of size 80 generated on a 2D face and extruded in the third dimension.",
+      "geometry": "cube",
+      "length": 160,
+      "ngrains": 8,
+      "grain_size": 80
+    },
+    "cube40_3plat_grains12_gsize20": {
+      "description": "Cube of side length 40 with 12 grains of size 20 generated as regular parallelepipeda on three layers.",
+      "geometry": "cube",
+      "length": 40,
+      "ngrains": 12,
+      "grain_size": 20
+    },
+    "cube80_3plat_grains12_gsize40": {
+      "description": "Cube of side length 80 with 12 grains of size 40 generated as regular parallelepipeda on three layers.",
+      "geometry": "cube",
+      "length": 80,
+      "ngrains": 12,
+      "grain_size": 40
+    },
+    "cube160_3plat_grains12_gsize80": {
+      "description": "Cube of side length 160 with 12 grains of size 80 generated as regular parallelepipeda on three layers.",
+      "geometry": "cube",
+      "length": 160,
+      "ngrains": 12,
+      "grain_size": 80
+    }
+  }
+}

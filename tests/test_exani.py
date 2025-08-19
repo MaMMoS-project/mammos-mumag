@@ -9,9 +9,7 @@ from mammos_mumag.simulation import Simulation
 def test_exani(DATA, tmp_path):
     """Test exani."""
     # initialize + load parameters
-    sim = Simulation(
-        mesh_filepath=DATA / "cube.fly", materials_filepath=DATA / "cube.krn"
-    )
+    sim = Simulation(mesh=DATA / "cube.fly", materials_filepath=DATA / "cube.krn")
 
     # run exani
     sim.run_exani(outdir=tmp_path)
