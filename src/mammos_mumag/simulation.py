@@ -341,7 +341,7 @@ class Simulation:
 
     def run_mapping(
         self,
-        outdir: str | pathlib.Path = "magnetization",
+        outdir: str | pathlib.Path = "mapping",
         name: str = "out",
     ) -> None:
         """Run "mapping" script.
@@ -391,7 +391,7 @@ class Simulation:
         )
 
     def run_store(
-        self, outdir: str | pathlib.Path = "magnetization", name: str = "out"
+        self, outdir: str | pathlib.Path = "store", name: str = "out"
     ) -> None:
         """Run "store" script.
 
