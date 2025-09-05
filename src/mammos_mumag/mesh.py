@@ -3,6 +3,7 @@
 import json
 import pathlib
 import shutil
+import time
 
 import requests
 
@@ -80,12 +81,15 @@ class Mesh:
         if self._local:
             shutil.copy(self._path, dest)
         else:
-            res = requests.get(self._url)
-            if res.status_code != 200:
-                raise RuntimeError(f"requests error code: {res.status_code}")
+            for _ in range(3):
+                res = requests.get(self._url)
+                if res.status_code == 200:
+                    break
+                time.sleep(5)
             else:
-                with open(dest, "wb") as f:
-                    f.write(res.content)
+                raise RuntimeError(f"Failed 3 requests. Error code: {res.status_code}")
+            with open(dest, "wb") as f:
+                f.write(res.content)
 
     def _write_from_keeper(self, dest: pathlib.Path | str) -> None:
         """Write mesh to destination.
@@ -101,10 +105,13 @@ class Mesh:
             shutil.copy(self.name, dest)
         else:
             keeper_url = get_mesh_json()["metadata"]["keeper_url"]
-            res = requests.get(
-                f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
-            )
-            if res.status_code != 200:
-                raise RuntimeError(f"requests error code: {res.status_code}")
+            mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
+            for _ in range(3):
+                res = requests.get(mesh_url)
+                if res.status_code == 200:
+                    break
+                time.sleep(5)
+            else:
+                raise RuntimeError(f"Failed 3 requests. Error code: {res.status_code}")
             with open(dest, "wb") as f:
                 f.write(res.content)
