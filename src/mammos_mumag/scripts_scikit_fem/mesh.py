@@ -3,13 +3,15 @@
 
 import sys
 
-from esys.finley import ReadMesh
+#before: from esys.finley import ReadMesh
+import skfem
 
 
 class Mesh:
     def __init__(self, name):
         # print("read mesh from " + name + ".fly")
-        self._domain = ReadMesh(name + ".fly")
+        #before: ReadMesh(name + ".fly")
+        self._domain = skfem.mesh.Mesh.load(name + ".med")
 
     def getDomain(self):
         return self._domain
