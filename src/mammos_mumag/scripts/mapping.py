@@ -150,12 +150,11 @@ def pars2jax(pars):
 
 # update pars from file
 def update_pars(name,pars):
-    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
     pars['mag_pars']  = mag_pars
     pars['hext_pars'] = hext_pars
     pars['hmag_on']   = hmag_on
     pars['min_pars']  = min_pars
-    pars['verbose']   = verbose
         
   
 # update initial magnetization
@@ -174,14 +173,13 @@ def escript2arrays(name,check=0,target='jax'):
     pars = {}
     
     # parameters
-    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
     m, _, _, state_id = mag_pars
     h, _, _, _        = hext_pars
     pars['mag_pars']  = mag_pars
     pars['hext_pars'] = hext_pars
     pars['hmag_on']   = hmag_on
     pars['min_pars']  = min_pars
-    pars['verbose']   = verbose
     
     # materials
     materials = Materials(name)

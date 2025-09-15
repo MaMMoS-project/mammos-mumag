@@ -92,8 +92,6 @@ def read_params(name):
             "tol_fun": 1e-10,
             "tol_hmag_factor": 1.0,
             "precond_iter": 10,
-            "iter_max": 1000,
-            "verbose": 1,
         }
     )
     config.read(name + ".p2")
@@ -128,14 +126,11 @@ def read_params(name):
     tol_fun = float(minimizer["tol_fun"])
     tol_hmag_factor = float(minimizer["tol_hmag_factor"])
     precond_iter = int(minimizer["precond_iter"])
-    iter_max = int(minimizer["iter_max"])
     tol_u = tol_fun * tol_hmag_factor
-    verbose = int(minimizer["verbose"])
     # print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}")
     return (                            
         (m,mstep,mfinal,state_id),                                 # magnetic state
         (h,hstart,hfinal,hstep),                                   # field steps
         hmag_on,                                                   # magnetostatics
-        (tol_u, tol_fun, precond_iter, iter_max),                  # solver parameters, 
-        verbose,                                                   # output
-    ) # mag_pars, hext_pars, hmag_on, min_pars, verbose
+        (tol_u, tol_fun, precond_iter),                  # solver parameters,
+    ) # mag_pars, hext_pars, hmag_on, min_pars

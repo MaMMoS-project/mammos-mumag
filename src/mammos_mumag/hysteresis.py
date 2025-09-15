@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import numbers
 import pathlib
+from numbers import Number
 from typing import TYPE_CHECKING
 
 import mammos_entity as me
@@ -28,17 +28,17 @@ if TYPE_CHECKING:
 
 
 def run(
-    Ms: numbers.Real | u.Quantity | me.Entity,
-    A: numbers.Real | u.Quantity | me.Entity,
-    K1: numbers.Real | u.Quantity | me.Entity,
-    theta: numbers.Real | u.Quantity | me.Entity,
-    phi: numbers.Real | u.Quantity | me.Entity,
+    Ms: Number | u.Quantity | me.Entity,
+    A: Number | u.Quantity | me.Entity,
+    K1: Number | u.Quantity | me.Entity,
+    theta: Number | u.Quantity | me.Entity,
+    phi: Number | u.Quantity | me.Entity,
     mesh: mammos_mumag.mesh.Mesh | pathlib.Path | str,
-    hstart: u.Quantity = 10 * u.T,
-    hfinal: u.Quantity = -10 * u.T,
-    hstep: numbers.Real | u.Quantity | None = None,
-    hnsteps: int = 20,
-    mfinal: numbers.Real = -2.0,
+    h_start: Number | u.Quantity | me.Entity | None = None,
+    h_final: Number | u.Quantity | me.Entity | None = None,
+    h_step: Number | u.Quantity | me.Entity | None = None,
+    h_n_steps: int = 20,
+    m_final: Number | u.Quantity | me.Entity | None = None,
     outdir: str | pathlib.Path = "hystloop",
 ) -> mammos_mumag.hysteresis.Result:
     r"""Run hysteresis loop.
@@ -55,30 +55,24 @@ def run(
         mesh: The mesh can either be given as a :py:class:`~mammos_mumag.mesh.Mesh`
             instance (for meshes available through `mammos_mumag`) or its path can be
             specified. The only possible mesh format is `.fly`.
-        hstart: Initial strength of the external field.
-        hfinal: Final strength of the external field.
-        hstep: Step size.
-        hnsteps: Number of steps in the field sweep.
-        mfinal: TODO
+        h_start: Initial strength of the external field in
+            :math:`\mathrm{A}/\mathrm{m}`.
+        h_final: Final strength of the external field in :math:`\mathrm{A}/\mathrm{m}`.
+        h_step: Step size in :math:`\mathrm{A}/\mathrm{m}`.
+        h_n_steps: Number of steps in the field sweep.
+        m_final: Value of magnetization (along the external field direction) at which
+            the hysteresis calculation will stop in :math:`\mathrm{A}/\mathrm{m}`.
         outdir: Directory where simulation results are written to.
 
     Returns:
-       Result object.
+       Hysteresis result object.
 
     """
-    if hstep is None:
-        hstep = (hfinal - hstart) / hnsteps
-
-    if not isinstance(A, me.Entity):
-        A = me.A(A)
-    if not isinstance(K1, me.Entity):
-        K1 = me.Ku(K1)
-    if not isinstance(Ms, me.Entity):
-        Ms = me.Ms(Ms)
-    if not isinstance(theta, me.Entity):
-        theta = me.Entity("Angle", theta)
-    if not isinstance(phi, me.Entity):
-        phi = me.Entity("Angle", phi)
+    Ms = me.Ms(Ms, unit=u.A / u.m)
+    A = me.A(A, unit=u.J / u.m)
+    K1 = me.Ku(K1, unit=u.J / u.m**3)
+    theta = me.Entity("Angle", theta)
+    phi = me.Entity("Angle", phi)
 
     if (
         len(set(e.q.size for e in [Ms, A, K1, theta, phi])) != 1
@@ -98,40 +92,42 @@ def run(
         ):
             materials.domains.append(
                 MaterialDomain(
-                    theta=theta_i,
-                    phi=phi_i,
-                    K1=K1_i,
                     Ms=Ms_i,
                     A=A_i,
+                    K1=K1_i,
+                    theta=theta_i,
+                    phi=phi_i,
                 )
             )
     else:  # entities are zero dimensions
         materials.domains.append(
             MaterialDomain(
-                theta=theta,
-                phi=phi,
-                K1=K1,
                 Ms=Ms,
                 A=A,
+                K1=K1,
+                theta=theta,
+                phi=phi,
             )
         )
     materials.domains.append(MaterialDomain())  # empty domain for air
     materials.domains.append(MaterialDomain())  # empty domain for shell
 
-    parameters = Parameters(
-        size=1.0e-9,
-        scale=0,
-        m_vect=[0, 0, 1],
-        hstart=hstart.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-        hfinal=hfinal.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-        hstep=hstep.to(u.T, equivalencies=u.magnetic_flux_field()).value,
-        h_vect=[0.01745, 0, 0.99984],
-        mstep=0.4,
-        mfinal=mfinal,
-        tol_fun=1e-10,
-        tol_hmag_factor=1,
-        precond_iter=10,
-    )
+    parameters = Parameters()  # initialize default simulation parameters
+
+    if h_start is not None:
+        parameters.h_start = me.Entity("ExternalMagneticField", h_start, unit=u.A / u.m)
+    if h_final is not None:
+        parameters.h_final = me.Entity("ExternalMagneticField", h_final, unit=u.A / u.m)
+    if h_step is not None:
+        parameters.h_step = me.Entity("ExternalMagneticField", h_step, unit=u.A / u.m)
+    else:
+        parameters.h_step = me.Entity(
+            "ExternalMagneticField",
+            (parameters.h_final.q - parameters.h_start.q) / h_n_steps,
+            unit=u.A / u.m,
+        )
+    if m_final is not None:
+        parameters.m_final = me.Entity("Magnetization", m_final, unit=u.A / u.m)
 
     sim = Simulation(
         mesh=mesh,
@@ -204,18 +200,22 @@ class Result:
     """Hysteresis loop Result."""
 
     H: me.Entity
-    """Array of external field strengths."""
+    r"""Array of external field strengths in :math:`\mathrm{A}/\mathrm{m}`."""
     M: me.Entity
-    """Array of spontaneous magnetization values for the field strengths in the
-    direction of H."""
+    r"""Array of spontaneous magnetization values for the field strengths in the
+    direction of H in :math:`\mathrm{A}/\mathrm{m}`."""
     Mx: me.Entity
-    """Component x of the spontaneous magnetization."""
+    r"""Component x of the spontaneous magnetization in
+    :math:`\mathrm{A}/\mathrm{m}`."""
     My: me.Entity
-    """Component y of the spontaneous magnetization."""
+    r"""Component y of the spontaneous magnetization in
+    :math:`\mathrm{A}/\mathrm{m}`."""
     Mz: me.Entity
-    """Component z of the spontaneous magnetization."""
+    r"""Component z of the spontaneous magnetization in
+    :math:`\mathrm{A}/\mathrm{m}`."""
     energy_density: me.Entity | None = None
-    """Array of energy densities for the field strengths."""
+    r"""Array of energy densities for the field strengths in
+    :math:`\mathrm{J}/\mathrm{m^3}`."""
     configuration_type: np.ndarray | None = None
     """Array of indices of representative configurations for the field strengths."""
     configurations: dict[int, pathlib.Path] | None = None
