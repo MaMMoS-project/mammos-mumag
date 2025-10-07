@@ -39,6 +39,15 @@ dependencies = [
   "scipy",
 ]
 
+[project.optional-dependencies]
+examples = [
+  "mammos_analysis>=0.1.4",
+  "mammos_dft>=0.3.2",
+  "mammos_spindynamics>=0.2.3",
+  "jupyterlab>3",
+  "nbval",
+]
+
 [project.urls]
 Homepage = "https://mammos-project.github.io"
 Documentation = "https://mammos-project.github.io/mammos"
@@ -78,8 +87,6 @@ platforms = [ "osx-arm64", "linux-64", "osx-64", "win-64" ]
 python = "==3.11"
 hatch = "*"
 ipython = "*"
-jupyterlab = ">3"
-nbval = "*"
 packaging = "<25"
 pre-commit = "*"
 pytest = "*"
@@ -94,12 +101,17 @@ esys-escript = ">=5.10,<6"
 mammos-mumag = { path = ".", editable = true }
 
 [tool.pixi.tasks]
-examples = "jupyter-lab examples"
 test-unittest = "pytest -v tests"
 test-docstrings = "run-escript -- -m pytest -v --doctest-modules src/mammos_mumag"
-test-notebooks = "pytest -v --nbval-lax examples"
-test-all = { depends-on = ["test-unittest", "test-docstrings", "test-notebooks"] }
 style = "pre-commit run --all-files"
+
+[tool.pixi.feature.examples.tasks]
+examples = "jupyter-lab examples"
+test-all = { depends-on = ["test-unittest", "test-docstrings", "test-notebooks"] }
+test-notebooks = "pytest -v --nbval-lax examples"
+
+[tool.pixi.environments]
+examples = {features = ["examples"], solve-group = "default"}
 
 [tool.towncrier]
 directory = "changes"

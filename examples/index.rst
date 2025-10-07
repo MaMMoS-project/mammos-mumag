@@ -9,4 +9,5 @@ mammos-mumag
    quickstart
    meshes
    hysteresis
+   using_tesla
    additional-functionality
