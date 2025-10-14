@@ -102,18 +102,25 @@ class Mesh:
         avail_fmts = [".fly", ".med", ".unv"]
         if dest.suffix not in avail_fmts:
             raise ValueError(f"Wrong format. Available formats: {avail_fmts}")
-        if self._local:
-            shutil.copy(self.name, dest)
-        else:
-            keeper_url = get_mesh_json()["metadata"]["keeper_url"]
-            mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
-            s = requests.Session()
-            retries = urllib3.util.Retry(
-                total=3,
-                backoff_factor=0.1,
-                status_forcelist=[500, 502, 503, 504],
-            )
-            s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
-            res = s.get(mesh_url)
-            with open(dest, "wb") as f:
-                f.write(res.content)
+        keeper_url = get_mesh_json()["metadata"]["keeper_url"]
+        mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
+        s = requests.Session()
+        retries = urllib3.util.Retry(
+            total=3,
+            backoff_factor=0.1,
+            status_forcelist=[500, 502, 503, 504],
+        )
+        s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+        res = s.get(mesh_url)
+        with open(dest, "wb") as f:
+            f.write(res.content)
+
+
+def _get_mesh_json_from_keeper() -> dict:
+    """Download mesh.json from Keeper and return dictionary."""
+    keeper_url = get_mesh_json()["metadata"]["keeper_url"]
+    res = requests.get(f"{keeper_url}files/?p=/README.json&dl=1")
+    if res.status_code != 200:
+        raise FileNotFoundError("README.json not found on Keeper.")
+    else:
+        return json.loads(res.content)

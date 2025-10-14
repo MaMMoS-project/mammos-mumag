@@ -37,6 +37,7 @@ dependencies = [
   "pyyaml>6",
   "requests",
   "scipy",
+  "tqdm",
 ]
 
 [project.optional-dependencies]
@@ -60,6 +61,9 @@ Documentation = "https://mammos-project.github.io/mammos"
 Repository = "https://github.com/MaMMoS-project/mammos-mumag"
 Issues = "https://github.com/MaMMoS-project/mammos-mumag/issues"
 Changelog = "https://mammos-project.github.io/mammos/changelog"
+
+[project.scripts]
+unv2fly = "mammos_mumag.cli:convert_mesh"
 
 [tool.ruff]
 target-version = "py311"
@@ -107,6 +111,9 @@ esys-escript = ">=5.10,<6"
 mammos-mumag = { path = ".", editable = true }
 
 [tool.pixi.tasks]
+download-all-meshes = "python scripts/download_all_meshes.py"
+update-mesh-json = "python scripts/update-mesh-json.py"
+examples = "jupyter-lab examples"
 test-unittest = "pytest -v tests"
 test-docstrings = "run-escript -- -m pytest -v --doctest-modules src/mammos_mumag"
 style = "pre-commit run --all-files"
