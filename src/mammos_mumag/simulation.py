@@ -75,6 +75,14 @@ class Simulation:
             if self.__getattribute__(attr) is None:
                 raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
 
+    def check_numgrains(self) -> None:
+        """Check that the number of grains match for mesh and material class."""
+        if (
+            "domains" in self.mesh.info
+            and len(self.materials.domains) != self.mesh.info["domains"] + 2
+        ):
+            raise ValueError("Mesh and domains have a different number of grains.")
+
     @classmethod
     def run_file(
         cls, file: str | pathlib.Path, outdir: str | pathlib.Path = "out"
@@ -94,7 +102,7 @@ class Simulation:
         _run_subprocess(cmd, cwd=outdir)
 
     @classmethod
-    def run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
+    def _run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
         """Run pre-defined script.
 
         Args:
@@ -158,10 +166,11 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
-        self.run_script(
+        self._run_script(
             script="exani",
             outdir=outdir,
             name=name,
@@ -194,11 +203,12 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials", "parameters")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self.run_script(
+        self._run_script(
             script="external",
             outdir=outdir,
             name=name,
@@ -255,10 +265,11 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
-        self.run_script(
+        self._run_script(
             script="hmag",
             outdir=outdir,
             name=name,
@@ -303,11 +314,12 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials", "parameters")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self.run_script(
+        self._run_script(
             script="loop",
             outdir=outdir,
             name=name,
@@ -329,11 +341,12 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials", "parameters")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self.run_script(
+        self._run_script(
             script="magnetization",
             outdir=outdir,
             name=name,
@@ -357,11 +370,12 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials", "parameters")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self.run_script(
+        self._run_script(
             script="mapping",
             outdir=outdir,
             name=name,
@@ -381,10 +395,11 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
-        self.run_script(
+        self._run_script(
             script="materials",
             outdir=outdir,
             name=name,
@@ -405,11 +420,12 @@ class Simulation:
         """
         outdir = check_dir(outdir)
         self.check_attribute("mesh", "materials", "parameters")
+        self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self.run_script(
+        self._run_script(
             script="store",
             outdir=outdir,
             name=name,
