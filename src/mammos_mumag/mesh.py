@@ -3,9 +3,9 @@
 import json
 import pathlib
 import shutil
-import time
 
 import requests
+import urllib3
 
 
 def get_mesh_json():
@@ -81,13 +81,14 @@ class Mesh:
         if self._local:
             shutil.copy(self._path, dest)
         else:
-            for _ in range(3):
-                res = requests.get(self._url)
-                if res.status_code == 200:
-                    break
-                time.sleep(5)
-            else:
-                raise RuntimeError(f"Failed 3 requests. Error code: {res.status_code}")
+            s = requests.Session()
+            retries = urllib3.util.Retry(
+                total=3,
+                backoff_factor=0.1,
+                status_forcelist=[500, 502, 503, 504],
+            )
+            s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+            res = s.get(self._url)
             with open(dest, "wb") as f:
                 f.write(res.content)
 
@@ -106,12 +107,13 @@ class Mesh:
         else:
             keeper_url = get_mesh_json()["metadata"]["keeper_url"]
             mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
-            for _ in range(3):
-                res = requests.get(mesh_url)
-                if res.status_code == 200:
-                    break
-                time.sleep(5)
-            else:
-                raise RuntimeError(f"Failed 3 requests. Error code: {res.status_code}")
+            s = requests.Session()
+            retries = urllib3.util.Retry(
+                total=3,
+                backoff_factor=0.1,
+                status_forcelist=[500, 502, 503, 504],
+            )
+            s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+            res = s.get(mesh_url)
             with open(dest, "wb") as f:
                 f.write(res.content)
