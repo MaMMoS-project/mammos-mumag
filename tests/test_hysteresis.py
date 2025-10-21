@@ -18,7 +18,7 @@ def test_hysteresis_run_inputs_python(DATA, tmp_path):
         theta=0,
         phi=0,
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -28,7 +28,7 @@ def test_hysteresis_run_inputs_python(DATA, tmp_path):
         theta=0.0,
         phi=0.0,
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -38,7 +38,7 @@ def test_hysteresis_run_inputs_python(DATA, tmp_path):
         theta=[0],
         phi=[0],
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
 
@@ -52,7 +52,7 @@ def test_hysteresis_run_inputs_numpy_array(DATA, tmp_path):
         theta=np.array(0),
         phi=np.array(0),
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -62,7 +62,7 @@ def test_hysteresis_run_inputs_numpy_array(DATA, tmp_path):
         theta=np.array([0]),
         phi=np.array([0]),
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -72,7 +72,7 @@ def test_hysteresis_run_inputs_numpy_array(DATA, tmp_path):
         theta=np.array([[0]]),
         phi=np.array([[0]]),
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
 
@@ -86,7 +86,7 @@ def test_hysteresis_run_inputs_Quantity(DATA, tmp_path):
         theta=0 * u.dimensionless_unscaled,
         phi=0 * u.dimensionless_unscaled,
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -96,7 +96,7 @@ def test_hysteresis_run_inputs_Quantity(DATA, tmp_path):
         theta=[0 * u.dimensionless_unscaled],
         phi=[0 * u.dimensionless_unscaled],
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
 
@@ -110,7 +110,7 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
         theta=me.Entity("Angle"),
         phi=me.Entity("Angle"),
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
     run(
@@ -120,7 +120,7 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
         theta=me.concat_flat([me.Entity("Angle")]),
         phi=me.concat_flat([me.Entity("Angle")]),
         mesh=DATA / "cube.fly",
-        hnsteps=1,
+        h_n_steps=1,
         outdir=tmp_path,
     )
 
@@ -139,7 +139,7 @@ def test_hysteresis_run_radians(DATA, tmp_path):
             theta=0 * u.rad,
             phi=0 * u.rad,
             mesh=DATA / "cube.fly",
-            hnsteps=1,
+            h_n_steps=1,
             outdir=tmp_path,
         )
 
@@ -154,6 +154,6 @@ def test_inconsistent_dimensions(DATA, tmp_path):
             theta=0,
             phi=0,
             mesh=DATA / "cube.fly",
-            hnsteps=1,
+            h_n_steps=1,
             outdir=tmp_path,
         )

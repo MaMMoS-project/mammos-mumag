@@ -47,7 +47,7 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript external.py modelname")
 
-    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
     m, _, _, _ =  mag_pars
     h, start, final, step = hext_pars
     Js = read_Js(name)

@@ -118,7 +118,7 @@ class Materials:
 
         Args:
             A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-            Ms: Spontaneous magnetisation in :math:`\mathrm{T}`.
+            Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
             K1: First magnetocrystalline anisotropy constant in
                 :math:`\mathrm{J}/\mathrm{m}^3`.
             K2: Second magnetocrystalline anisotropy constant in

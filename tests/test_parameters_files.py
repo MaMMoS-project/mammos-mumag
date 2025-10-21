@@ -1,5 +1,6 @@
 """Test parameters file i/o."""
 
+import mammos_units as u
 import numpy as np
 import pytest
 from pydantic import ValidationError
@@ -50,11 +51,11 @@ def test_parameters_file(DATA, tmp_path):
     parameter is exactly equal or sufficiently close to the original one.
     """
     par = Parameters(
-        m=[1, 0, 0],
-        hstart=8.0,
-        hfinal=-1.5,
-        hstep=-0.01,
-        iter_max=5000,
+        m_vect=[1, 0, 0],
+        h_vect=[0, 1, 0],
+        h_start=(8.0 * u.T).to("A/m", equivalencies=u.magnetic_flux_field()),
+        h_final=(-1.5 * u.T).to("A/m", equivalencies=u.magnetic_flux_field()),
+        h_step=(-0.01 * u.T).to("A/m", equivalencies=u.magnetic_flux_field()),
     )
 
     par.write_p2(tmp_path / "par.p2")

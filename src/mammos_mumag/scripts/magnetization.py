@@ -103,7 +103,7 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript magnetization.py modelname")
 
-    mag_pars, hext_pars, hmag_on, min_pars, verbose  = read_params(name)
+    mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
     m, _, _, state_id = mag_pars
 
     materials = Materials(name)

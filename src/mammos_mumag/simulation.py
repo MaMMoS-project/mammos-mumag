@@ -25,13 +25,24 @@ class Simulation:
     """Simulation class.
 
     Args:
-        material_domain_list: TODO
+        materials: :py:class:`~mammos_mumag.materials.Materials` instance containing
+            information about the material.
+        material_domain_list: List of :py:class:`~mammos_mumag.materials.MaterialDomain`
+            objects. Each object contains the intrinsic properties in any uniform
+            subdomain. If specified, this material information overwrites the
+            :py:attr:`~mammos_mumag.simulation.Simulation.materials` attribute.
+        materials_filepath: Location of materials file to read. If specified, the
+            material parameters read from file will overwrite any material information
+            defined via the :py:attr:`~mammos_mumag.simulation.Simulation.materials` or
+            :py:attr:`~mammos_mumag.simulation.Simulation.material_domain_list`
+            attributes.
         mesh: Mesh object.
-        paretials_filepath: TODO
-        parameters_filepath: TODO
-        materials: class managing materials.
-        parameters: class managing parameters.
-
+        parameters: :py:class:`~mammos_mumag.parameters.Parameters` instance containing
+            information about simulation parameters.
+        parameters_filepath: Location of parameter file to read. If specified, all the
+            parameters stored in the
+            :py:attr:`~mammos_mumag.simulation.Simulation.parameters` attribute will be
+            overwritten.
     """
 
     mesh: mammos_mumag.mesh.Mesh
@@ -288,7 +299,9 @@ class Simulation:
 
         * `<name>.p2`: simulation parameters file.
 
-        * `<name>_{i}.vtu`: saved `vtk` files. TODO
+        * `<name>_{i}.vtu`: saved configurations. The amount of configurations stored
+          depends on the simulation parameter
+          :py:attr:`~mammos_mumag.parameters.Parameters.m_step`.
 
         * `<name>_stats.txt`: memory usage information.
 
