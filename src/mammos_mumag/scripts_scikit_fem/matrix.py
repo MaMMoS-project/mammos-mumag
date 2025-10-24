@@ -22,7 +22,7 @@ def gz(Js, volume):
 
 def rhs_matrix(Js,v):
     pde = LinearPDE(Js.getDomain())
-    pde.setValue(B=Js*v)
+    pde.setValue(B=Js*v) # p.69 of the manual
     return pde.getOperator()
 
 def dx(Js):

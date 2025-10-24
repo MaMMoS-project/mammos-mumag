@@ -13,3 +13,5 @@ examples/hystloop
 .gitignore
 src/mammos_mumag/scripts_scikit_fem/test-files
 src/mammos_mumag/scripts_scikit_fem/.DS_Store
+src/mammos_mumag/scripts_scikit_fem/testing.ipynb
+dev/demag-skfem/mesh/Omega.msh
