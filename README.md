@@ -33,6 +33,7 @@ APIs and tutorials are available in the documentation. To access the documentati
 ## Installation
 
 To install `mammos-mumag`, you can use `pip install mammos-mumag` inside a Python environment.
+For CUDA support (Nvidia GPUs), use `pip install mammos-mumag[cuda]` and for ROCm support (AMD GPUs), use `pip install mammos-mumag[rocm]`.
 For more details refer to the documentation.
 
 ## How to cite

@@ -40,12 +40,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+cuda = [
+  "jax[cuda]",
+]
 examples = [
   "mammos_analysis>=0.1.4",
   "mammos_dft>=0.3.2",
   "mammos_spindynamics>=0.2.3",
   "jupyterlab>3",
   "nbval",
+]
+rocm = [
+  "jax[rocm]",
 ]
 
 [project.urls]
@@ -111,6 +117,8 @@ test-all = { depends-on = ["test-unittest", "test-docstrings", "test-notebooks"]
 test-notebooks = "pytest -v --nbval-lax examples"
 
 [tool.pixi.environments]
+cuda = {features = ["cuda"]}
+rocm = {features = ["rocm"]}
 examples = {features = ["examples"], solve-group = "default"}
 
 [tool.towncrier]
