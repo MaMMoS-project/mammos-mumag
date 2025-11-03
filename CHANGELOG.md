@@ -6,6 +6,29 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.9.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.9.0) – 2025-11-03
+
+### Added
+
+- Create cli command `unv2fly` to convert unv mesh to fly format. ([#61](https://github.com/MaMMoS-project/mammos-mumag/pull/61))
+- Added notebook `using_tesla.ipynb` for information on how to set up a workflow in Tesla. ([#68](https://github.com/MaMMoS-project/mammos-mumag/pull/68))
+- Added possibility to install GPU support (both CUDA and ROCm) with `pip` via the extra dependencies. ([#81](https://github.com/MaMMoS-project/mammos-mumag/pull/81))
+
+### Changed
+
+- Now :py:func:`mammos_mumag.hysteresis.run` can be used to execute simulations with multigrain materials. ([#46](https://github.com/MaMMoS-project/mammos-mumag/pull/46))
+- Implement automatic retries to download meshes if the requests fail. The requests will try three times in total, with a backoff factor of 0.1. ([#70](https://github.com/MaMMoS-project/mammos-mumag/pull/70))
+- Documentation is updated. Parameters have been formatted to snake case when possible. The names `h_start`, `h_final`, `h_step`,  `n_h_steps`, `m_step`, `m_final`, and `tol_h_mag_factor` take the place of `hstart`, `hfinal`, `hstep`, `nhsteps`, `mstep`, `mfinal`, and `tol_hmag_factor`. Whenever possible, reasonable entities have been defined. The unused variables `iter_max`, `tol_u`, and `verbose` have been removed. Warning: this PR causes failure in previously defined workflows if the variables  were defined by the user. ([#71](https://github.com/MaMMoS-project/mammos-mumag/pull/71))
+
+### Fixed
+
+- Fixed default `outdir` input in two functions in `mammos_mumag.simulation`. ([#69](https://github.com/MaMMoS-project/mammos-mumag/pull/69))
+
+### Misc
+
+- Added `examples/hysteresis.ipynb` to document full functionality of `mammos-mumag` when running a hysteresis loop simulation. Additionally, show the functionality of the package irrelevant to an average user in `examples/additional-functionality.ipynb`. ([#42](https://github.com/MaMMoS-project/mammos-mumag/pull/42))
+
+
 ## [mammos-mumag 0.8.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.8.1) – 2025-08-13
 
 ### Fixed
