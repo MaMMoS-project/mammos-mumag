@@ -6,6 +6,13 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.9.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.9.1) – 2025-11-04
+
+### Added
+
+- Added `multigrain-simulation` examples to documentation ([#85](https://github.com/MaMMoS-project/mammos-mumag/pull/85))
+
+
 ## [mammos-mumag 0.9.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.9.0) – 2025-11-03
 
 ### Added
