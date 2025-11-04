@@ -9,5 +9,6 @@ mammos-mumag
    quickstart
    meshes
    hysteresis
+   multigrain-simulation
    using_tesla
    additional-functionality
