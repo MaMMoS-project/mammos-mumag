@@ -243,6 +243,7 @@ class Result:
         configuration_marks: bool = False,
         ax: matplotlib.axes.Axes | None = None,
         label: str | None = None,
+        tesla: bool = False,
         **kwargs,
     ) -> matplotlib.axes.Axes:
         """Plot hysteresis loop.
@@ -256,6 +257,9 @@ class Result:
                 if not passed.
             label: Label shown in the legend. A legend is automatically added to the
                 plot if this argument is not None.
+            tesla: If true, plots External Magnetic Flux Density B instead of External
+                Magnetic Field H and Spontaneous Polarisation Js instead of Spontaneous
+                Magnetization Ms.
             kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
                 hysteresis lines.
 
@@ -267,32 +271,44 @@ class Result:
             ax = ax
         else:
             _, ax = plt.subplots()
-        if label:
-            (line,) = ax.plot(self.dataframe.H, self.dataframe.M, label=label, **kwargs)
+        df = self.dataframe
+        if tesla:
+            B = me.B(self.H.q.to("T", equivalencies=u.magnetic_flux_field()))
+            J = me.J(self.M.q.to("T", equivalencies=u.magnetic_flux_field()))
+            df["x"] = B.q
+            df["y"] = J.q
+            x_label = B.axis_label
+            y_label = J.axis_label
         else:
-            (line,) = ax.plot(self.dataframe.H, self.dataframe.M, **kwargs)
+            df = df.rename(columns={"H": "x", "M": "y"})
+            x_label = self.H.axis_label
+            y_label = self.M.axis_label
+        if label:
+            (line,) = ax.plot(df.x, df.y, label=label, **kwargs)
+        else:
+            (line,) = ax.plot(df.x, df.y, **kwargs)
         j = 0
         if configuration_marks:
-            for _, row in self.dataframe.iterrows():
+            for _, row in df.iterrows():
                 idx = int(row.configuration_type)
                 if idx != j:
-                    plt.plot(row.H, row.M, "rx")
+                    plt.plot(row.x, row.y, "rx")
                     j = idx
                     ax.annotate(
                         j,
-                        xy=(row.H, row.M),
+                        xy=(row.x, row.y),
                         xytext=(-2, -10),
                         textcoords="offset points",
                     )
         ax.set_title("Hysteresis Loop")
-        ax.set_xlabel(self.H.axis_label)
-        ax.set_ylabel(self.M.axis_label)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
         if label:
             ax.legend()
         if duplicate:
             if not duplicate_change_color:
                 kwargs.setdefault("color", line.get_color())
-            ax.plot(-self.dataframe.H, -self.dataframe.M, **kwargs)
+            ax.plot(-df.x, -df.y, **kwargs)
 
         return ax
 
