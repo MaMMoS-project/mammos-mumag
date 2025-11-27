@@ -6,6 +6,13 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.10.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.10.0) – 2025-11-27
+
+### Added
+
+- Added `tesla=True` option in the `plot` method of `mammos_mumag.hysteresis.Result` to generate the hysteresis loop in Tesla units. ([#87](https://github.com/MaMMoS-project/mammos-mumag/pull/87))
+
+
 ## [mammos-mumag 0.9.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.9.1) – 2025-11-04
 
 ### Added
