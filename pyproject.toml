@@ -30,7 +30,9 @@ dependencies = [
   "jinja2>=3.1.6",
   "mammos_entity>=0.10.0",
   "mammos_units",
+  "matplotlib",
   "numpy",
+  "pandas",
   "psutil>=7",
   "pydantic>=2.11",
   "pyvista[all]",
@@ -38,6 +40,7 @@ dependencies = [
   "requests",
   "scipy",
   "tqdm",
+  "urllib3",
 ]
 
 [project.optional-dependencies]
