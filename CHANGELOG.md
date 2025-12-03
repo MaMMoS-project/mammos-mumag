@@ -6,6 +6,13 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.10.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.10.1) – 2025-12-03
+
+### Misc
+
+- Fix dependencies: add `matplotlib`, `pandas`, and `urllib3`. ([#93](https://github.com/MaMMoS-project/mammos-mumag/pull/93))
+
+
 ## [mammos-mumag 0.10.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.10.0) – 2025-11-27
 
 ### Added
