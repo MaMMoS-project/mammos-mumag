@@ -1,6 +1,9 @@
 """Test mesh module."""
 
+import pathlib
+
 import pytest
+from platformdirs import user_cache_dir
 
 from mammos_mumag.mesh import Mesh, find_mesh
 
@@ -28,5 +31,12 @@ def test_mesh_wrong_format():
 
 @pytest.mark.parametrize("mesh_name", find_mesh())
 def test_mesh_download_all_meshes(mesh_name, tmp_path):
-    """Test that all meshes are downloadable."""
+    """Test that all meshes are downloadable.
+
+    Furthermore, it checks that each mesh (except for ``cube20_singlegrain_msize2``)
+    is cached after download. One mesh is excluded because it is packaged with
+    ``mammos_mumag`` and it will not be be downloaded to cache.
+    """
     Mesh(mesh_name).write(tmp_path / f"{mesh_name}.fly")
+    if mesh_name != "cube20_singlegrain_msize2":
+        assert (pathlib.Path(user_cache_dir("mammos_mumag")) / mesh_name).is_file()

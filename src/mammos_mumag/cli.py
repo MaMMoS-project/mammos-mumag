@@ -6,6 +6,8 @@ The command `unv2fly` converts a mesh in the `unv` format to `fly`.
 import argparse
 import pathlib
 
+from platformdirs import user_cache_dir
+
 from mammos_mumag import tofly
 
 
@@ -50,3 +52,11 @@ def convert_mesh():
         else args.infile.with_suffix(".fly").name
     )
     tofly.convert(args.infile, outfile, exclude_list=exclude_list)
+
+
+def clear_cache():
+    """Command-line entry point to clear the cache from downloaded meshes."""
+    mammos_cache_dest = pathlib.Path(user_cache_dir("mammos_mumag"))
+    if mammos_cache_dest.is_dir():
+        for mesh in mammos_cache_dest.iterdir():
+            mesh.unlink()
