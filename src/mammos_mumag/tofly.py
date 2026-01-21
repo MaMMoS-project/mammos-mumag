@@ -23,7 +23,8 @@ optional arguments:
 """
 
 import functools
-import pathlib
+import os
+from pathlib import Path
 
 CONTACT_GRP = "contact"
 
@@ -363,21 +364,21 @@ def get_exclude_set(exclude_list):
 
 
 def convert(
-    unv_path: str | pathlib.Path,
-    fly_path: str | pathlib.Path,
+    unv_path: str | os.PathLike,
+    fly_path: str | os.PathLike,
     exclude_list: list[int] = [1, 2],
 ) -> None:
-    """Convert mesh file from `unv` to `fly`.
+    """Convert mesh file from ``unv`` to ``fly``.
 
     Args:
-        unv_path: Input `unv` file path.
-        fly_path: Output `fly` file path.
-        exclude_list: List of dimensions to be excluded. Defaults to [1,2], so it will
-            exclude 1D and 2D elements.
+        unv_path: Input ``unv`` file path.
+        fly_path: Output ``fly`` file path.
+        exclude_list: List of dimensions to be excluded. Defaults to ``[1,2]``,
+            so it will exclude 1D and 2D elements.
 
     """
     infile = open(unv_path)
-    pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
+    Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
     outfile = open(fly_path, "w")
     exclude_set = get_exclude_set(exclude_list)
     nodes, index, groups, contact = scanUnv(infile, exclude_set)

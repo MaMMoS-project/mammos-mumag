@@ -1,7 +1,20 @@
-"""Materials class."""
+"""Materials class.
+
+This submodule contains classes to describe (possibly multigrain) magnetic materials.
+
+* :py:class:`~mammos_mumag.materials.MaterialDomain` contains magnetic properties for
+  each domain.
+* :py:class:`~mammos_mumag.materials.Materials` contains information about the whole
+  magnetic material. Together with a list of
+  :py:class:`~mammos_mumag.materials.MaterialDomain` objects, this class has also
+  methods to read and write material information.
+"""
+
+from __future__ import annotations
 
 import numbers
-import pathlib
+import os
+from pathlib import Path
 from typing import Any
 
 import mammos_entity as me
@@ -16,22 +29,32 @@ from pydantic.dataclasses import dataclass
 class MaterialDomain:
     """Uniform material domain.
 
-    It collects material parameters, constant in a certain domain.
+    A domain is a volume with constant magnetic parameters.
+    This class contains the values of these magnetic parameters.
+
+    Geometric information are not included.
     """
 
-    theta: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction in
-    radians."""
-    phi: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
-    radians."""
-    K1: me.Entity = Field(default_factory=me.Ku)
-    r"""First magnetocrystalline anisotropy constant in
-    :math:`\mathrm{J}/\mathrm{m}^3`."""
-    Ms: me.Entity = Field(default_factory=me.Ms)
-    r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
-    A: me.Entity = Field(default_factory=me.A)
-    r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
+    theta: me.Entity = Field(default=me.Entity("Angle"))
+    """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction
+    as an ``Angle``. Interpreted in radians if passed without unit.
+    Default value is zero."""
+    phi: me.Entity = Field(default=me.Entity("Angle"))
+    """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction
+    as an ``Angle``. Interpreted in radians if passed without unit.
+    Default value is zero."""
+    K1: me.Entity = Field(default=me.Entity("MagnetocrystallineAnisotropyConstantK1"))
+    r"""First magnetocrystalline anisotropy constant as
+    `MagnetocrystallineAnisotropyConstantK1`, defined by the uniaxial anisotropy energy
+    density :math:`K_1 \sin^2(\theta)`, where :math:`\theta` is the angle between the
+    anisotropy axis and the magnetization. Interpreted in J/m³ if passed without unit.
+    """
+    Ms: me.Entity = Field(default=me.Entity("SpontaneousMagnetization"))
+    """Spontaneous magnetization as ``SpontaneousMagnetization``.
+    Interpreted in A/m if passed without unit."""
+    A: me.Entity = Field(default=me.Entity("ExchangeStiffnessConstant"))
+    """Exchange stiffness constant as ``ExchangeStiffnessConstant``.
+    Interpreted in J/m if passed without unit."""
 
     @field_validator("theta", mode="before")
     @classmethod
@@ -63,7 +86,7 @@ class MaterialDomain:
     @classmethod
     def _convert_A(cls, A: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(A, float | int | u.Quantity):
+        if isinstance(A, numbers.Real | u.Quantity):
             A = me.A(A, unit=u.J / u.m)
         return A
 
@@ -71,7 +94,7 @@ class MaterialDomain:
     @classmethod
     def _convert_Ms(cls, Ms: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(Ms, float | int | u.Quantity):
+        if isinstance(Ms, numbers.Real | u.Quantity):
             Ms = me.Ms(Ms, unit=u.A / u.m)
         return Ms
 
@@ -83,7 +106,7 @@ class Materials:
     domains: list[MaterialDomain] = Field(default_factory=list)
     """Each domain is a MaterialDomain class of material parameters, constant in each
     region."""
-    filepath: pathlib.Path | None = Field(default=None, repr=False)
+    filepath: os.PathLike | None = Field(default=None, repr=False)
     """Material file path."""
 
     def __post_init__(self) -> None:
@@ -99,13 +122,16 @@ class Materials:
     def add_domain(
         self, A: float, Ms: float, K1: float, phi: float, theta: float
     ) -> None:
-        r"""Append domain with specified parameters.
+        """Append domain with specified parameters.
+
+        All the inputs should be float numbers and be without unit.
+        They should be however be expressed in specific units (specified
+        in each argument docstring).
 
         Args:
-            A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-            Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
-            K1: First magnetocrystalline anisotropy constant in
-                :math:`\mathrm{J}/\mathrm{m}^3`.
+            A: Exchange stiffness constant in J/m.
+            Ms: Spontaneous magnetization in A/m.
+            K1: First magnetocrystalline anisotropy constant in J/m³.
             phi: Angle of the magnetocrystalline anisotropy axis
                 from the :math:`x`-direction in radians.
             theta: Angle of the magnetocrystalline anisotropy axis
@@ -128,22 +154,24 @@ class Materials:
         )
         self.domains.append(dom)
 
-    def read(self, fname: str | pathlib.Path) -> None:
-        """Read materials file.
+    def read(self, fname: str | os.PathLike) -> None:
+        """Read material information from file.
 
         This function overwrites the current
-        :py:attr:`~mammos_mumag.materials.Materials.domains` attribute.
+        :py:attr:`~mammos_mumag.materials.Materials.domains` attribute, hence
+        overwriting all material parameters previously defined.
 
-        Currently accepted formats: ``krn`` and ``yaml``.
+        Supported formats are ``krn`` (with extension ``.krn``) and ``yaml`` (with
+        extension ``.yaml`` or ``.yml``).
 
         Args:
-            fname: File name.
+            fname: File to read.
 
         Raises:
             NotImplementedError: Wrong file format.
 
         """
-        fpath = pathlib.Path(fname)
+        fpath = Path(fname)
         if not fpath.is_file():
             raise FileNotFoundError(f"File {fpath} not found.")
 
@@ -158,7 +186,7 @@ class Materials:
                 f"{fpath.suffix} materials file is not supported."
             )
 
-    def _read_krn(self, fname: str | pathlib.Path) -> None:
+    def _read_krn(self, fname: str | os.PathLike) -> None:
         """Read material `krn` file.
 
         This function overwrites the current ``domains`` attribute.
@@ -182,7 +210,7 @@ class Materials:
                 A=float(line[5]),
             )
 
-    def _read_yaml(self, fname: str | pathlib.Path) -> None:
+    def _read_yaml(self, fname: str | os.PathLike) -> None:
         """Read material `yaml` file.
 
         This function overwrites the current ``domains`` attribute.
@@ -205,14 +233,20 @@ class Materials:
                 A=dom["A"],
             )
 
-    def write_krn(self, fname: str | pathlib.Path) -> None:
-        """Write material `krn` file.
+    def write_krn(self, fname: str | os.PathLike) -> None:
+        """Write material parameters in the  ``krn`` file.
 
         Each domain in :py:attr:`~domains` is written on a single line
         with spaces as separators.
 
         Args:
-            fname: File path
+            fname: File to write.
+
+
+        Examples:
+            >>> from mammos_mumag.materials import Materials
+            >>> mat = Materials()
+            >>> mat.write_krn("materials.krn")
 
         """
         env = Environment(
@@ -231,11 +265,14 @@ class Materials:
                 )
             )
 
-    def write_yaml(self, fname: str | pathlib.Path) -> None:
-        """Write material `yaml` file.
+    def write_yaml(self, fname: str | os.PathLike) -> None:
+        """Write material parameters in the ``yaml`` format.
+
+        The output file will contain a list of all domains, where each domain
+        is a ``parameter: value`` map.
 
         Args:
-            fname: File path
+            fname: Output file path
 
         """
         domains = [

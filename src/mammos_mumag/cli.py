@@ -4,7 +4,7 @@ The command `unv2fly` converts a mesh in the `unv` format to `fly`.
 """
 
 import argparse
-import pathlib
+from pathlib import Path
 
 from mammos_mumag import tofly
 
@@ -18,13 +18,13 @@ def convert_mesh():
     )
     parser.add_argument(
         "infile",
-        type=pathlib.Path,
+        type=Path,
         help=("path of mesh in unv format"),
     )
     parser.add_argument(
         "outfile",
         nargs="?",
-        type=pathlib.Path,
+        type=Path,
         default=None,
         help=(
             "path of mesh in fly format. If not defined the name will be inferred from "

@@ -1,7 +1,7 @@
 """Download all available meshes from Keeper."""
 
 import json
-import pathlib
+from pathlib import Path
 
 from mammos_mumag.mesh import _get_mesh_json_from_keeper, get_mesh_json
 
@@ -19,7 +19,7 @@ def update_mesh_json():
         print("Mesh JSON file already up to date.")
     else:
         print("Mesh JSON was updated.")
-        with open(pathlib.Path(__file__).parent / "mesh" / "README.json", "w") as f:
+        with open(Path(__file__).parent / "mesh" / "README.json", "w") as f:
             json.dump(new_json, f, indent=2)
 
 

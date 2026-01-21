@@ -1,67 +1,102 @@
-"""Functions for evaluating and processin the hysteresis loop."""
+"""Functions for evaluating and processing the hysteresis loop."""
 
 from __future__ import annotations
 
-import pathlib
-from numbers import Number
+import os
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import mammos_entity as me
 import mammos_units as u
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas
 import pandas as pd
 import pyvista as pv
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 
 from mammos_mumag.materials import MaterialDomain, Materials
+from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
 
 if TYPE_CHECKING:
+    import mammos_entity
+    import mammos_units
     import matplotlib
+    import numpy.typing
+    import pandas.DataFrame
     import pyvista
 
     import mammos_mumag
 
 
 def run(
-    Ms: Number | u.Quantity | me.Entity,
-    A: Number | u.Quantity | me.Entity,
-    K1: Number | u.Quantity | me.Entity,
-    theta: Number | u.Quantity | me.Entity,
-    phi: Number | u.Quantity | me.Entity,
-    mesh: mammos_mumag.mesh.Mesh | pathlib.Path | str,
-    h_start: Number | u.Quantity | me.Entity | None = None,
-    h_final: Number | u.Quantity | me.Entity | None = None,
-    h_step: Number | u.Quantity | me.Entity | None = None,
+    Ms: mammos_entity.Entity | mammos_units.Quantity | numpy.typing.ArrayLike,
+    A: mammos_entity.Entity | mammos_units.Quantity | numpy.typing.ArrayLike,
+    K1: mammos_entity.Entity | mammos_units.Quantity | numpy.typing.ArrayLike,
+    theta: mammos_entity.Entity | mammos_units.Quantity | numpy.typing.ArrayLike,
+    phi: mammos_entity.Entity | mammos_units.Quantity | numpy.typing.ArrayLike,
+    mesh: Mesh | os.PathLike | str,
+    h_start: mammos_entity.Entity
+    | mammos_units.Quantity
+    | numpy.typing.ArrayLike
+    | None = None,
+    h_final: mammos_entity.Entity
+    | mammos_units.Quantity
+    | numpy.typing.ArrayLike
+    | None = None,
+    h_step: mammos_entity.Entity
+    | mammos_units.Quantity
+    | numpy.typing.ArrayLike
+    | None = None,
     h_n_steps: int = 20,
-    m_final: Number | u.Quantity | me.Entity | None = None,
-    outdir: str | pathlib.Path = "hystloop",
+    m_final: mammos_entity.Entity
+    | mammos_units.Quantity
+    | numpy.typing.ArrayLike
+    | None = None,
+    outdir: str | os.PathLike = "hystloop",
 ) -> mammos_mumag.hysteresis.Result:
     r"""Run hysteresis loop.
 
+    The size of the magnetic properties ``Ms``, ``A``, ``K1``, ``theta``, and ``phi``
+    should be equal to the number of magnetic domains in the mesh.
+
+    If a mesh from the MaMMoS Zenodo record is used, the number of geometric
+    tags are higher than the number of domains. For more information,
+    see the :py:mod:`mammos_mumag.mesh` module.
+
     Args:
-        Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
-        A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        K1: First magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
+        Ms: Spontaneous magnetization as ``SpontaneousMagnetization``.
+            Interpreted in A/m if passed without unit.
+        A: Exchange stiffness constant as ``ExchangeStiffnessConstant``.
+            Interpreted in J/m if passed without unit.
+        K1: First magnetocrystalline anisotropy constant as
+            ``MagnetocrystallineAnisotropyConstantK1``, defined by the uniaxial
+            anisotropy energy density :math:`K_1 \sin^2(\theta)`, where
+            :math:`\theta` is the angle between the anisotropy axis and the
+            magnetization. Interpreted in J/m³ if passed without unit.
         theta: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`z`-direction in radians.
+            :math:`z`-direction as an ``Angle``.
+            Interpreted in radians if passed without unit.
         phi: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`x`-direction in radians.
-        mesh: The mesh can either be given as a :py:class:`~mammos_mumag.mesh.Mesh`
-            instance (for meshes available through `mammos_mumag`) or its path can be
-            specified. The only possible mesh format is `.fly`.
-        h_start: Initial strength of the external field in
-            :math:`\mathrm{A}/\mathrm{m}`.
-        h_final: Final strength of the external field in :math:`\mathrm{A}/\mathrm{m}`.
-        h_step: Step size in :math:`\mathrm{A}/\mathrm{m}`.
-        h_n_steps: Number of steps in the field sweep.
+            :math:`x`-direction as an ``Angle``.
+            Interpreted in radians if passed without unit.
+        mesh: Mesh of the material. The mesh can either be given as a
+            :py:class:`~mammos_mumag.mesh.Mesh` instance, as a string for Zenodo meshes
+            available through :py:mod:`mammos_mumag`, or as a path for local meshes.
+            The only recognized mesh format is ``.fly``.
+        h_start: Initial strength of the external field as an
+            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+        h_final: Final strength of the external field as an
+            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+        h_step: Step size of external magnetic field in the hysteresis loop as an
+            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+        h_n_steps: Number of steps in the field sweep. If ``h_step`` is given, this
+            argument is ignored.
         m_final: Value of magnetization (along the external field direction) at which
-            the hysteresis calculation will stop in :math:`\mathrm{A}/\mathrm{m}`.
+            the hysteresis calculation will stop as a ``Magnetization``.
+            Interpreted in A/m if passed without unit.
         outdir: Directory where simulation results are written to.
 
     Returns:
@@ -145,25 +180,30 @@ def run(
 
 
 def read_result(
-    outdir: str | pathlib.Path,
+    outdir: str | os.PathLike,
     name: str = "out",
 ) -> mammos_mumag.hysteresis.Result:
-    r"""Read hysteresis loop output from directory.
+    """Read hysteresis loop output from directory.
+
+    In particular, this function looks for the file ``<outdir>/<name>.csv`` in the
+    `mammos_entity csv format <https://mammos-project.github.io/mammos/api/
+    mammos_entity.io.html>`__ generated at the end of the hysteresis loop.
 
     Args:
-        outdir: Path of output directory where the results of the hysteresis loop are
-            stored.
+        outdir: Location of output directory where the results of the hysteresis loop
+            are stored.
         name: System name with which the loop output files are stored.
 
     Returns:
-       Result object.
+       Hysteresis result object.
 
     Raises:
-        FileNotFoundError: hysteresis loop .dat file not found.
+        FileNotFoundError:
+            hysteresis loop output file ``<outdir>/<name>.csv`` not found.
 
     """
     try:
-        res = me.from_csv(pathlib.Path(outdir) / f"{name}.csv")
+        res = me.from_csv(Path(outdir) / f"{name}.csv")
     except FileNotFoundError:
         raise FileNotFoundError(
             f"Hysteresis file {name}.csv not found in outdir='{outdir}'."
@@ -193,9 +233,7 @@ def read_result(
         energy_density=res.energy_density,
         configurations={
             i + 1: fname
-            for i, fname in enumerate(
-                sorted(pathlib.Path(outdir).resolve().glob("*.vtu"))
-            )
+            for i, fname in enumerate(sorted(Path(outdir).resolve().glob("*.vtu")))
         },
         configuration_type=np.asarray(res.configuration_type),
     )
@@ -203,28 +241,45 @@ def read_result(
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True, frozen=True))
 class Result:
-    """Hysteresis loop Result."""
+    """Hysteresis loop Result.
+
+    This class contains the resultant magnetization values of a hysteresis loop.
+    ``H`` is the array of external field strengths. To know the axis of the
+    applied external field, one needs to read the input file `<name>.p2`.
+
+    The resultant magnetization values are denoted using the letter "M". Without
+    suffix, ``M`` indicates the strength of the magnetization in the direction
+    of the external field axis. The other values, ``Mx``, ``My``, and ``Mz``,
+    are the Cartesian component of the magnetization.
+
+    If available, ``energy_density`` reads the resulting energy density.
+
+    If available, ``configuration_type`` and ``configurations`` give information
+    about different magnetic configuration appearing in the hysteresis loop.
+    During the hysteresis loop, a new configuration is saved if two consecutive
+    magnetization values differ for more than
+    :py:attr:`~mammos_mumag.parameters.Parameters.m_step`. This value is found in
+    the `<name>.p2` input file.
+
+    This class is frozen and cannot be modified by the user.
+    """
 
     H: me.Entity
-    r"""Array of external field strengths in :math:`\mathrm{A}/\mathrm{m}`."""
+    """Array of external field strengths."""
     M: me.Entity
-    r"""Array of magnetization values for the field strengths in the
-    direction of H in :math:`\mathrm{A}/\mathrm{m}`."""
+    """Array of magnetization values for the field strengths in the direction parallel
+    to the external field axis."""
     Mx: me.Entity
-    r"""Component x of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
+    """Array of x-component of the magnetization in Cartesian coordinates."""
     My: me.Entity
-    r"""Component y of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
+    """Array of y-component of the magnetization in Cartesian coordinates."""
     Mz: me.Entity
-    r"""Component z of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
+    """Array of z-component of the magnetization in Cartesian coordinates."""
     energy_density: me.Entity | None = None
-    r"""Array of energy densities for the field strengths in
-    :math:`\mathrm{J}/\mathrm{m^3}`."""
+    """Array of energy densities for the field strengths."""
     configuration_type: np.ndarray | None = None
     """Array of indices of representative configurations for the field strengths."""
-    configurations: dict[int, pathlib.Path] | None = None
+    configurations: dict[int, os.PathLike] | None = None
     """Mapping of configuration indices to file paths."""
 
     @property
@@ -255,21 +310,26 @@ class Result:
         """Plot hysteresis loop.
 
         Args:
-            duplicate: Also plot loop with -M and -H to simulate full hysteresis.
+            duplicate: Also plot loop with the mirror image of the simulated :math:`M`
+                and :math:`H` values with respect to the magnetization axis
+                full hysteresis loop.
             duplicate_change_color: If set to false use the same color for both branches
                 of the hysteresis plot.
             configuration_marks: Show markers where a configuration has been saved.
-            ax: Matplotlib axes object to which the plot is added. A new one is create
+            ax: Matplotlib axes object to which the plot is added. A new one is created
                 if not passed.
             label: Label shown in the legend. A legend is automatically added to the
                 plot if this argument is not None.
-            tesla: If true, plots External Magnetic Flux Density B instead of External
-                Magnetic Field H and Polarisation J instead of Magnetization M.
-            kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
+            tesla: If true, plots External Magnetic Flux Density strength B instead of
+                External Magnetic Field strength H and Polarisation Js instead of
+                Magnetization Ms.
+
+            **kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
                 hysteresis lines.
 
         Returns:
-            The `matplotlib.axes.Axes` object which was used to plot the hysteresis loop
+            The :py:class:`~matplotlib.axes.Axes` object which was used to plot the
+                hysteresis loop
 
         """
         if ax:

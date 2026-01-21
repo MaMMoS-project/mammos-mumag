@@ -1,7 +1,8 @@
 """Download all available meshes from Keeper."""
 
 import json
-import pathlib
+import os
+from pathlib import Path
 
 from tqdm import tqdm
 
@@ -9,7 +10,7 @@ from mammos_mumag.mesh import Mesh, _get_mesh_json_from_keeper
 
 
 def mesh_download_all(
-    extension: str = "fly", outdir: str | pathlib.Path = "all_meshes"
+    extension: str = "fly", outdir: str | os.PathLike = "all_meshes"
 ) -> None:
     """Helper function to download all available meshes.
 
@@ -18,7 +19,7 @@ def mesh_download_all(
         `unv`.
         outdir: Directory where meshes are downloaded.
     """
-    outdir = pathlib.Path(outdir)
+    outdir = Path(outdir)
     outdir.mkdir(exist_ok=True)
     keeper_json = _get_mesh_json_from_keeper()
 
