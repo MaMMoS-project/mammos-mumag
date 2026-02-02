@@ -3,6 +3,7 @@
 import json
 import pathlib
 import shutil
+from warnings import warn
 
 import requests
 import urllib3
@@ -89,8 +90,19 @@ class Mesh:
             )
             s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
             res = s.get(self._url)
-            with open(dest, "wb") as f:
-                f.write(res.content)
+            if res.status_code != 200:
+                warn(
+                    "Unable to download mesh from Zenodo. "
+                    f"The request returned with HTTP code: {res.status_code}. "
+                    "Downloading the mesh from keeper.",
+                    stacklevel=1,
+                )
+                # Keeper works reliably when downloading 1000 fly mesh in parallel!
+                # Think about completely replacing Zenodo downloads with Keeper.
+                self._write_from_keeper(dest)
+            else:
+                with open(dest, "wb") as f:
+                    f.write(res.content)
 
     def _write_from_keeper(self, dest: pathlib.Path | str) -> None:
         """Write mesh to destination.
