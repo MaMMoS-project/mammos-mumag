@@ -32,36 +32,68 @@ def find_mesh(mesh_name: str | None = None) -> list[str]:
 
 
 class Mesh:
-    """Mesh class."""
+    """Mesh class.
+
+    This class supports both local mesh (i.e. found on disk and defined by the user) and
+    remote meshes stored on Zenodo. The Zenodo URL is found in the ``README.json`` and a
+    list of all available meshes is found using :py:func:`~mammos_mumag.mesh.find_mesh`.
+
+    Attributes:
+        name:
+
+            * If local mesh, path to the file.
+            * If remote mesh, its name is as it appears on the Zenodo record or in the
+              ``README.json``.
+
+        info: dictionary of available information about the mesh. If the mesh is local,
+            this dictionary is initialized with the couple
+            `"description": "User defined mesh."`.
+
+    """
 
     def __init__(self, mesh_name: str | pathlib.Path):
-        """Initialize Mesh with either mesh_name or path for local meshes."""
-        matches = (
-            find_mesh(mesh_name) if not isinstance(mesh_name, pathlib.Path) else []
-        )
-        if len(matches) > 1:
-            raise ValueError(
-                f"Mesh name ambiguous. More than one match found: {matches}"
-            )
-        elif not matches:
-            filepath = pathlib.Path(mesh_name)
-            if filepath.is_file():
-                self.name = filepath
-                self.info = {"description": "User defined mesh."}
-                self._local = True
-                self._path = filepath
-            else:
-                raise ValueError("Mesh not found.")
+        """Initialize Mesh.
+
+        * The input ``mesh_name`` is initially understood as a location and tried for
+          matches on disk. If such file exists, the mesh is intended as local.
+        * Otherwise, ``mesh_name`` is given to :py:func:`~mammos_mumag.mesh.find_mesh`
+          for matches in the Zenodo record. If multiple matches are found, the
+          initialization will return an error.
+
+        Args:
+            mesh_name: Location of local mesh or name of remote mesh.
+
+        Raises:
+            RuntimeError: Multiple matches found in the Zenodo record.
+            RuntimeError: No match found, either local or remote.
+        """
+        if pathlib.Path(mesh_name).is_file():
+            self.name = mesh_name
+            self.info = {"description": "User defined mesh."}
+            self._local = True
+            self._path = pathlib.Path(mesh_name)
         else:
-            mesh_json = get_mesh_json()
-            self.name = matches[0]
-            self.info = mesh_json["meshes"][matches[0]]
-            if _local := (
-                _path := pathlib.Path(__file__).parent / "mesh" / f"{self.name}.fly"
-            ).is_file():
-                self._path = _path
-            self._local = _local
-            self._url = f"{mesh_json['metadata']['zenodo_url']}/files/{self.name}.fly"
+            matches = find_mesh(mesh_name)
+            if len(matches) == 0:
+                raise RuntimeError(
+                    f"No local or remote matches found with name: {mesh_name}"
+                )
+            elif len(matches) > 1:
+                raise RuntimeError(
+                    f"Mesh name ambiguous. More than one match found: {matches}"
+                )
+            else:
+                mesh_json = get_mesh_json()
+                self.name = matches[0]
+                self.info = mesh_json["meshes"][self.name]
+                self._local = (
+                    _path := pathlib.Path(__file__).parent / "mesh" / f"{self.name}.fly"
+                ).is_file()
+                if self._local:
+                    self._path = _path
+                self._url = (
+                    f"{mesh_json['metadata']['zenodo_url']}/files/{self.name}.fly"
+                )
 
     def __str__(self) -> str:
         """Implement str dunder."""

@@ -7,13 +7,13 @@ from mammos_mumag.mesh import Mesh, find_mesh
 
 def test_mesh_no_matches():
     """Test Mesh creation with no matches in database."""
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Mesh("cube131")
 
 
 def test_mesh_too_many_matches():
     """Test Mesh creation with too many matches in database."""
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         Mesh("cube40")
 
 
