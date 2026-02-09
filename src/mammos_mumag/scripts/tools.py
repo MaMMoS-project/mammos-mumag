@@ -96,8 +96,8 @@ def read_params(name):
     )
     config.read(name + ".p2")
     mesh = config["mesh"]
-    size = mesh["size"]
-    scale = mesh["scale"]
+    size = float(mesh["size"])
+    scale = float(mesh["scale"])
     intial_state = config["initial state"]
     field = config["field"]
     minimizer = config["minimizer"]
