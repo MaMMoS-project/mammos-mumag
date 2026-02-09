@@ -30,9 +30,6 @@ class MaterialDomain:
     K1: me.Entity = Field(default_factory=me.Ku)
     r"""First magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
-    K2: me.Entity = Field(default_factory=me.Ku)
-    r"""Second magnetocrystalline anisotropy constant in
-    :math:`\mathrm{J}/\mathrm{m}^3`."""
     Ms: me.Entity = Field(default_factory=me.Ms)
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
     A: me.Entity = Field(default_factory=me.A)
@@ -65,14 +62,6 @@ class MaterialDomain:
         if isinstance(K1, numbers.Real | u.Quantity):
             K1 = me.Ku(K1, unit=u.J / u.m**3)
         return K1
-
-    @field_validator("K2", mode="before")
-    @classmethod
-    def _convert_K2(cls, K2: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(K2, float | int | u.Quantity):
-            K2 = me.Ku(K2, unit=u.J / u.m**3)
-        return K2
 
     @field_validator("A", mode="before")
     @classmethod
@@ -112,7 +101,7 @@ class Materials:
             self.read(self.filepath)
 
     def add_domain(
-        self, A: float, Ms: float, K1: float, K2: float, phi: float, theta: float
+        self, A: float, Ms: float, K1: float, phi: float, theta: float
     ) -> None:
         r"""Append domain with specified parameters.
 
@@ -120,8 +109,6 @@ class Materials:
             A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
             Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
             K1: First magnetocrystalline anisotropy constant in
-                :math:`\mathrm{J}/\mathrm{m}^3`.
-            K2: Second magnetocrystalline anisotropy constant in
                 :math:`\mathrm{J}/\mathrm{m}^3`.
             phi: Angle of the magnetocrystalline anisotropy axis
                 from the :math:`x`-direction in radians.
@@ -131,16 +118,15 @@ class Materials:
         Examples:
             >>> from mammos_mumag.materials import Materials
             >>> mat = Materials()
-            >>> mat.add_domain(A=1, Ms=2, K1=3, K2=0, phi=0, theta=0)
+            >>> mat.add_domain(A=1, Ms=2, K1=3, phi=0, theta=0)
             >>> mat
-            Materials(domains=[MaterialDomain(theta=..., phi=..., K1=..., K2=..., Ms=..., A=...)])
+            Materials(domains=[MaterialDomain(theta=..., phi=..., K1=..., Ms=..., A=...)])
 
         """  # noqa: E501
         dom = MaterialDomain(
             theta=theta,
             phi=phi,
             K1=K1,
-            K2=K2,
             Ms=Ms,
             A=A,
         )
@@ -212,7 +198,6 @@ class Materials:
                 "theta": dom.theta.value.tolist(),
                 "phi": dom.phi.value.tolist(),
                 "K1": dom.K1.value.tolist(),
-                "K2": dom.K2.value.tolist(),
                 "Ms": dom.Ms.q.to(
                     u.T, equivalencies=u.magnetic_flux_field()
                 ).value.tolist(),
@@ -243,7 +228,6 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
             theta=me.Entity("Angle", float(line[0])),
             phi=me.Entity("Angle", float(line[1])),
             K1=me.Ku(float(line[2]), unit="J/m3"),
-            K2=me.Ku(float(line[3]), unit="J/m3"),
             Ms=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
@@ -274,7 +258,6 @@ def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
             K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
-            K2=me.Ku(float(dom["K2"]), unit=u.J / u.m**3),
             Ms=me.Ms(
                 (float(dom["Ms"]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
