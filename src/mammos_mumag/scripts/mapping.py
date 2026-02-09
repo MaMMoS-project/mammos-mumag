@@ -150,7 +150,8 @@ def pars2jax(pars):
 
 # update pars from file
 def update_pars(name,pars):
-    mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
+    mesh_pars, mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
+    pars['mesh_pars'] = mesh_pars
     pars['mag_pars']  = mag_pars
     pars['hext_pars'] = hext_pars
     pars['hmag_on']   = hmag_on
@@ -173,7 +174,8 @@ def escript2arrays(name,check=0,target='jax'):
     pars = {}
     
     # parameters
-    mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
+    mesh_pars, mag_pars, hext_pars, hmag_on, min_pars  = read_params(name)
+    size, scale       = mesh_pars
     m, _, _, state_id = mag_pars
     h, _, _, _        = hext_pars
     pars['mag_pars']  = mag_pars
@@ -182,7 +184,7 @@ def escript2arrays(name,check=0,target='jax'):
     pars['min_pars']  = min_pars
     
     # materials
-    materials = Materials(name)
+    materials = Materials(name, size=size, scale=scale)
     if target=='jax':
       pars['meas'] = escript2jax(materials.meas)
     else:

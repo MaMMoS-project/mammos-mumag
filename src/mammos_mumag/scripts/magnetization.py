@@ -103,10 +103,11 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript magnetization.py modelname")
 
-    mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
+    mesh_pars, mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
+    size, scale = mesh_pars
     m, _, _, state_id = mag_pars
 
-    materials = Materials(name)
+    materials = Materials(name, size=size, scale=scale)
     m = getM(e.wherePositive(materials.meas), m, state_id)
     i = 0
     saveVTK(name + f".{i:04}", tags=materials.get_tags(), m=m)
