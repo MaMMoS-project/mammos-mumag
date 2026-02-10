@@ -95,6 +95,9 @@ def read_params(name):
         }
     )
     config.read(name + ".p2")
+    mesh = config["mesh"]
+    size = float(mesh["size"])
+    scale = float(mesh["scale"])
     intial_state = config["initial state"]
     field = config["field"]
     minimizer = config["minimizer"]
@@ -128,9 +131,10 @@ def read_params(name):
     precond_iter = int(minimizer["precond_iter"])
     tol_u = tol_fun * tol_hmag_factor
     # print(f"tolerances: optimality tolerance {tol_fun}   hmag {tol_u}")
-    return (                            
+    return (
+        (size, scale),                                             # mesh parameters
         (m,mstep,mfinal,state_id),                                 # magnetic state
         (h,hstart,hfinal,hstep),                                   # field steps
         hmag_on,                                                   # magnetostatics
         (tol_u, tol_fun, precond_iter),                  # solver parameters,
-    ) # mag_pars, hext_pars, hmag_on, min_pars
+    ) # mesh_pars, mag_pars, hext_pars, hmag_on, min_pars

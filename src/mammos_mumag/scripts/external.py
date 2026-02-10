@@ -47,13 +47,14 @@ if __name__ == "__main__":
     except IndexError:
         sys.exit("usage run-escript external.py modelname")
 
-    mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
+    mesh_pars, mag_pars, hext_pars, hmag_on, min_pars = read_params(name)
+    size, scale = mesh_pars
     m, _, _, _ =  mag_pars
     h, start, final, step = hext_pars
     Js = read_Js(name)
     ezee = -Js * (start - step) * (m[0] * h[0] + m[1] * h[1] + m[2] * h[2])
 
-    materials = Materials(name)
+    materials = Materials(name, size=size, scale=scale)
     m = getM(e.wherePositive(materials.meas), m)
     external = External(start, final, step, h, materials.meas, materials.volume)
         
