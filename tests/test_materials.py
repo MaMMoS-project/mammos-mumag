@@ -39,7 +39,6 @@ def test_wrong_numgrains(tmp_path):
                 "theta": 0,
                 "phi": 0,
                 "K1": 0,
-                "K2": 0,
                 "Ms": 0,
                 "A": 0,
             }
