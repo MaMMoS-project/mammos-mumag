@@ -50,7 +50,6 @@ def alpha_init(f0,      # energy of previous iteration
                  lambda t: 1.0e30,        # use high value, select term1 afterwards
                  lambda t: t,
                  term2)
-    # jax.debug.print('initial step length {a} {b} {x}',a=term1,b=term2,x=term1<o*term2)
     return lax.cond(term1 < o*term2,
                     lambda _: term1,
                     lambda _: term2,
@@ -121,7 +120,6 @@ def line_search(x,      # current magnetization
     def body(state):
         i, _, _, alpha, _, _, alt_args, stats = state
         alpha *= rho
-        jax.debug.print('STEP SIZE DECREASED to {alpha} {i}',alpha=alpha, i=i)
         x1 = update_x(x, alpha, d)
         f1, g1, alt_args, stats = func(x1, func_args, alt_args, stats)
         gd1 = np.dot(g1, d)         
@@ -147,20 +145,8 @@ def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_i
     k = 1
     n_restart = 20
 
-    def print_restart_z1(_):
-        jax.debug.print("restart: -z1 is not a sufficient downhill direction")
-        return None
-
-    def print_restart_d(_):
-        jax.debug.print("restart:  d  is not a sufficient downhill direction")
-        return None
-
-    def no_op(_):
-        return None
-
     def cond(state):
         k, x0, f0, x, f, g, _, _, _ = state
-        # jax.debug.print('    min   {k} {f}',k=k,f=f)
         a = (f0-f) > tol*(1+np.abs(f))                # gill, murray, wright, practical optimization, section 8.2.3.2
         b = np.logical_or(np.linalg.norm((x0-x),ord=np.inf) > np.sqrt(tol)*(1+np.linalg.norm(x,ord=np.inf)),k==0)
         c = np.linalg.norm(g,ord=np.inf) > np.cbrt(tol)*(1+np.abs(f))
@@ -169,7 +155,6 @@ def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_i
     def body(state):
         k, _, f0, x, f, g, d, alt_args, stats = state
         condition = np.dot(d,g) > -0.001*np.linalg.norm(d)*np.linalg.norm(g)   # eq 2.15, Andrei, Open Problems in Nonlinear Conjugate Gradient ...
-        jax.lax.cond(condition, print_restart_z1, no_op, operand=None)
         d = jax.lax.select(condition, -g, d)                                   # use -g, if d not downhill
         x1, f1, g1, alt_args, stats = line_search(x,f0, f,g,d, func, func_args, alt_args, stats, update_x) 
         z1 = M_inv(x, g1, func_args, alt_args)
@@ -180,7 +165,7 @@ def hestenes_stiefel_ncg(x, func, func_args, alt_args, stats, tol, update_x, M_i
         # beta = jax.lax.select(condition, 0.0, beta)
         d = -z1 + beta * d
         condition = np.dot(d,g) > -0.001*np.linalg.norm(d)*np.linalg.norm(g)   # eq 2.15, Andrei, Open Problems in Nonlinear Conjugate Gradient ...
-        jax.lax.cond(condition, print_restart_d, no_op, operand=None)
+
         d = jax.lax.select(condition, -z1, d)                                  # use -z1, if d not downhill
         return k+1, x, f, x1, f1, g1, d, alt_args, stats
 
