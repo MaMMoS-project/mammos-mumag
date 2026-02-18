@@ -39,7 +39,9 @@ def test_mesh_download_all_meshes(mesh_name, tmp_path):
     """
     Mesh(mesh_name).write(tmp_path / f"{mesh_name}.fly")
     if mesh_name != "cube20_singlegrain_msize2":
-        assert (pathlib.Path(user_cache_dir("mammos_mumag")) / mesh_name).is_file()
+        assert (
+            pathlib.Path(user_cache_dir("mammos_mumag")) / f"{mesh_name}.fly"
+        ).is_file()
 
 
 def test_download_from_keeper(tmp_path):
