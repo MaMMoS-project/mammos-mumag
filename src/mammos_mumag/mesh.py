@@ -119,17 +119,19 @@ class Mesh:
                 function :py:func:`platformdirs.user_cache_dir` to ensure compatibility
                 with different platforms.
 
-        Raises:
-            ValueError: Wrong mesh format. Only `.fly` meshes can be written with this
-                function. If the suffix of the destination is different, this error is
-                raised.
+        Warnings:
+            UserWarning: The extension of the ``destination`` argument is different than
+                the accepted mesh format ``.fly``. The file will be saved in the
+                extension specified by ``destination`` but in the ``.fly`` syntax.
+
         """
         destination = pathlib.Path(destination).resolve()
-        if suff := destination.suffix != ".fly":
-            raise ValueError(
-                "Wrong mesh format. "
-                "Only `.fly` meshes can be written. "
-                f"Given destination suffix: {suff}."
+        if (suff := destination.suffix) != ".fly":
+            warn(
+                "Default mesh extension (`.fly`) "
+                f"and extension of destination ({suff}) differ. "
+                f"The file {destination} will have the `.fly` syntax.",
+                stacklevel=1,
             )
 
         if self._local:
@@ -139,11 +141,12 @@ class Mesh:
                 (cached_dest := pathlib.Path(user_cache_dir("mammos_mumag"))).mkdir(
                     exist_ok=True, parents=True
                 )
-                if not (cached_file := cached_dest / self.name).is_file():
+                cached_file = (cached_dest / self.name).with_suffix(".fly")
+                if not cached_file.is_file():
                     self._download_mesh(cached_file)
                 shutil.copy(cached_file, destination)
             else:
-                self._download_mesh(cached_file)
+                self._download_mesh(destination)
 
     def _download_mesh(self, destination: pathlib.Path | str) -> None:
         """Download mesh to destination.
@@ -154,19 +157,11 @@ class Mesh:
         Args:
             destination: Where to save the mesh.
 
-        Raises:
-            ValueError: Wrong mesh format. The only available mesh format on
-                Zenodo is `.fly`. If the suffix of the destination is different,
-                this error is raised.
-        """
-        destination = pathlib.Path(destination).resolve()
-        if destination.suffix != ".fly":
-            raise ValueError(
-                "Wrong mesh format. "
-                "Only `.fly` meshes are available on Zenodo. "
-                f"Given destination suffix: {destination.suffix}."
-            )
+        Warnings:
+            UserWarning: If the download from Zenodo has failed, Keeper is used
+                as a backup.
 
+        """
         res = _request(self._url)
         if res.status_code == 200:
             # Download from Zenodo successful
@@ -181,9 +176,11 @@ class Mesh:
             )
             # Keeper works reliably when downloading 1000 fly mesh in parallel!
             # Think about completely replacing Zenodo downloads with Keeper.
-            self._download_from_keeper(destination)
+            self._download_from_keeper(destination, extension=".fly")
 
-    def _download_from_keeper(self, destination: pathlib.Path | str) -> None:
+    def _download_from_keeper(
+        self, destination: pathlib.Path | str, extension: str = ".fly"
+    ) -> None:
         """Download mesh from Keeper.
 
         Download from Keeper seems to be more reliable and should be used
@@ -191,24 +188,25 @@ class Mesh:
 
         Args:
             destination: Where to save the mesh.
+            extension: Desired extension. Only `.fly`, `.med`, and `.unv` are available.
+                If `destination` has a different extension suffix, the file will still
+                be saved in the syntax specified by the variable `extension`.
 
         Raises:
-            ValueError: Wrong mesh format. The available mesh formats on Keeper are
-                `.fly`, `.med`, and `.unv`. If the suffix of the destination is
-                different, this error is raised.
+            RuntimeError: Specified extension not recognized. The available mesh formats
+                are `.fly`, `.med`, and `.unv`.
         """
         destination = pathlib.Path(destination).resolve()
         avail_fmts = [".fly", ".med", ".unv"]
-        if destination.suffix not in avail_fmts:
-            raise ValueError(
-                "Wrong mesh format. "
-                f"Only {avail_fmts} meshes are available on Keeper. "
-                f"Given destination suffix: {destination.suffix}."
+        if extension not in avail_fmts:
+            raise RuntimeError(
+                f"Extension '{extension}' not recognized. "
+                f"Only {avail_fmts} meshes are available on Keeper."
             )
 
         keeper_url = get_mesh_json()["metadata"]["keeper_url"]
-        mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{destination.suffix}&dl=1"
-        res = _request(mesh_url, destination)
+        mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{extension}&dl=1"
+        res = _request(mesh_url)
         with open(destination, "wb") as f:
             f.write(res.content)
 
