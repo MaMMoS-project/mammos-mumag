@@ -9,7 +9,7 @@
 # `energy_density` is the energy density.,,,,,,
 #----------------------------------------,,,,,,
 #,MagneticFluxDensity,MagneticPolarisation,MagneticPolarisation,MagneticPolarisation,MagneticPolarisation,EnergyDensity
-#,https://w3id.org/emmo#EMMO_961d1aba_f75e_4411_aaa4_457f7516ed6b,https://w3id.org/emmo/domain/magnetic_material#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_56258d3a-f2ee-554e-af99-499dd8620457
+#,https://w3id.org/emmo#EMMO_961d1aba_f75e_4411_aaa4_457f7516ed6b,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_56258d3a-f2ee-554e-af99-499dd8620457
 #,T,T,T,T,T,J / m3
 configuration_type,B_ext,J,Jx,Jy,Jz,energy_density
 1,1,1.60968149019821,0.00325017783301859,5.9998935962821E-05,1.60986990131555,-5859539.06761574
