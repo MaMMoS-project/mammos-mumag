@@ -168,19 +168,19 @@ def read_result(
             value=res.B_ext.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        M=me.Ms(
+        M=me.M(
             res.J.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        Mx=me.Ms(
+        Mx=me.M(
             res.Jx.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        My=me.Ms(
+        My=me.M(
             res.Jy.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
-        Mz=me.Ms(
+        Mz=me.M(
             res.Jz.q.to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
             unit=u.A / u.m,
         ),
@@ -202,16 +202,16 @@ class Result:
     H: me.Entity
     r"""Array of external field strengths in :math:`\mathrm{A}/\mathrm{m}`."""
     M: me.Entity
-    r"""Array of spontaneous magnetization values for the field strengths in the
+    r"""Array of magnetization values for the field strengths in the
     direction of H in :math:`\mathrm{A}/\mathrm{m}`."""
     Mx: me.Entity
-    r"""Component x of the spontaneous magnetization in
+    r"""Component x of the magnetization in
     :math:`\mathrm{A}/\mathrm{m}`."""
     My: me.Entity
-    r"""Component y of the spontaneous magnetization in
+    r"""Component y of the magnetization in
     :math:`\mathrm{A}/\mathrm{m}`."""
     Mz: me.Entity
-    r"""Component z of the spontaneous magnetization in
+    r"""Component z of the magnetization in
     :math:`\mathrm{A}/\mathrm{m}`."""
     energy_density: me.Entity | None = None
     r"""Array of energy densities for the field strengths in
@@ -258,8 +258,7 @@ class Result:
             label: Label shown in the legend. A legend is automatically added to the
                 plot if this argument is not None.
             tesla: If true, plots External Magnetic Flux Density B instead of External
-                Magnetic Field H and Spontaneous Polarisation Js instead of Spontaneous
-                Magnetization Ms.
+                Magnetic Field H and Polarisation J instead of Magnetization M.
             kwargs: Additional keyword arguments passed to `ax.plot` when plotting the
                 hysteresis lines.
 

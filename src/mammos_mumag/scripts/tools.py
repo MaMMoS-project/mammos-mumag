@@ -32,15 +32,15 @@ def write_mh(name, mh):
             `configuration_type` is the name of the corresponding vtu file containing the magnetization.
             `B_ext` is the applied magnetic flux density.
             `J` is the polarisation in the direction of the applied magnetic flux.
-            `Jx`, `Jy`, `Jz` are the components of the spontaneous polarisation.
+            `Jx`, `Jy`, `Jz` are the components of the polarisation.
             `energy_density` is the energy density."""
         ),
         configuration_type=mh[:,0].astype(int),
         B_ext=me.Entity("MagneticFluxDensity", mh[:,1], u.T),
-        J=me.Js(mh[:,2], u.T),
-        Jx=me.Js(mh[:,3], u.T),
-        Jy=me.Js(mh[:,4], u.T),
-        Jz=me.Js(mh[:,5], u.T),
+        J=me.J(mh[:,2], u.T),
+        Jx=me.J(mh[:,3], u.T),
+        Jy=me.J(mh[:,4], u.T),
+        Jz=me.J(mh[:,5], u.T),
         energy_density=me.Entity("EnergyDensity", mh[:,6] / get_mu0(), u.J / u.m**3),
     )
 
