@@ -1,13 +1,13 @@
-#mammos csv v2,,,,,,
-#----------------------------------------,,,,,,
-# Hysteresis loop.,,,,,,
-# Generated from mammos_mumag 0.8.1.,,,,,,
-# `configuration_type` is the name of the corresponding vtu file containing the magnetization.,,,,,,
-# `B_ext` is the applied magnetic flux density.,,,,,,
-# `J` is the polarisation in the direction of the applied magnetic flux.,,,,,,
-# `Jx`, `Jy`, `Jz` are the components of the polarisation.,,,,
-# `energy_density` is the energy density.,,,,,,
-#----------------------------------------,,,,,,
+#mammos csv v2
+#----------------------------------------
+# Hysteresis loop.
+# Generated from mammos_mumag 0.8.1.
+# `configuration_type` is the name of the corresponding vtu file containing the magnetization.
+# `B_ext` is the applied magnetic flux density.
+# `J` is the polarisation in the direction of the applied magnetic flux.
+# `Jx`, `Jy`, `Jz` are the components of the polarisation.
+# `energy_density` is the energy density.
+#----------------------------------------
 #,MagneticFluxDensity,MagneticPolarisation,MagneticPolarisation,MagneticPolarisation,MagneticPolarisation,EnergyDensity
 #,https://w3id.org/emmo#EMMO_961d1aba_f75e_4411_aaa4_457f7516ed6b,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo#EMMO_74a096dd_cc83_4c7e_b704_0541620ff18d,https://w3id.org/emmo/domain/magnetic_material#EMMO_56258d3a-f2ee-554e-af99-499dd8620457
 #,T,T,T,T,T,J / m3
