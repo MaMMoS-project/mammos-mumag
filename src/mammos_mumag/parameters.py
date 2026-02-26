@@ -24,7 +24,7 @@ class Parameters:
 
     Args:
         size: Size of the mesh. This factor usually indicates the magnitude of the
-            geometry, i.e., 1e-9 for nanometer meshes, 1e-9 for micrometer, etc.
+            geometry, i.e., 1e-9 for nanometer meshes, 1e-6 for micrometer, etc.
         scale: Scale of the mesh. This factor can include other scaling, so that
             the total scale of the mesh is `size` * `scale`.
         state: Name of the initial magnetization state. Scripts recognize the strings
