@@ -23,8 +23,7 @@ def write_stats(header, total_time, cg_iter, function_calls, hmag_iter):
     # print('  iterations (hmag)      ', hmag_iter)
 
 def write_mh(name, mh):
-    me.io.entities_to_file(
-        f"{name}.csv",
+    collection = me.EntityCollection(
         dedent(
             f"""\
             Hysteresis loop.
@@ -36,13 +35,15 @@ def write_mh(name, mh):
             `energy_density` is the energy density."""
         ),
         configuration_type=mh[:,0].astype(int),
-        B_ext=me.Entity("MagneticFluxDensity", mh[:,1], u.T),
-        J=me.J(mh[:,2], u.T),
-        Jx=me.J(mh[:,3], u.T),
-        Jy=me.J(mh[:,4], u.T),
-        Jz=me.J(mh[:,5], u.T),
-        energy_density=me.Entity("EnergyDensity", mh[:,6] / get_mu0(), u.J / u.m**3),
+        B_ext=me.Entity(ontology_label="MagneticFluxDensity", value=mh[:,1], unit=u.T),
+        J=me.J(value=mh[:,2], unit=u.T),
+        Jx=me.J(value=mh[:,3], unit=u.T),
+        Jy=me.J(value=mh[:,4], unit=u.T),
+        Jz=me.J(value=mh[:,5], unit=u.T),
+        energy_density=me.Entity(ontology_label="EnergyDensity", value=mh[:,6] / get_mu0(), unit=u.J / u.m**3),
     )
+    collection.to_csv(f"{name}.csv")
+
 
 def get_mu0():
     return scipy.constants.mu_0
