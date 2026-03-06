@@ -71,7 +71,13 @@ def run(
     Ms = me.Ms(Ms, unit=u.A / u.m)
     A = me.A(A, unit=u.J / u.m)
     K1 = me.Ku(K1, unit=u.J / u.m**3)
+    if isinstance(theta, u.Quantity):
+        with u.set_enabled_equivalencies(u.dimensionless_angles()):
+            theta = theta.to("")
     theta = me.Entity("Angle", theta)
+    if isinstance(phi, u.Quantity):
+        with u.set_enabled_equivalencies(u.dimensionless_angles()):
+            phi = phi.to("")
     phi = me.Entity("Angle", phi)
 
     if (
@@ -157,7 +163,7 @@ def read_result(
 
     """
     try:
-        res = me.io.entities_from_file(pathlib.Path(outdir) / f"{name}.csv")
+        res = me.from_csv(pathlib.Path(outdir) / f"{name}.csv")
     except FileNotFoundError:
         raise FileNotFoundError(
             f"Hysteresis file {name}.csv not found in outdir='{outdir}'."

@@ -1,8 +1,8 @@
 """Check loop script."""
 
+import mammos_entity as me
 import numpy as np
 import pyvista as pv
-from mammos_entity.io import entities_from_file
 
 from mammos_mumag.simulation import Simulation
 
@@ -19,8 +19,8 @@ def test_loop(DATA, tmp_path):
     sim.run_loop(outdir=tmp_path, name="cube")
 
     # check hysteresis loop
-    content_1 = entities_from_file(DATA / "loop" / "cube.csv")
-    content_2 = entities_from_file(tmp_path / "cube.csv")
+    content_1 = me.from_csv(DATA / "loop" / "cube.csv")
+    content_2 = me.from_csv(tmp_path / "cube.csv")
     assert np.all(content_1.configuration_type == content_2.configuration_type)
     assert content_1.B_ext == content_2.B_ext
     assert content_1.J == content_2.J

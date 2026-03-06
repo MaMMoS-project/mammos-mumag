@@ -271,13 +271,14 @@ class Parameters:
     def read_yaml(self, fpath: str | pathlib.Path) -> None:
         """Read parameter file in `yaml` format.
 
-        We expect the parameters to be saved using the module :py:mod:`mammos_entity.io`
-        and use the function :py:func:`mammos_entity.io.entities_from_file`.
+        We expect the parameters to be saved in the mammos yaml format. See
+        :py:func:`mammos_entity.EntityCollection.to_yaml` for more information
+        on this format.
 
         Args:
             fpath: Parameter file path.
         """
-        content = me.io.entities_from_file(fpath)
+        content = me.from_yaml(fpath)
         self.size = content.mesh_size
         self.scale = content.mesh_scale
         self.state = content.initial_state
@@ -342,9 +343,8 @@ class Parameters:
             >>> par.write_yaml("parameters.yaml")
 
         """
-        me.io.entities_to_file(
-            fname,
-            "File containing simulation parameters.",
+        collection = me.EntityCollection(
+            description="File containing simulation parameters.",
             mesh_size=self.size,
             mesh_scale=self.scale,
             initial_state=self.state,
@@ -364,6 +364,7 @@ class Parameters:
             minimizer_tol_h_mag_factor=self.tol_h_mag_factor,
             minimizer_precond_iter=self.precond_iter,
         )
+        collection.to_yaml(fname)
 
 
 def _normalize(vector: me.Entity) -> list[float]:

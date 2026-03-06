@@ -1,6 +1,5 @@
 """Test hysteresis module."""
 
-import astropy
 import mammos_entity as me
 import mammos_units as u
 import numpy as np
@@ -114,11 +113,11 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
         outdir=tmp_path,
     )
     run(
-        Ms=me.concat_flat([me.Ms()]),
-        A=me.concat_flat([me.A()]),
-        K1=me.concat_flat([me.Ku()]),
-        theta=me.concat_flat([me.Entity("Angle")]),
-        phi=me.concat_flat([me.Entity("Angle")]),
+        Ms=me.operations.concat_flat([me.Ms()]),
+        A=me.operations.concat_flat([me.A()]),
+        K1=me.operations.concat_flat([me.Ku()]),
+        theta=me.operations.concat_flat([me.Entity("Angle")]),
+        phi=me.operations.concat_flat([me.Entity("Angle")]),
         mesh=DATA / "cube.fly",
         h_n_steps=1,
         outdir=tmp_path,
@@ -128,20 +127,19 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
 def test_hysteresis_run_radians(DATA, tmp_path):
     """Test use of radians for angles.
 
-    The Entity "Angle" does not accept radians, so the angles will be read as
-    dimensionless.
+    The Entity "Angle" does not accept any units, but we allow implicit conversion
+    to dimensionless in the code.
     """
-    with pytest.raises(astropy.units.errors.UnitConversionError):
-        run(
-            Ms=0 * u.A / u.m,
-            A=0 * u.J / u.m,
-            K1=0 * u.J / u.m**3,
-            theta=0 * u.rad,
-            phi=0 * u.rad,
-            mesh=DATA / "cube.fly",
-            h_n_steps=1,
-            outdir=tmp_path,
-        )
+    run(
+        Ms=0 * u.A / u.m,
+        A=0 * u.J / u.m,
+        K1=0 * u.J / u.m**3,
+        theta=30 * u.degree,
+        phi=1 * u.rad,
+        mesh=DATA / "cube.fly",
+        h_n_steps=1,
+        outdir=tmp_path,
+    )
 
 
 def test_inconsistent_dimensions(DATA, tmp_path):

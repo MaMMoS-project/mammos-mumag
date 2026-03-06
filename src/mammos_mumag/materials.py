@@ -39,21 +39,19 @@ class MaterialDomain:
     @classmethod
     def _convert_theta(cls, theta: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(theta, numbers.Real | u.Quantity):
-            if isinstance(theta, u.Quantity) and theta.unit == u.rad:
-                theta = theta / u.rad  # Angle needs to be without units
-            theta = me.Entity("Angle", theta, unit=None)
-        return theta
+        if isinstance(theta, u.Quantity):
+            with u.set_enabled_equivalencies(u.dimensionless_angles()):
+                theta = theta.to("")
+        return me.Entity("Angle", theta)
 
     @field_validator("phi", mode="before")
     @classmethod
     def _convert_phi(cls, phi: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(phi, numbers.Real | u.Quantity):
-            if isinstance(phi, u.Quantity) and phi.unit == u.rad:
-                phi = phi / u.rad  # Angle needs to be without units
-            phi = me.Entity("Angle", phi, unit=None)
-        return phi
+        if isinstance(phi, u.Quantity):
+            with u.set_enabled_equivalencies(u.dimensionless_angles()):
+                phi = phi.to("")
+        return me.Entity("Angle", phi)
 
     @field_validator("K1", mode="before")
     @classmethod
