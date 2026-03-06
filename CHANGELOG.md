@@ -6,6 +6,25 @@ This project uses [towncrier](https://towncrier.readthedocs.io/) and the changes
 
 <!-- towncrier release notes start -->
 
+## [mammos-mumag 0.11.0](https://github.com/MaMMoS-project/mammos-mumag/tree/0.11.0) – 2026-03-06
+
+### Changed
+
+- Changed `SpontaneousMagnetization` to `Magnetization` when relevant. ([#121](https://github.com/MaMMoS-project/mammos-mumag/pull/121))
+
+### Removed
+
+- Removed material parameter `K2`, unused in the micromagnetic simulation. ([#114](https://github.com/MaMMoS-project/mammos-mumag/pull/114))
+- Removed debugging messages generated in the conjugate gradient optimization during the hysteresis loop. ([#118](https://github.com/MaMMoS-project/mammos-mumag/pull/118))
+
+### Fixed
+
+- Fixed logic of downloading meshes from Zenodo: if HTTP return code is not 200 (everything OK), fallback on Keeper and download mesh from there. ([#103](https://github.com/MaMMoS-project/mammos-mumag/pull/103))
+- Fixed and better documented mesh initialization logic. First meshes are searched locally, interpreting the mesh name as its path. If they are not found, the mesh name is looked up in the Zenodo record. ([#106](https://github.com/MaMMoS-project/mammos-mumag/pull/106))
+- Fixed bug in code, where parameters `size` and `scale` were not actually read. ([#113](https://github.com/MaMMoS-project/mammos-mumag/pull/113))
+- Fixed typo in documentation. ([#128](https://github.com/MaMMoS-project/mammos-mumag/pull/128))
+
+
 ## [mammos-mumag 0.10.1](https://github.com/MaMMoS-project/mammos-mumag/tree/0.10.1) – 2025-12-03
 
 ### Misc

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mammos-mumag"
-version = "0.10.1"
+version = "0.11.0"
 description = "Finite element micromagnetic simulation tool."
 readme = "README.md"
 authors = [
@@ -13,6 +13,7 @@ authors = [
   { name = "Andrea Petrocchi" },
   { name = "Samuel Holt" },
   { name = "Martin Lang" },
+  { name = "Michael Adams" },
   { name = "Hans Fangohr" },
 ]
 license = "MIT"
