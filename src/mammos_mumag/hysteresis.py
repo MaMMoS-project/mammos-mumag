@@ -75,7 +75,7 @@ def run(
         "SpontaneousMagnetization", "A/m", Ms=Ms, enforce_unit=True
     )
     A = me._entity.from_compatible(
-        "ExchangeStiffnessConstatn", "J/m", A=A, enforce_unit=True
+        "ExchangeStiffnessConstant", "J/m", A=A, enforce_unit=True
     )
     K1 = me._entity.from_compatible(
         "UniaxialAnisotropyConstant", "J/m^3", K1=K1, enforce_unit=True
