@@ -70,7 +70,7 @@ def run(
     """
     Ms = me.Ms(Ms, unit=u.A / u.m)
     A = me.A(A, unit=u.J / u.m)
-    K1 = me.Ku(K1, unit=u.J / u.m**3)
+    K1 = me.K1(K1, unit=u.J / u.m**3)
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
             theta = theta.to("")

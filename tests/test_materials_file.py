@@ -24,21 +24,21 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(4.9e06, unit=u.J / u.m**3),
+                "K1": me.K1(4.9e06, unit=u.J / u.m**3),
                 "Ms": me.Ms(1.61, unit=u.A / u.m),
                 "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -64,21 +64,21 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(1, unit=u.J / u.m**3),
+                "K1": me.K1(1, unit=u.J / u.m**3),
                 "Ms": me.Ms(2, unit=u.A / u.m),
                 "A": me.A(3, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -117,7 +117,7 @@ def test_materials_types():
     dom_1 = MaterialDomain(
         theta=0,
         phi=0,
-        K1=me.Ku(1, unit=u.J / u.m**3),
+        K1=me.K1(1, unit=u.J / u.m**3),
         Ms=me.Ms(3, unit=u.A / u.m),
         A=me.A(4, unit=u.J / u.m),
     )
@@ -141,7 +141,7 @@ def test_materials_types():
     dom_4 = MaterialDomain(
         theta=0,
         phi=0,
-        K1=me.Ku(1, unit=u.J / u.m**3).q,
+        K1=me.K1(1, unit=u.J / u.m**3).q,
         Ms=me.Ms(3, unit=u.A / u.m).q,
         A=me.A(4, unit=u.J / u.m).q,
     )

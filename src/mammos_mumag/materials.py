@@ -25,7 +25,7 @@ class MaterialDomain:
     phi: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
-    K1: me.Entity = Field(default_factory=me.Ku)
+    K1: me.Entity = Field(default_factory=me.K1)
     r"""First magnetocrystalline anisotropy constant in
     :math:`\mathrm{J}/\mathrm{m}^3`."""
     Ms: me.Entity = Field(default_factory=me.Ms)
@@ -56,7 +56,7 @@ class MaterialDomain:
     def _convert_K1(cls, K1: Any) -> Any:
         """Convert number or Quantity to Entity."""
         if isinstance(K1, numbers.Real | u.Quantity):
-            K1 = me.Ku(K1, unit=u.J / u.m**3)
+            K1 = me.K1(K1, unit=u.J / u.m**3)
         return K1
 
     @field_validator("A", mode="before")
@@ -225,7 +225,7 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
         MaterialDomain(
             theta=me.Entity("Angle", float(line[0])),
             phi=me.Entity("Angle", float(line[1])),
-            K1=me.Ku(float(line[2]), unit="J/m3"),
+            K1=me.K1(float(line[2]), unit="J/m3"),
             Ms=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
@@ -255,7 +255,7 @@ def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
+            K1=me.K1(float(dom["K1"]), unit=u.J / u.m**3),
             Ms=me.Ms(
                 (float(dom["Ms"]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()

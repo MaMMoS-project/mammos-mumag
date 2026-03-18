@@ -105,7 +105,7 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
     run(
         Ms=me.Ms(),
         A=me.A(),
-        K1=me.Ku(),
+        K1=me.K1(),
         theta=me.Entity("Angle"),
         phi=me.Entity("Angle"),
         mesh=DATA / "cube.fly",
@@ -115,7 +115,7 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
     run(
         Ms=me.operations.concat_flat([me.Ms()]),
         A=me.operations.concat_flat([me.A()]),
-        K1=me.operations.concat_flat([me.Ku()]),
+        K1=me.operations.concat_flat([me.K1()]),
         theta=me.operations.concat_flat([me.Entity("Angle")]),
         phi=me.operations.concat_flat([me.Entity("Angle")]),
         mesh=DATA / "cube.fly",
