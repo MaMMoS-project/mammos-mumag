@@ -57,6 +57,17 @@ class MaterialDomain:
         """Convert number or Quantity to Entity."""
         if isinstance(K1, numbers.Real | u.Quantity):
             K1 = me.K1(K1, unit=u.J / u.m**3)
+        elif isinstance(K1, me.Entity):
+            if K1.ontology_label == "MagnetoCrystallineAnisotropyConstantK1":
+                K1 = me.K1(K1, unit=u.J / u.m**3)
+            elif K1.ontology_label == "UniaxialAnisotropyConstant":
+                K1 = me.K1(K1.q, unit=u.J / u.m**3)
+            else:
+                raise ValueError(
+                    f"Variable {K1=} is an entity with an incompatible ontology label. "
+                    "Only accepted labels are 'MagnetoCrystallineAnisotropyConstantK1' "
+                    "and 'UniaxialAnisotropyConstant'."
+                )
         return K1
 
     @field_validator("A", mode="before")
