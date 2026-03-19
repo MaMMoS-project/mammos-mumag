@@ -58,7 +58,7 @@ class MaterialDomain:
         if isinstance(K1, numbers.Real | u.Quantity):
             K1 = me.K1(K1, unit=u.J / u.m**3)
         elif isinstance(K1, me.Entity):
-            if K1.ontology_label == "MagnetoCrystallineAnisotropyConstantK1":
+            if K1.ontology_label == "MagnetocrystallineAnisotropyConstantK1":
                 K1 = me.K1(K1, unit=u.J / u.m**3)
             elif K1.ontology_label == "UniaxialAnisotropyConstant":
                 K1 = me.K1(K1.q, unit=u.J / u.m**3)

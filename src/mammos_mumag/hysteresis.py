@@ -71,16 +71,18 @@ def run(
     Ms = me.Ms(Ms, unit=u.A / u.m)
     A = me.A(A, unit=u.J / u.m)
     if isinstance(K1, me.Entity):
-        if K1.ontology_label == "MagnetoCrystallineAnisotropyConstantK1":
+        if K1.ontology_label == "MagnetocrystallineAnisotropyConstantK1":
             K1 = me.K1(K1, unit=u.J / u.m**3)
         elif K1.ontology_label == "UniaxialAnisotropyConstant":
             K1 = me.K1(K1.q, unit=u.J / u.m**3)
         else:
             raise ValueError(
                 f"Variable {K1=} is an entity with an incompatible ontology label. "
-                "Only accepted labels are 'MagnetoCrystallineAnisotropyConstantK1' "
+                "Only accepted labels are 'MagnetocrystallineAnisotropyConstantK1' "
                 "and 'UniaxialAnisotropyConstant'."
             )
+    else:
+        K1 = me.K1(K1, unit=u.J / u.m**3)
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
             theta = theta.to("")
