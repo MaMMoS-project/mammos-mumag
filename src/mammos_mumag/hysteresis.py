@@ -46,8 +46,8 @@ def run(
     Args:
         Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        K1: First magnetocrystalline anisotropy constant or uniaxial anisotropy
-            constant in :math:`\mathrm{J}/\mathrm{m}^3`.
+        K1: Uniaxial magnetocrystalline anisotropy constant in
+            :math:`\mathrm{J}/\mathrm{m}^3`.
         theta: Angle of the magnetocrystalline anisotropy axis from the
             :math:`z`-direction in radians.
         phi: Angle of the magnetocrystalline anisotropy axis from the
