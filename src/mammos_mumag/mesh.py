@@ -7,6 +7,7 @@ from warnings import warn
 
 import requests
 import urllib3
+from platformdirs import user_cache_dir
 
 
 def get_mesh_json():
@@ -45,7 +46,7 @@ class Mesh:
             * If remote mesh, its name is as it appears on the Zenodo record or in the
               ``README.json``.
 
-        info: dictionary of available information about the mesh. If the mesh is local,
+        info: Dictionary of available information about the mesh. If the mesh is local,
             this dictionary is initialized with the couple
             `"description": "User defined mesh."`.
 
@@ -106,57 +107,107 @@ class Mesh:
         """Implement repr dunder."""
         return f"Mesh('{self.name}')"
 
-    def write(self, dest: pathlib.Path | str) -> None:
-        """Write mesh to destination."""
-        dest = pathlib.Path(dest).resolve()
-        if dest.suffix != ".fly":
-            raise ValueError("Only `.fly` meshes are available.")
-        if self._local:
-            shutil.copy(self._path, dest)
-        else:
-            s = requests.Session()
-            retries = urllib3.util.Retry(
-                total=3,
-                backoff_factor=0.1,
-                status_forcelist=[500, 502, 503, 504],
-            )
-            s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
-            res = s.get(self._url)
-            if res.status_code != 200:
-                warn(
-                    "Unable to download mesh from Zenodo. "
-                    f"The request returned with HTTP code: {res.status_code}. "
-                    "Downloading the mesh from keeper.",
-                    stacklevel=1,
-                )
-                # Keeper works reliably when downloading 1000 fly mesh in parallel!
-                # Think about completely replacing Zenodo downloads with Keeper.
-                self._write_from_keeper(dest)
-            else:
-                with open(dest, "wb") as f:
-                    f.write(res.content)
-
-    def _write_from_keeper(self, dest: pathlib.Path | str) -> None:
+    def write(self, destination: pathlib.Path | str, use_cache: bool = True) -> None:
         """Write mesh to destination.
 
-        Load mesh from Keeper rather than from Zenodo.
-        This functions is only for developers and should not be used.
+        Args:
+            destination: Where to save the mesh.
+            use_cache: Whether to cache the remote mesh. If True, the mesh gets first
+                downloaded to the system cache directory and then copied to destination.
+                If the remote mesh with the same name is already in the cache directory,
+                the download is skipped. The system cache directory is defined by the
+                function :py:func:`platformdirs.user_cache_dir` to ensure compatibility
+                with different platforms.
+
+        Warnings:
+            UserWarning: The extension of the ``destination`` argument is different than
+                the accepted mesh format ``.fly``. The file will be saved in the
+                extension specified by ``destination`` but in the ``.fly`` syntax.
+
         """
-        dest = pathlib.Path(dest).resolve()
+        destination = pathlib.Path(destination).resolve()
+        if (suff := destination.suffix) != ".fly":
+            warn(
+                "Default mesh extension (`.fly`) "
+                f"and extension of destination ({suff}) differ. "
+                f"The file {destination} will have the `.fly` syntax.",
+                stacklevel=1,
+            )
+
+        if self._local:
+            shutil.copy(self._path, destination)
+        else:
+            if use_cache:
+                (cached_dest := pathlib.Path(user_cache_dir("mammos_mumag"))).mkdir(
+                    exist_ok=True, parents=True
+                )
+                cached_file = (cached_dest / self.name).with_suffix(".fly")
+                if not cached_file.is_file():
+                    self._download_mesh(cached_file)
+                shutil.copy(cached_file, destination)
+            else:
+                self._download_mesh(destination)
+
+    def _download_mesh(self, destination: pathlib.Path | str) -> None:
+        """Download mesh to destination.
+
+        This function tries to download from Zenodo first. If the request fails, the
+        mesh is instead downloaded from Keeper.
+
+        Args:
+            destination: Where to save the mesh.
+
+        Warnings:
+            UserWarning: If the download from Zenodo has failed, Keeper is used
+                as a backup.
+
+        """
+        res = _request(self._url)
+        if res.status_code == 200:
+            # Download from Zenodo successful
+            with open(destination, "wb") as f:
+                f.write(res.content)
+        else:
+            warn(
+                "Unable to download mesh from Zenodo. "
+                f"The request returned with HTTP code: {res.status_code}. "
+                "Downloading the mesh from keeper.",
+                stacklevel=1,
+            )
+            # Keeper works reliably when downloading 1000 fly mesh in parallel!
+            # Think about completely replacing Zenodo downloads with Keeper.
+            self._download_from_keeper(destination, extension=".fly")
+
+    def _download_from_keeper(
+        self, destination: pathlib.Path | str, extension: str = ".fly"
+    ) -> None:
+        """Download mesh from Keeper.
+
+        Download from Keeper seems to be more reliable and should be used
+        as a fallback in case the download from Zenodo fails.
+
+        Args:
+            destination: Where to save the mesh.
+            extension: Desired extension. Only `.fly`, `.med`, and `.unv` are available.
+                If `destination` has a different extension suffix, the file will still
+                be saved in the syntax specified by the variable `extension`.
+
+        Raises:
+            RuntimeError: Specified extension not recognized. The available mesh formats
+                are `.fly`, `.med`, and `.unv`.
+        """
+        destination = pathlib.Path(destination).resolve()
         avail_fmts = [".fly", ".med", ".unv"]
-        if dest.suffix not in avail_fmts:
-            raise ValueError(f"Wrong format. Available formats: {avail_fmts}")
+        if extension not in avail_fmts:
+            raise RuntimeError(
+                f"Extension '{extension}' not recognized. "
+                f"Only {avail_fmts} meshes are available on Keeper."
+            )
+
         keeper_url = get_mesh_json()["metadata"]["keeper_url"]
-        mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
-        s = requests.Session()
-        retries = urllib3.util.Retry(
-            total=3,
-            backoff_factor=0.1,
-            status_forcelist=[500, 502, 503, 504],
-        )
-        s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
-        res = s.get(mesh_url)
-        with open(dest, "wb") as f:
+        mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{extension}&dl=1"
+        res = _request(mesh_url)
+        with open(destination, "wb") as f:
             f.write(res.content)
 
 
@@ -168,3 +219,24 @@ def _get_mesh_json_from_keeper() -> dict:
         raise FileNotFoundError("README.json not found on Keeper.")
     else:
         return json.loads(res.content)
+
+
+def _request(url) -> requests.Response:
+    """Request content from a webpage and get a ``Response`` back.
+
+    If the request fails with codes 50X, it is retried for a total of three times
+    with a 0.1 backoff factor. This function is used only to access meshes on Zenodo or
+    Keeper.
+
+    Args:
+        url: URL of webpage to download
+    """
+    s = requests.Session()
+    retries = urllib3.util.Retry(
+        total=3,
+        backoff_factor=0.1,
+        status_forcelist=[500, 502, 503, 504],
+    )
+    s.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+    res = s.get(url)
+    return res

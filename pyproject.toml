@@ -68,6 +68,7 @@ Changelog = "https://mammos-project.github.io/mammos/changelog"
 
 [project.scripts]
 unv2fly = "mammos_mumag.cli:convert_mesh"
+mammos-mumag-clear-cache = "mammos_mumag.cli:clear_cache"
 
 [tool.ruff]
 target-version = "py311"
