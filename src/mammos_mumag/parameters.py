@@ -193,17 +193,17 @@ class Parameters:
             raise FileNotFoundError(f"File {fpath} not found.")
 
         if fpath.suffix == ".yaml":
-            self.read_yaml(fpath)
+            self._read_yaml(fpath)
 
         elif fpath.suffix == ".p2":
-            self.read_p2(fpath)
+            self._read_p2(fpath)
 
         else:
             raise NotImplementedError(
                 f"{fpath.suffix} parameter file is not supported."
             )
 
-    def read_p2(self, fpath: str | pathlib.Path) -> None:
+    def _read_p2(self, fpath: str | pathlib.Path) -> None:
         """Read parameter file in `p2` format.
 
         The speciality of this file format is that magnetization values are stored
@@ -268,7 +268,7 @@ class Parameters:
         if "truncation" in minimizer:
             self.truncation = int(minimizer["truncation"])
 
-    def read_yaml(self, fpath: str | pathlib.Path) -> None:
+    def _read_yaml(self, fpath: str | pathlib.Path) -> None:
         """Read parameter file in `yaml` format.
 
         We expect the parameters to be saved in the mammos yaml format. See
