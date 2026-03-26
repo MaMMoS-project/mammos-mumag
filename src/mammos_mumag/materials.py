@@ -196,13 +196,13 @@ class Materials:
         self.domains = []
         for dom in domains:
             self.add_domain(
-                theta=float(dom["theta"]),
-                phi=float(dom["phi"]),
-                K1=float(dom["K1"]),
-                Ms=(float(dom["Ms"]) * u.T).to(
+                theta=dom["theta"],
+                phi=dom["phi"],
+                K1=dom["K1"],
+                Ms=(dom["Ms"] * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
                 ),
-                A=float(dom["A"]),
+                A=dom["A"],
             )
 
     def write_krn(self, fname: str | pathlib.Path) -> None:
