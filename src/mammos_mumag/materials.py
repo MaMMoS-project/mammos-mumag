@@ -1,6 +1,5 @@
 """Materials class."""
 
-import numbers
 import pathlib
 from typing import Any
 
@@ -26,8 +25,9 @@ class MaterialDomain:
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
     K1: me.Entity = Field(default_factory=me.K1)
-    r"""First magnetocrystalline anisotropy constant in
-    :math:`\mathrm{J}/\mathrm{m}^3`."""
+    r""":entity:`MagnetocrystallineAnisotropyConstantK1` or
+    :entity:`UniaxialAnisotropyConstant`. If no unit is provided,
+    values are interpreted as in :math:`\mathrm{J}/\mathrm{m}^3`."""
     Ms: me.Entity = Field(default_factory=me.Ms)
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
     A: me.Entity = Field(default_factory=me.A)
@@ -55,19 +55,12 @@ class MaterialDomain:
     @classmethod
     def _convert_K1(cls, K1: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(K1, numbers.Real | u.Quantity):
-            K1 = me.K1(K1, unit=u.J / u.m**3)
-        elif isinstance(K1, me.Entity):
-            if K1.ontology_label == "MagnetocrystallineAnisotropyConstantK1":
-                K1 = me.K1(K1, unit=u.J / u.m**3)
-            elif K1.ontology_label == "UniaxialAnisotropyConstant":
-                K1 = me.K1(K1.q, unit=u.J / u.m**3)
-            else:
-                raise ValueError(
-                    f"Variable {K1=} is an entity with an incompatible ontology label. "
-                    "Only accepted labels are 'MagnetoCrystallineAnisotropyConstantK1' "
-                    "and 'UniaxialAnisotropyConstant'."
-                )
+        K1 = me._entity.from_compatible(
+            "MagnetocrystallineAnisotropyConstantK1",
+            u.J / u.m**3,
+            compatible_entities=("UniaxialAnisotropyConstant"),
+            enforce_unit=True,
+        )
         return K1
 
     @field_validator("A", mode="before")
