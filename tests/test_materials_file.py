@@ -3,7 +3,6 @@
 import mammos_entity as me
 import mammos_units as u
 import pytest
-from pydantic import ValidationError
 
 from mammos_mumag.materials import MaterialDomain, Materials
 
@@ -161,12 +160,14 @@ def test_materials_types():
     assert are_domains_equal([dom_5], [dom_6])
 
 
-def test_wrong_domains():
+def test_wrong_materialdomain():
     """Use wrong types in definition.
 
-    All tests are supposed to raise `ValidationError`.
+    The input K1 in a MaterialDomain is forced into a `K1` entity.
+    So this test will give the TypeError raised
+    when trying define an entity with a string.
     """
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         MaterialDomain(K1="K1")
 
 
