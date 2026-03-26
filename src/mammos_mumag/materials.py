@@ -61,7 +61,7 @@ class MaterialDomain:
         K1 = me._entity.from_compatible(
             "MagnetocrystallineAnisotropyConstantK1",
             u.J / u.m**3,
-            compatible_entities=("UniaxialAnisotropyConstant"),
+            compatible_entities=("UniaxialAnisotropyConstant",),
             enforce_unit=True,
             K1=K1,
         )
