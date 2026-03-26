@@ -86,7 +86,7 @@ class Simulation:
             if self.__getattribute__(attr) is None:
                 raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
 
-    def check_numgrains(self) -> None:
+    def _check_numgrains(self) -> None:
         """Check that the number of grains match for mesh and material class."""
         if (
             "domains" in self.mesh.info
@@ -178,7 +178,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -216,7 +216,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -279,7 +279,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -331,7 +331,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -359,7 +359,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -389,7 +389,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
@@ -415,7 +415,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
 
@@ -441,7 +441,7 @@ class Simulation:
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
+        self._check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
