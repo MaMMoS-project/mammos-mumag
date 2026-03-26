@@ -148,14 +148,61 @@ class Materials:
             raise FileNotFoundError(f"File {fpath} not found.")
 
         if fpath.suffix == ".yaml":
-            self.domains = read_yaml(fpath)
+            self._read_yaml(fpath)
 
         elif fpath.suffix == ".krn":
-            self.domains = read_krn(fpath)
+            self._read_krn(fpath)
 
         else:
             raise NotImplementedError(
                 f"{fpath.suffix} materials file is not supported."
+            )
+
+    def _read_krn(self, fname: str | pathlib.Path) -> None:
+        """Read material `krn` file.
+
+        This function overwrites the current ``domains`` attribute.
+
+        Args:
+            fname: File path
+
+        """
+        with open(fname) as file:
+            lines = file.readlines()
+        self.domains = []
+        for line in lines:
+            line = line.split()
+            self.add_domain(
+                theta=float(line[0]),
+                phi=float(line[1]),
+                K1=float(line[2]),
+                Ms=(float(line[4]) * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                ),
+                A=float(line[5]),
+            )
+
+    def _read_yaml(self, fname: str | pathlib.Path) -> None:
+        """Read material `yaml` file.
+
+        This function overwrites the current ``domains`` attribute.
+
+        Args:
+            fname: File path
+
+        """
+        with open(fname) as file:
+            domains = yaml.safe_load(file)
+        self.domains = []
+        for dom in domains:
+            self.add_domain(
+                theta=dom["theta"],
+                phi=dom["phi"],
+                K1=dom["K1"],
+                Ms=(dom["Ms"] * u.T).to(
+                    u.A / u.m, equivalencies=u.magnetic_flux_field()
+                ),
+                A=dom["A"],
             )
 
     def write_krn(self, fname: str | pathlib.Path) -> None:
@@ -205,63 +252,3 @@ class Materials:
         ]
         with open(fname, "w") as file:
             yaml.dump(domains, file)
-
-
-def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
-    """Read material `krn` file and return as list of dictionaries.
-
-    Args:
-        fname: File path
-
-    Returns:
-        Domains as list of dictionaries, with each dictionary defining
-        the material constant in a specific region.
-
-    """
-    with open(fname) as file:
-        lines = file.readlines()
-    lines = [line.split() for line in lines]
-    return [
-        MaterialDomain(
-            theta=me.Entity("Angle", float(line[0])),
-            phi=me.Entity("Angle", float(line[1])),
-            K1=me.Ku(float(line[2]), unit="J/m3"),
-            Ms=me.Ms(
-                (float(line[4]) * u.T).to(
-                    u.A / u.m, equivalencies=u.magnetic_flux_field()
-                ),
-                unit="A/m",
-            ),
-            A=me.A(float(line[5]), unit="J/m"),
-        )
-        for line in lines
-    ]
-
-
-def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
-    """Read material `yaml` file.
-
-    Args:
-        fname: File path
-
-    Returns:
-        Domains as list of dictionaries, with each dictionary defining
-        the material constant in a specific region.
-
-    """
-    with open(fname) as file:
-        domains = yaml.safe_load(file)
-    return [
-        MaterialDomain(
-            theta=float(dom["theta"]),
-            phi=float(dom["phi"]),
-            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
-            Ms=me.Ms(
-                (float(dom["Ms"]) * u.T).to(
-                    u.A / u.m, equivalencies=u.magnetic_flux_field()
-                )
-            ),
-            A=me.A(float(dom["A"]), unit=u.J / u.m),
-        )
-        for dom in domains
-    ]
