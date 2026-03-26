@@ -124,6 +124,20 @@ def test_hysteresis_run_inputs_Entity(DATA, tmp_path):
     )
 
 
+def test_hysteresis_run_inputs_Ku(DATA, tmp_path):
+    """Test use of `Ku` entity as input."""
+    run(
+        Ms=me.Ms(),
+        A=me.A(),
+        K1=me.Ku(),
+        theta=me.Entity("Angle"),
+        phi=me.Entity("Angle"),
+        mesh=DATA / "cube.fly",
+        h_n_steps=1,
+        outdir=tmp_path,
+    )
+
+
 def test_hysteresis_run_radians(DATA, tmp_path):
     """Test use of radians for angles.
 

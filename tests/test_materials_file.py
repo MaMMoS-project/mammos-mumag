@@ -179,3 +179,18 @@ def test_angles_in_rad():
     """
     MaterialDomain(theta=0 * u.rad)
     MaterialDomain(phi=1 * u.rad)
+
+
+def test_Ku_input(DATA, tmp_path):
+    """Test use of entity Ku as input.
+
+    We expect the entity to be converted to K1 internally.
+    """
+    mat = MaterialDomain(
+        theta=me.Entity("Angle"),
+        phi=me.Entity("Angle"),
+        K1=me.Ku(),
+        Ms=me.Ms(),
+        A=me.A(),
+    )
+    assert me.K1() == mat.K1
