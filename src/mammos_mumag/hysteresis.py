@@ -46,8 +46,9 @@ def run(
     Args:
         Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        K1: Uniaxial magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
+        K1: :entity:`MagnetocrystallineAnisotropyConstantK1` or
+            :entity:`UniaxialAnisotropyConstant`. If no unit is provided,
+            values are interpreted as in :math:`\mathrm{J}/\mathrm{m}^3`.
         theta: Angle of the magnetocrystalline anisotropy axis from the
             :math:`z`-direction in radians.
         phi: Angle of the magnetocrystalline anisotropy axis from the
@@ -70,19 +71,12 @@ def run(
     """
     Ms = me.Ms(Ms, unit=u.A / u.m)
     A = me.A(A, unit=u.J / u.m)
-    if isinstance(K1, me.Entity):
-        if K1.ontology_label == "MagnetocrystallineAnisotropyConstantK1":
-            K1 = me.K1(K1, unit=u.J / u.m**3)
-        elif K1.ontology_label == "UniaxialAnisotropyConstant":
-            K1 = me.K1(K1.q, unit=u.J / u.m**3)
-        else:
-            raise ValueError(
-                f"Variable {K1=} is an entity with an incompatible ontology label. "
-                "Only accepted labels are 'MagnetocrystallineAnisotropyConstantK1' "
-                "and 'UniaxialAnisotropyConstant'."
-            )
-    else:
-        K1 = me.K1(K1, unit=u.J / u.m**3)
+    K1 = me._entity.from_compatible(
+        "MagnetocrystallineAnisotropyConstantK1",
+        u.J / u.m**3,
+        compatible_entities=("UniaxialAnisotropyConstant"),
+        enforce_unit=True,
+    )
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
             theta = theta.to("")
