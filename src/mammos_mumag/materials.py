@@ -11,8 +11,6 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from pydantic import ConfigDict, Field, field_validator
 from pydantic.dataclasses import dataclass
 
-from mammos_mumag.tools import check_path
-
 
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class MaterialDomain:
@@ -145,7 +143,9 @@ class Materials:
             NotImplementedError: Wrong file format.
 
         """
-        fpath = check_path(fname)
+        fpath = pathlib.Path(fname)
+        if not fpath.is_file():
+            raise FileNotFoundError(f"File {fpath} not found.")
 
         if fpath.suffix == ".yaml":
             self.domains = read_yaml(fpath)

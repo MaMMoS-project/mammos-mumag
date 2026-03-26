@@ -12,10 +12,10 @@ from pydantic import Field, field_validator
 from pydantic.dataclasses import dataclass
 
 import mammos_mumag
+from mammos_mumag._tools import check_esys_escript
 from mammos_mumag.materials import MaterialDomain, Materials
 from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
-from mammos_mumag.tools import check_dir, check_esys_escript
 
 IS_POSIX = os.name == "posix"
 
@@ -175,7 +175,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -212,7 +213,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -274,7 +276,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -325,7 +328,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -352,7 +356,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -381,7 +386,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -406,7 +412,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
@@ -431,7 +438,8 @@ class Simulation:
             name: System name.
 
         """
-        outdir = check_dir(outdir)
+        outdir = pathlib.Path(outdir)
+        outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
