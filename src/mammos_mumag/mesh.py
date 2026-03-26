@@ -9,7 +9,7 @@ import requests
 import urllib3
 
 
-def get_mesh_json():
+def _get_mesh_json():
     """Load mesh JSON file."""
     with open(pathlib.Path(__file__).parent / "mesh" / "README.json") as f:
         return json.load(f)
@@ -24,7 +24,7 @@ def find_mesh(mesh_name: str | None = None) -> list[str]:
     Returns:
         List of matches with given name. Empty list if no matches are found.
     """
-    meshes = get_mesh_json()["meshes"]
+    meshes = _get_mesh_json()["meshes"]
     if mesh_name is None:
         return list(meshes.keys())
     else:
@@ -83,7 +83,7 @@ class Mesh:
                     f"Mesh name ambiguous. More than one match found: {matches}"
                 )
             else:
-                mesh_json = get_mesh_json()
+                mesh_json = _get_mesh_json()
                 self.name = matches[0]
                 self.info = mesh_json["meshes"][self.name]
                 self._local = (
@@ -146,7 +146,7 @@ class Mesh:
         avail_fmts = [".fly", ".med", ".unv"]
         if dest.suffix not in avail_fmts:
             raise ValueError(f"Wrong format. Available formats: {avail_fmts}")
-        keeper_url = get_mesh_json()["metadata"]["keeper_url"]
+        keeper_url = _get_mesh_json()["metadata"]["keeper_url"]
         mesh_url = f"{keeper_url}files/?p=/{self.name}/mesh{dest.suffix}&dl=1"
         s = requests.Session()
         retries = urllib3.util.Retry(
@@ -162,7 +162,7 @@ class Mesh:
 
 def _get_mesh_json_from_keeper() -> dict:
     """Download mesh.json from Keeper and return dictionary."""
-    keeper_url = get_mesh_json()["metadata"]["keeper_url"]
+    keeper_url = _get_mesh_json()["metadata"]["keeper_url"]
     res = requests.get(f"{keeper_url}files/?p=/README.json&dl=1")
     if res.status_code != 200:
         raise FileNotFoundError("README.json not found on Keeper.")
