@@ -21,7 +21,7 @@ def test_m_vect():
     with pytest.raises(ValidationError):
         Parameters(m_vect=[1, 2, 3, 4])
     par = Parameters(m_vect=np.array([1, 2, 3]))
-    assert par.m == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
+    assert par._m == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
 
 
 def test_h_vect():
@@ -37,7 +37,7 @@ def test_h_vect():
     with pytest.raises(ValidationError):
         Parameters(h_vect=[1, 2, 3, 4])
     par = Parameters(h_vect=np.array([1, 2, 3]))
-    assert par.h == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
+    assert par._h == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
 
 
 def test_parameters_file(DATA, tmp_path):
