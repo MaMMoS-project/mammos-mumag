@@ -76,6 +76,7 @@ def run(
         u.J / u.m**3,
         compatible_entities=("UniaxialAnisotropyConstant"),
         enforce_unit=True,
+        K1=K1,
     )
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
