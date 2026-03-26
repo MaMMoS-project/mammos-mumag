@@ -46,8 +46,13 @@ def run(
     Args:
         Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
         A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        K1: First magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
+        K1: First uniaxial magnetocrystalline anisotropy constant, defined by the
+            uniaxial anisotropy energy density :math:`K_1 \sin^2(\theta)`, where
+            :math:`\theta` is the angle between the anisotropy axis and the
+            magnetization. Possible compatible entities are
+            :entity:`MagnetocrystallineAnisotropyConstantK1` and
+            :entity:`UniaxialAnisotropyConstant`, and internally the former will be
+            used. If no unit is provided, values are interpreted as J/m^3.
         theta: Angle of the magnetocrystalline anisotropy axis from the
             :math:`z`-direction in radians.
         phi: Angle of the magnetocrystalline anisotropy axis from the
@@ -70,7 +75,13 @@ def run(
     """
     Ms = me.Ms(Ms, unit=u.A / u.m)
     A = me.A(A, unit=u.J / u.m)
-    K1 = me.Ku(K1, unit=u.J / u.m**3)
+    K1 = me._entity.from_compatible(
+        "MagnetocrystallineAnisotropyConstantK1",
+        u.J / u.m**3,
+        compatible_entities=("UniaxialAnisotropyConstant",),
+        enforce_unit=True,
+        K1=K1,
+    )
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
             theta = theta.to("")

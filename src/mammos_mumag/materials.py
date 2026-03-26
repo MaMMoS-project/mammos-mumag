@@ -1,6 +1,5 @@
 """Materials class."""
 
-import numbers
 import pathlib
 from typing import Any
 
@@ -25,9 +24,13 @@ class MaterialDomain:
     phi: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
     """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
     radians."""
-    K1: me.Entity = Field(default_factory=me.Ku)
-    r"""First magnetocrystalline anisotropy constant in
-    :math:`\mathrm{J}/\mathrm{m}^3`."""
+    K1: me.Entity = Field(default_factory=me.K1)
+    r"""First uniaxial magnetocrystalline anisotropy constant, defined by the uniaxial
+    anisotropy energy density :math:`K_1 \sin^2(\theta)`, where :math:`\theta` is the
+    angle between the anisotropy axis and the magnetization. Possible compatible
+    entities are :entity:`MagnetocrystallineAnisotropyConstantK1` and
+    :entity:`UniaxialAnisotropyConstant`, and internally the former will be used.
+    If no unit is provided, values are interpreted as J/m^3."""
     Ms: me.Entity = Field(default_factory=me.Ms)
     r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
     A: me.Entity = Field(default_factory=me.A)
@@ -55,8 +58,13 @@ class MaterialDomain:
     @classmethod
     def _convert_K1(cls, K1: Any) -> Any:
         """Convert number or Quantity to Entity."""
-        if isinstance(K1, numbers.Real | u.Quantity):
-            K1 = me.Ku(K1, unit=u.J / u.m**3)
+        K1 = me._entity.from_compatible(
+            "MagnetocrystallineAnisotropyConstantK1",
+            u.J / u.m**3,
+            compatible_entities=("UniaxialAnisotropyConstant",),
+            enforce_unit=True,
+            K1=K1,
+        )
         return K1
 
     @field_validator("A", mode="before")
@@ -225,7 +233,7 @@ def read_krn(fname: str | pathlib.Path) -> list[MaterialDomain]:
         MaterialDomain(
             theta=me.Entity("Angle", float(line[0])),
             phi=me.Entity("Angle", float(line[1])),
-            K1=me.Ku(float(line[2]), unit="J/m3"),
+            K1=me.K1(float(line[2]), unit="J/m3"),
             Ms=me.Ms(
                 (float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
@@ -255,7 +263,7 @@ def read_yaml(fname: str | pathlib.Path) -> list[MaterialDomain]:
         MaterialDomain(
             theta=float(dom["theta"]),
             phi=float(dom["phi"]),
-            K1=me.Ku(float(dom["K1"]), unit=u.J / u.m**3),
+            K1=me.K1(float(dom["K1"]), unit=u.J / u.m**3),
             Ms=me.Ms(
                 (float(dom["Ms"]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()

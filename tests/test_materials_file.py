@@ -3,7 +3,6 @@
 import mammos_entity as me
 import mammos_units as u
 import pytest
-from pydantic import ValidationError
 
 from mammos_mumag.materials import MaterialDomain, Materials
 
@@ -24,21 +23,21 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(4.9e06, unit=u.J / u.m**3),
+                "K1": me.K1(4.9e06, unit=u.J / u.m**3),
                 "Ms": me.Ms(1.61, unit=u.A / u.m),
                 "A": me.A(8.0e-11, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -64,21 +63,21 @@ def test_materials_file(DATA, tmp_path):
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(1, unit=u.J / u.m**3),
+                "K1": me.K1(1, unit=u.J / u.m**3),
                 "Ms": me.Ms(2, unit=u.A / u.m),
                 "A": me.A(3, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
             {
                 "theta": 0,
                 "phi": 0,
-                "K1": me.Ku(0, unit=u.J / u.m**3),
+                "K1": me.K1(0, unit=u.J / u.m**3),
                 "Ms": me.Ms(0, unit=u.A / u.m),
                 "A": me.A(0, unit=u.J / u.m),
             },
@@ -117,7 +116,7 @@ def test_materials_types():
     dom_1 = MaterialDomain(
         theta=0,
         phi=0,
-        K1=me.Ku(1, unit=u.J / u.m**3),
+        K1=me.K1(1, unit=u.J / u.m**3),
         Ms=me.Ms(3, unit=u.A / u.m),
         A=me.A(4, unit=u.J / u.m),
     )
@@ -141,7 +140,7 @@ def test_materials_types():
     dom_4 = MaterialDomain(
         theta=0,
         phi=0,
-        K1=me.Ku(1, unit=u.J / u.m**3).q,
+        K1=me.K1(1, unit=u.J / u.m**3).q,
         Ms=me.Ms(3, unit=u.A / u.m).q,
         A=me.A(4, unit=u.J / u.m).q,
     )
@@ -161,12 +160,14 @@ def test_materials_types():
     assert are_domains_equal([dom_5], [dom_6])
 
 
-def test_wrong_domains():
+def test_wrong_materialdomain():
     """Use wrong types in definition.
 
-    All tests are supposed to raise `ValidationError`.
+    The input K1 in a MaterialDomain is forced into a `K1` entity.
+    So this test will give the TypeError raised
+    when trying define an entity with a string.
     """
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         MaterialDomain(K1="K1")
 
 
@@ -178,3 +179,18 @@ def test_angles_in_rad():
     """
     MaterialDomain(theta=0 * u.rad)
     MaterialDomain(phi=1 * u.rad)
+
+
+def test_Ku_input(DATA, tmp_path):
+    """Test use of entity Ku as input.
+
+    We expect the entity to be converted to K1 internally.
+    """
+    mat = MaterialDomain(
+        theta=me.Entity("Angle"),
+        phi=me.Entity("Angle"),
+        K1=me.Ku(),
+        Ms=me.Ms(),
+        A=me.A(),
+    )
+    assert me.K1() == mat.K1
