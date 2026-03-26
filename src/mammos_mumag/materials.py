@@ -174,7 +174,7 @@ class Materials:
             line = line.split()
             self.add_domain(
                 theta=float(line[0]),
-                phi=float(line[0]),
+                phi=float(line[1]),
                 K1=float(line[2]),
                 Ms=(float(line[4]) * u.T).to(
                     u.A / u.m, equivalencies=u.magnetic_flux_field()
