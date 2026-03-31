@@ -27,7 +27,7 @@ def mesh_download_all(
 
     for mesh_name in (pbar := tqdm(keeper_json["meshes"])):
         pbar.set_description(f"Downloading {mesh_name}")
-        Mesh(mesh_name)._write_from_keeper(outdir / f"{mesh_name}.fly")
+        Mesh(mesh_name)._write_from_keeper(outdir / f"{mesh_name}.{extension}")
 
 
 if __name__ == "__main__":
