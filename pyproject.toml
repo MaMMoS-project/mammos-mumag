@@ -27,16 +27,20 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
+  "gmsh",
   "jax",
+  "jaxopt",
   "jinja2>=3.1.6",
   "mammos_entity>=0.12.0",
   "mammos_units",
   "matplotlib",
+  "meshio",
+  "meshpy",
   "numpy",
   "pandas",
-  "psutil>=7",
+  "pyamg",
   "pydantic>=2.11",
-  "pyvista[all]",
+  # "pyvista[all]",
   "pyyaml>6",
   "requests",
   "scipy",
@@ -94,7 +98,7 @@ pydocstyle.convention = "google"
 "tests/*" = ["D100", "D103"]  # do not enforce docstrings in tests
 
 [tool.pixi.workspace]
-channels = [ "conda-forge" ]
+channels = [ "conda-forge", "set3mah"  ]
 platforms = [ "osx-arm64", "linux-64", "osx-64", "win-64" ]
 
 [tool.pixi.dependencies]
@@ -109,7 +113,7 @@ towncrier = "*"
 tqdm = ">=4.67.1,<5"
 
 [tool.pixi.target.linux-64.dependencies]
-esys-escript = ">=5.10,<6"
+neper = "==4.6.0"
 
 [tool.pixi.pypi-dependencies]
 mammos-mumag = { path = ".", editable = true }
