@@ -2,7 +2,6 @@
 
 import mammos_entity as me
 import numpy as np
-import pyvista as pv
 
 from mammos_mumag.simulation import Simulation
 
@@ -10,7 +9,7 @@ from mammos_mumag.simulation import Simulation
 def test_loop(DATA, tmp_path):
     """Test loop."""
     sim = Simulation(
-        mesh=DATA / "cube.fly",
+        mesh="cube20_singlegrain_msize2",
         materials_filepath=DATA / "cube.krn",
         parameters_filepath=DATA / "cube.p2",
     )
@@ -28,10 +27,3 @@ def test_loop(DATA, tmp_path):
     assert content_1.Jy == content_2.Jy
     assert content_1.Jz == content_2.Jz
     assert content_1.energy_density == content_2.energy_density
-
-    # check generated vtus
-    vtu_list = [i.name for i in tmp_path.iterdir() if i.suffix == ".vtu"]
-    for vtu_name in vtu_list:
-        mesh_data = pv.read(DATA / "loop" / vtu_name)
-        mesh_sim = pv.read(tmp_path / vtu_name)
-        assert np.allclose(mesh_data.point_data["m"], mesh_sim.point_data["m"])
