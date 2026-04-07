@@ -1,12 +1,16 @@
 """Mesh functions."""
 
 import json
+import os
 import pathlib
 import shutil
 from warnings import warn
 
+import meshio as mio
+import numpy as np
 import requests
 import urllib3
+from scipy.spatial import KDTree
 
 
 def _get_mesh_json():
@@ -159,6 +163,12 @@ class Mesh:
         with open(dest, "wb") as f:
             f.write(res.content)
 
+    def _write_npz(self, dest: pathlib.Path | str) -> None:
+        """Write mesh in npz format."""
+        mesh_path = pathlib.Path(dest).with_suffix(".med")
+        self._write_from_keeper(mesh_path)
+        _med2npz(pathlib.Path(mesh_path))
+
 
 def _get_mesh_json_from_keeper() -> dict:
     """Download mesh.json from Keeper and return dictionary."""
@@ -168,3 +178,75 @@ def _get_mesh_json_from_keeper() -> dict:
         raise FileNotFoundError("README.json not found on Keeper.")
     else:
         return json.loads(res.content)
+
+
+def _med2npz(mesh_path: os.PathLike) -> None:
+    """Convert med mesh to npz.
+
+    Swapneel's function.
+    """
+    mesh = mio.read(mesh_path)
+    points = mesh.points
+
+    # Remove non-tetrahedral cells
+    for i, cell_block in enumerate(mesh.cells):
+        if cell_block.type == "tetra":
+            required_cell_block = cell_block
+            required_cell_data = mesh.cell_data["cell_tags"][i]
+            break
+
+    cell_tags = mesh.cell_tags
+
+    # Create new mesh with only tetra cells and tags as cell-sets
+    new_mesh = mio.Mesh(
+        points=points,
+        cells=[required_cell_block],
+        cell_data={
+            "cell_tags": [np.array([int(cell_tags[i][0]) for i in required_cell_data])]
+        },
+    )
+    new_mesh.unique_tag_values = np.unique(new_mesh.cell_data["cell_tags"][0])
+    new_mesh.cell_data_to_sets("cell_tags")
+
+    required_cells = []
+
+    # Remove the air and shell subregions
+    for key, val in new_mesh.cell_sets.items():
+        if key not in {
+            f"set-cell_tags-{new_mesh.unique_tag_values[-1]}",
+            f"set-cell_tags-{new_mesh.unique_tag_values[-2]}",
+        }:
+            required_cells.append(val[0])
+
+    # Select required cells and points without air and shell
+    required_cells_arr = np.concatenate(required_cells)
+    required_points_arr = np.unique(
+        new_mesh.cells[0].data[required_cells_arr].flatten()
+    )
+
+    # Going back to cell tags as cell-data instead of cell sets
+    new_mesh.cell_sets_to_data(data_name="cell_tags")
+    new_mesh.cell_data["cell_tags"][0] += 1
+
+    # Extract required point coordinates and cell connectivity
+    # in terms of point coordinates
+    new_points = new_mesh.points[required_points_arr]
+    new_connectivity_as_points = new_mesh.points[
+        new_mesh.cells[0].data[required_cells_arr]
+    ]
+    # Create tree for re-evaluation of connectivity indices
+    tree = KDTree(new_points)
+
+    # Find the new indices
+    dist, new_connectivity = tree.query(new_connectivity_as_points)
+    if not np.all(dist == 0.0):
+        raise RuntimeError("The new connectivity might be wrong!")
+
+    # Create the connectivity array according to Tom's conventions
+    new_ijk = np.empty((new_connectivity.shape[0], 5), dtype=np.int_)
+    new_ijk[:, 0:-1] = new_connectivity
+    new_ijk[:, -1] = new_mesh.cell_data["cell_tags"][0][required_cells_arr]
+
+    # Save the mesh as numpy arrays
+    npz_path = mesh_path.with_suffix(".npz")
+    np.savez(f"{npz_path}", knt=new_points, ijk=new_ijk)
