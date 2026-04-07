@@ -7,7 +7,7 @@ import mammos_mumag
 u.add_enabled_equivalencies(u.magnetic_flux_field())
 
 
-def test_run():
+def test_run(tmp_path):
     """Test run."""
     results_hysteresis = mammos_mumag.hysteresis.run(
         mesh="cube20_singlegrain_msize2",
@@ -19,11 +19,12 @@ def test_run():
         h_start=(1 * u.T).to("A/m"),
         h_final=-(1 * u.T).to("A/m"),
         h_n_steps=3,
+        outdir=tmp_path,
     )
     assert isinstance(results_hysteresis, mammos_mumag.hysteresis.Result)
 
 
-def test_run_zeros():
+def test_run_zeros(tmp_path):
     """Test run with zeros."""
     results_hysteresis = mammos_mumag.hysteresis.run(
         mesh="cube20_singlegrain_msize2",
@@ -35,5 +36,6 @@ def test_run_zeros():
         h_start=(1 * u.T).to("A/m"),
         h_final=-(1 * u.T).to("A/m"),
         h_n_steps=3,
+        outdir=tmp_path,
     )
     assert isinstance(results_hysteresis, mammos_mumag.hysteresis.Result)
