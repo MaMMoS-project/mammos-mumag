@@ -12,7 +12,6 @@ from pydantic import Field, field_validator
 from pydantic.dataclasses import dataclass
 
 import mammos_mumag
-from mammos_mumag._tools import check_esys_escript
 from mammos_mumag.materials import MaterialDomain, Materials
 from mammos_mumag.mesh import Mesh
 from mammos_mumag.parameters import Parameters
@@ -94,201 +93,6 @@ class Simulation:
         ):
             raise ValueError("Mesh and domains have a different number of grains.")
 
-    @classmethod
-    def run_file(
-        cls, file: str | pathlib.Path, outdir: str | pathlib.Path = "out"
-    ) -> None:
-        """Run python file using `esys.escript`.
-
-        Args:
-            file: Path to simulation script.
-            outdir: Working directory.
-
-        """
-        check_esys_escript()
-        cmd = shlex.split(
-            f"{mammos_mumag._run_escript_bin} {file}",
-            posix=IS_POSIX,
-        )
-        _run_subprocess(cmd, cwd=outdir)
-
-    @classmethod
-    def _run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
-        """Run pre-defined script.
-
-        Args:
-            script: Name of pre-defined script.
-            outdir: Working directory
-            name: System name
-
-        """
-        check_esys_escript()
-        cmd = shlex.split(
-            f"{mammos_mumag._run_escript_bin} "
-            f"{mammos_mumag._scripts_directory / script}.py {name}",
-            posix=IS_POSIX,
-        )
-        _run_subprocess(cmd, cwd=outdir)
-        with open(outdir / "info.json", "w") as file:
-            json.dump(
-                {
-                    "datetime": datetime.datetime.now(datetime.UTC)
-                    .astimezone()
-                    .isoformat(timespec="seconds"),
-                    "mammos_mumag_version": mammos_mumag.__version__,
-                },
-                file,
-            )
-
-    def run_exani(
-        self,
-        outdir: str | pathlib.Path = "exani",
-        name: str = "out",
-    ) -> None:
-        r"""Run "exani" script.
-
-        Test the computation of the exchange and anisotropy energy density.
-        This gives the exchange energy density of a vortex in the :math:`xy`-plane
-        and the anistropy energy density in the uniformly magnetized state.
-        Here we have placed the anistropy direction paralle to to the :math:`z`-axis.
-        The anisotropy energy density is calculated as :math:`-K (\mathbf{m} \cdot
-        \mathbf{k})^2` where :math:`\mathbf{m}` is the unit vector of magnetization
-        and :math:`\mathbf{k}` is the anisotropy direction. :math:`K` is the
-        magnetocrystalline anisotropy constant.
-
-        This scripts creates the following files in `outdir`:
-
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>_uniform.csv`: table containing information about
-          the exchange anisotropy energy evaluated with different
-          methods on a uniformly  magnetized cube.
-
-        * `<name>_vortex.csv`: table containing information about
-          the exchange anisotropy energy evaluated with different
-          methods on a vortex.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-
-        self._run_script(
-            script="exani",
-            outdir=outdir,
-            name=name,
-        )
-
-    def run_external(
-        self,
-        outdir: str | pathlib.Path = "external",
-        name: str = "out",
-    ) -> None:
-        r"""Run "external" script.
-
-        Compute the Zeemann energy by finite elements and analytically.
-
-        This scripts creates the following files in `outdir`:
-
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>.p2`: simulation parameters file.
-
-        * `<name>.csv`: table containing information about
-          the Zeeman energy evaluated with different methods.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-        self.parameters.write_p2(outdir / f"{name}.p2")
-
-        self._run_script(
-            script="external",
-            outdir=outdir,
-            name=name,
-        )
-
-    def run_hmag(self, outdir: str | pathlib.Path = "hmag", name: str = "out") -> None:
-        r"""Run "hmag" script.
-
-        This script evaluates the magnetostatic energy density
-        and the field of a uniformly magnetized geometry.
-        Creates the `vtk` file for visualisation of the magnetic scalar potential
-        and the magnetic field. With linear basis function for the magnetic scalar
-        potential :math:`u`, the magnetostatic field :math:`h = -\nabla u` is
-        defined at the finite elements. By smoothing the field can be transfered
-        to the nodes of the finite element mesh.
-
-        This scripts creates the following files in `outdir`:
-
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>.csv`: table containing information about the magnetostatic
-          energy density evaluated with different methods.
-          Three energy values are compared:
-
-          .. math::
-
-            E_{\mathsf{field}} := - \frac{1}{2} \int_\Omega \frac{\mathbf{h} \cdot J_s
-            \mathbf{m}}{V} \ \mathrm{d}x
-
-          where :math:`\Omega` is the domain, :math:`\mathbf{h}` is the
-          demagnetization field, :math:`J_s` is the spontaneous polarisation,
-          :math:`\mathbf{m}` is the magnetization field, and :math:`V` is the volume
-          of the domain.
-
-          .. math::
-
-            E_{\mathsf{gradient}} := \frac{1}{2} \sum_i \mathbf{m}_i \cdot \mathbf{g}_i
-
-          where :math:`\mathbf{m}_i` and :math:`\mathbf{g}_i` are the unit vector of
-          the magnetization and the gradient of the energy normalized by the volume
-          of the energy with respect to :math:`\mathbf{m}_i` at the nodes of the finite
-          element mesh.
-
-          .. math::
-
-            E_{\mathsf{analytic}} := J_s^2 / (6 \mu_0)
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-
-        self._run_script(
-            script="hmag",
-            outdir=outdir,
-            name=name,
-        )
-
     def run_loop(self, outdir: str | pathlib.Path = "loop", name: str = "out") -> None:
         r"""Run "loop" script.
 
@@ -296,7 +100,9 @@ class Simulation:
 
         This scripts creates the following files in `outdir`:
 
-        * `<name>.fly`: mesh file.
+        * `<name>.med`: mesh file in med format.
+
+        * `<name>.npz`: mesh file in npz format.
 
         * `<name>.krn`: materials file.
 
@@ -330,148 +136,38 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
+
+        # check inputs
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
+
+        # copy input files into `outdir`
+        self.mesh._write_npz(outdir / f"{name}")
         self.materials.write_krn(outdir / f"{name}.krn")
         self.parameters.write_p2(outdir / f"{name}.p2")
 
-        self._run_script(
-            script="loop",
-            outdir=outdir,
-            name=name,
+        # call subprocess with loop script
+        loop_script = pathlib.Path(__file__).parent / "src" / "loop.py"
+        cmd = shlex.split(f"python {loop_script} --mesh {name}.npz", posix=IS_POSIX)
+        res = subprocess.run(
+            cmd,
+            cwd=outdir,
+            stderr=subprocess.PIPE,
         )
+        return_code = res.returncode
+        if return_code:
+            raise RuntimeError(
+                f"Simulation has failed with error: \n{res.stderr.decode('utf-8')}"
+            )
 
-    def run_magnetization(
-        self,
-        outdir: str | pathlib.Path = "magnetization",
-        name: str = "out",
-    ) -> None:
-        """Run "magnetization" script.
-
-        Creates the `vtk` file for the visualisation of the material properties.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-        self.parameters.write_p2(outdir / f"{name}.p2")
-
-        self._run_script(
-            script="magnetization",
-            outdir=outdir,
-            name=name,
-        )
-
-    def run_mapping(
-        self,
-        outdir: str | pathlib.Path = "mapping",
-        name: str = "out",
-    ) -> None:
-        """Run "mapping" script.
-
-        Test the energy calculations with matrices.
-        The module mapping.py contains the tools for mapping from the finite element
-        bilinear forms to sparse matrices. We use sparse matrix methods from ``jax``.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-        self.parameters.write_p2(outdir / f"{name}.p2")
-
-        self._run_script(
-            script="mapping",
-            outdir=outdir,
-            name=name,
-        )
-
-    def run_materials(
-        self, outdir: str | pathlib.Path = "materials", name: str = "out"
-    ) -> None:
-        """Run "materials" script.
-
-        This script generates a `vtu` file that shows the material.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-
-        self._run_script(
-            script="materials",
-            outdir=outdir,
-            name=name,
-        )
-
-    def run_store(
-        self, outdir: str | pathlib.Path = "store", name: str = "out"
-    ) -> None:
-        """Run "store" script.
-
-        The sparse matrices used for computation can be stored
-        and reused for simulations with the same finite element mesh.
-
-        Args:
-            outdir: Working directory.
-            name: System name.
-
-        """
-        outdir = pathlib.Path(outdir)
-        outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
-        self.check_numgrains()
-        self.mesh.write(outdir / f"{name}.fly")
-        self.materials.write_krn(outdir / f"{name}.krn")
-        self.parameters.write_p2(outdir / f"{name}.p2")
-
-        self._run_script(
-            script="store",
-            outdir=outdir,
-            name=name,
-        )
-
-
-def _run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
-    """Run command using `subprocess` in the specified directory.
-
-    Args:
-        cmd: command to execute
-        cwd: working directory
-
-    Raises:
-        RuntimeError: Simulation has failed.
-
-    """
-    res = subprocess.run(
-        cmd,
-        cwd=cwd,
-        stderr=subprocess.PIPE,
-    )
-    return_code = res.returncode
-
-    if return_code:
-        raise RuntimeError(
-            f"Simulation has failed. Exit with error: \n{res.stderr.decode('utf-8')}"
-        )
+        # write run info
+        with open(outdir / "info.json", "w") as f:
+            json.dump(
+                {
+                    "datetime": datetime.datetime.now(datetime.UTC)
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                    "mammos_mumag_version": mammos_mumag.__version__,
+                },
+                f,
+            )
