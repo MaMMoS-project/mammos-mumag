@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 import pandas as pd
-import pyvista as pv
 from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 
@@ -337,21 +336,22 @@ class Result:
                 created if no plotter is passed.
 
         """
-        config = pv.read(self.configurations[idx])
-        config["m_norm"] = np.linalg.norm(config["m"], axis=1)
-        glyphs = config.glyph(
-            orient="m",
-            scale="m_norm",
-        )
-        pl = plotter or pv.Plotter()
-        pl.add_mesh(
-            glyphs,
-            scalars=glyphs["GlyphVector"][:, 2],
-            lighting=False,
-            cmap="coolwarm",
-            clim=[-1, 1],
-            scalar_bar_args={"title": "m_z"},
-        )
-        pl.show_axes()
-        if plotter is None:
-            pl.show(jupyter_backend=jupyter_backend)
+        raise NotImplementedError
+        # config = pv.read(self.configurations[idx])
+        # config["m_norm"] = np.linalg.norm(config["m"], axis=1)
+        # glyphs = config.glyph(
+        #     orient="m",
+        #     scale="m_norm",
+        # )
+        # pl = plotter or pv.Plotter()
+        # pl.add_mesh(
+        #     glyphs,
+        #     scalars=glyphs["GlyphVector"][:, 2],
+        #     lighting=False,
+        #     cmap="coolwarm",
+        #     clim=[-1, 1],
+        #     scalar_bar_args={"title": "m_z"},
+        # )
+        # pl.show_axes()
+        # if plotter is None:
+        #     pl.show(jupyter_backend=jupyter_backend)
