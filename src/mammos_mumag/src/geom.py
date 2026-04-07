@@ -1,16 +1,19 @@
-import numpy as np
+from functools import partial
+from typing import NamedTuple
+
 import jax
 import jax.numpy as jnp
-from typing import NamedTuple, Tuple, Optional
-from functools import partial
+import numpy as np
 
 
 class TetGeom(NamedTuple):
-    conn: jnp.ndarray          # (E,4) int32
-    grad_phi: jnp.ndarray      # (E,4,3) float64 -- constant ∇φ per element/vertex
-    volume: jnp.ndarray        # (E,) float64 -- V_e (may be scaled)
-    mat_id: jnp.ndarray        # (E,) int32 -- material group id per element
-    volume_scalefactor: jnp.ndarray  # () float64 -- scale applied to volumes (default 1.0)
+    conn: jnp.ndarray  # (E,4) int32
+    grad_phi: jnp.ndarray  # (E,4,3) float64 -- constant ∇φ per element/vertex
+    volume: jnp.ndarray  # (E,) float64 -- V_e (may be scaled)
+    mat_id: jnp.ndarray  # (E,) int32 -- material group id per element
+    volume_scalefactor: (
+        jnp.ndarray
+    )  # () float64 -- scale applied to volumes (default 1.0)
 
 
 def _coeff_matrix(verts):
@@ -20,16 +23,15 @@ def _coeff_matrix(verts):
 
 
 def _tet_geom_from_verts(verts):
-    """
-    Compute per-element quantities from vertex coords (4,3):
+    """Compute per-element quantities from vertex coords (4,3):
     - grad_phi (4,3): rows are (b_i, c_i, d_i)
     - volume (scalar): det(B)/6 (Eq. 13)
     """
     B = _coeff_matrix(verts)  # (4,4)
     Binv = jnp.linalg.inv(B)  # columns are [a_i,b_i,c_i,d_i]
     detB = jnp.linalg.det(B)
-    Ve = detB / 6.0          # Eq. (13)
-    grads = Binv[1:, :].T    # (4,3) -> gradients (Eq. 18 via Eq. 8 coefficients)
+    Ve = detB / 6.0  # Eq. (13)
+    grads = Binv[1:, :].T  # (4,3) -> gradients (Eq. 18 via Eq. 8 coefficients)
     return grads, Ve
 
 
@@ -37,16 +39,11 @@ def _tet_geom_from_verts(verts):
 _vmap_geom = jax.vmap(_tet_geom_from_verts, in_axes=(0,), out_axes=(0, 0))
 
 
-@partial(jax.jit, static_argnames=('one_based_indexing', 'fix_orientation'))
+@partial(jax.jit, static_argnames=("one_based_indexing", "fix_orientation"))
 def precompute_linear_tet_geometry(
-    knt,
-    ijk,
-    *,
-    one_based_indexing: bool = False,
-    fix_orientation: bool = True
+    knt, ijk, *, one_based_indexing: bool = False, fix_orientation: bool = True
 ) -> TetGeom:
-    """
-    Parameters
+    """Parameters
     ----------
     knt : (N,3) float64
         Node coordinates.
@@ -57,7 +54,7 @@ def precompute_linear_tet_geometry(
     fix_orientation : bool
         If True, ensures positive volume by swapping the last two nodes if needed.
 
-    Returns
+    Returns:
     -------
     TetGeom(conn, grad_phi, volume, mat_id, volume_scalefactor)
     """
@@ -89,7 +86,9 @@ def precompute_linear_tet_geometry(
 
         # For each element, either recompute with swapped verts or keep as-is
         grad_phi_fix, Ve_fix = jax.vmap(
-            lambda vs, do: jax.lax.cond(do, _swap_and_recompute, _tet_geom_from_verts, vs),
+            lambda vs, do: jax.lax.cond(
+                do, _swap_and_recompute, _tet_geom_from_verts, vs
+            ),
             in_axes=(0, 0),
         )(verts, neg)
 
@@ -104,7 +103,13 @@ def precompute_linear_tet_geometry(
 
     # Default: no scaling at this stage
     vol_scale = jnp.asarray(1.0, dtype=jnp.float64)
-    return TetGeom(conn=conn, grad_phi=grad_phi, volume=Ve, mat_id=mat_id, volume_scalefactor=vol_scale)
+    return TetGeom(
+        conn=conn,
+        grad_phi=grad_phi,
+        volume=Ve,
+        mat_id=mat_id,
+        volume_scalefactor=vol_scale,
+    )
 
 
 # ------------------------------- New: high-level precompute function from in-memory arrays (NumPy or JAX)
@@ -112,11 +117,10 @@ def precompute_geometry_from_knt_ijk(
     knt_in: np.ndarray,
     ijk_in: np.ndarray,
     *,
-    detect_one_based: Optional[bool] = None,
+    detect_one_based: bool | None = None,
     fix_orientation: bool = True,
-) -> Tuple[jnp.ndarray, TetGeom]:
-    """
-    Validate and precompute TetGeom directly from in-memory (knt, ijk).
+) -> tuple[jnp.ndarray, TetGeom]:
+    """Validate and precompute TetGeom directly from in-memory (knt, ijk).
 
     Parameters
     ----------
@@ -130,7 +134,7 @@ def precompute_geometry_from_knt_ijk(
     fix_orientation : bool
         If True, enforce positive tet volumes by swapping local nodes 3<->4 where needed.
 
-    Returns
+    Returns:
     -------
     knt : jax.numpy.ndarray (N,3) float64
         JAX array of node coordinates.
@@ -178,8 +182,7 @@ def precompute_geometry_from_knt_ijk(
 
 # ------------------------------- Updated loader: now delegates to the in-memory precompute function
 def load_and_precompute_geometry(mesh_path: str, *, mmap: bool = True):
-    """
-    Load a tetrahedral mesh (.npz) and return precomputed TetGeom.
+    """Load a tetrahedral mesh (.npz) and return precomputed TetGeom.
 
     Parameters
     ----------
@@ -190,7 +193,7 @@ def load_and_precompute_geometry(mesh_path: str, *, mmap: bool = True):
     mmap : bool
         If True (default), use memory-mapping to reduce peak RAM during load.
 
-    Returns
+    Returns:
     -------
     knt : jnp.ndarray (N,3)
     geom : TetGeom

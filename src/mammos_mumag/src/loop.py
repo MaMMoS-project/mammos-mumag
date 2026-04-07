@@ -1,45 +1,47 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Any, Optional, Tuple, List
-from pathlib import Path
+
 import argparse
 import configparser
 import re
-import jax
-import jax.numpy as jnp
 import sys
 import time
-from magnetostatics import (
-    prepare_shells_and_geom,
-    p2_path_for_mesh,
-    read_mesh_params_from_p2,
-    MU0,  # keep MU0 import
-)
-from geom import TetGeom
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import jax
+import jax.numpy as jnp
 from energies import (
     brown_energy_and_grad_from_m,
     brown_energy_and_grad_from_scalar_potential,
     magnetic_volume,
 )
+from geom import TetGeom
+from magnetostatics import (
+    MU0,  # keep MU0 import
+    p2_path_for_mesh,
+    prepare_shells_and_geom,
+    read_mesh_params_from_p2,
+)
 from optimize import (
+    make_uniform_u_raw,
+    minimize_energy_bb,
+    minimize_energy_lbfgs,
+    precompute_block_jacobi_3x3_from_geom,
+    precompute_diag_tangent_from_geom,
     prepare_core_amg,
     prepare_core_amg_scalar,  # <-- scalar AMG prep
-    minimize_energy_lbfgs,
-    minimize_energy_bb,
-    make_uniform_u_raw,
-    precompute_diag_tangent_from_geom,
-    precompute_block_jacobi_3x3_from_geom,
 )
 
 
 # ------------------------------- Dataclasses ---------------------------------
 @dataclass
 class AmgPack:
-    A_t: Tuple[Any, ...]
-    P_t: Tuple[Any, ...]
-    R_t: Tuple[Any, ...]
-    Dinv_t: Tuple[jnp.ndarray, ...]
-    L_c: Optional[jnp.ndarray] = None
+    A_t: tuple[Any, ...]
+    P_t: tuple[Any, ...]
+    R_t: tuple[Any, ...]
+    Dinv_t: tuple[jnp.ndarray, ...]
+    L_c: jnp.ndarray | None = None
 
 
 @dataclass
@@ -127,8 +129,7 @@ _INT_RX = re.compile(
 
 
 def _getint_relaxed(cfg, section, option, default=None):
-    """
-    Read an integer from a ConfigParser with relaxed parsing.
+    """Read an integer from a ConfigParser with relaxed parsing.
 
     Behavior:
     - If 'section' or 'option' is missing -> return default.
@@ -144,7 +145,7 @@ def _getint_relaxed(cfg, section, option, default=None):
     option : str
     default : Optional[int]
 
-    Returns
+    Returns:
     -------
     int or default
     """
@@ -161,7 +162,7 @@ def _getint_relaxed(cfg, section, option, default=None):
             return default
 
 
-def _normalize(v: Tuple[float, float, float], eps=1e-30):
+def _normalize(v: tuple[float, float, float], eps=1e-30):
     x, y, z = v
     n = (x * x + y * y + z * z) ** 0.5
     return (0.0, 0.0, 1.0, 1.0) if n < eps else (x / n, y / n, z / n, n)
@@ -198,7 +199,7 @@ def step2_build_amg(
     return AmgPack(A_t=A_t, P_t=P_t, R_t=R_t, Dinv_t=Dinv_t, L_c=L_c)
 
 
-def step3_read_p2(mesh: str) -> Optional[P2Config]:
+def step3_read_p2(mesh: str) -> P2Config | None:
     p2p = p2_path_for_mesh(mesh)
     p = Path(p2p)
     if not p.exists():
@@ -329,10 +330,9 @@ def compute_B_H_from_A(*, geom: TetGeom, A_nodes, m_nodes, Ms_lookup):
 
 
 def compute_B_H_from_U(*, geom: TetGeom, U_nodes, m_nodes, Ms_lookup):
-    """
-    Scalar potential route:
-      H_e = -grad(U)_e  (constant per tet);  M_e = Ms_e * mean(m_nodes at tet);
-      B_e = μ0 * (H_e + M_e)
+    """Scalar potential route:
+    H_e = -grad(U)_e  (constant per tet);  M_e = Ms_e * mean(m_nodes at tet);
+    B_e = μ0 * (H_e + M_e)
     """
     conn = geom.conn
     grad_phi = geom.grad_phi
@@ -350,8 +350,7 @@ def compute_B_H_from_U(*, geom: TetGeom, U_nodes, m_nodes, Ms_lookup):
 
 # ----------------------------- Step 5: initial E -----------------------------
 def check_unit_vectors(m: jnp.ndarray, tol: float = 1e-12) -> bool:
-    """
-    Check if all rows in m have norm ≈ 1 within a tolerance.
+    """Check if all rows in m have norm ≈ 1 within a tolerance.
 
     Parameters
     ----------
@@ -360,7 +359,7 @@ def check_unit_vectors(m: jnp.ndarray, tol: float = 1e-12) -> bool:
     tol : float
         Allowed deviation from 1.0 for the norm.
 
-    Returns
+    Returns:
     -------
     bool
         True if all norms are within [1 - tol, 1 + tol], False otherwise.
@@ -372,14 +371,13 @@ def check_unit_vectors(m: jnp.ndarray, tol: float = 1e-12) -> bool:
 def make_vortex_yz(
     knt: jnp.ndarray,
     *,
-    center: Optional[Sequence[float]] = None,
+    center: Sequence[float] | None = None,
     core_radius_frac: float = 0.001,
     core_amp: float = 1.0,
     chirality: int = +1,  # +1 or -1: rotation sense in the y–z plane
     polarity: int = +1,  # +1 or -1: +x or -x vortex core
 ) -> jnp.ndarray:
-    """
-    Create a vortex in the y–z plane (circulation around x) with a small core along x.
+    """Create a vortex in the y–z plane (circulation around x) with a small core along x.
 
     Parameters
     ----------
@@ -397,7 +395,7 @@ def make_vortex_yz(
     polarity : {+1, -1}
         +1 sets the core along +x; -1 along -x.
 
-    Returns
+    Returns:
     -------
     m : jnp.ndarray
         Unit magnetization field of shape (N, 3) representing a y–z-plane vortex.
@@ -608,8 +606,7 @@ def write_vtu_MHB(
 def save_state_with_index(
     *, basename: str, index: int, u_raw, aux_star, ms_mode: str
 ) -> str:
-    """
-    Save current state (u_raw and aux_star) to an .npz named with the VTU index.
+    """Save current state (u_raw and aux_star) to an .npz named with the VTU index.
     File name: {basename}.{index:04d}.state.npz
 
     Parameters
@@ -627,7 +624,7 @@ def save_state_with_index(
     ms_mode : {"A","U"}
         Magnetostatics formulation.
 
-    Returns
+    Returns:
     -------
     out_path : str
         Path of the written .npz.
@@ -649,8 +646,7 @@ def save_state_with_index(
 def load_state_file(
     state_path: str, *, expected_N: int | None = None, ms_mode: str | None = None
 ):
-    """
-    Load a previously saved state (.npz) and return (u_raw, aux_star).
+    """Load a previously saved state (.npz) and return (u_raw, aux_star).
 
     Parameters
     ----------
@@ -661,7 +657,7 @@ def load_state_file(
     ms_mode : {"A","U"} or None
         If provided, verify the saved file matches this formulation.
 
-    Returns
+    Returns:
     -------
     (u_raw, aux_star)
         JAX arrays ready to be used as initial state.
@@ -692,8 +688,7 @@ def load_state_file(
 
 
 def _parse_int_or_none(s: str | None) -> int | None:
-    """
-    Return int(s) if s is a valid integer string (e.g., "7", "+7", "-3", "0032"),
+    """Return int(s) if s is a valid integer string (e.g., "7", "+7", "-3", "0032"),
     otherwise None. Passing None returns None.
     """
     if s is None:
@@ -740,7 +735,7 @@ def _mh_mxyz_device(
     return MH, Mx, My, Mz
 
 
-def _h_schedule(hstart, hfinal, hstep) -> List[float]:
+def _h_schedule(hstart, hfinal, hstep) -> list[float]:
     vals = []
     if hstep == 0.0:
         return [float(hstart)]
@@ -1479,7 +1474,7 @@ def main():
     a_tol = tol_hmag_factor * (tol_fun ** (1 / 3))
 
     # Step 4
-    krn_path: Optional[Path] = None
+    krn_path: Path | None = None
     if args.krn is not None:
         krn_path = Path(args.krn)
     elif not args.no_auto_krn:
