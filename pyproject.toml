@@ -77,7 +77,7 @@ unv2fly = "mammos_mumag.cli:convert_mesh"
 target-version = "py311"
 exclude = [
   "dev",
-  "src/mammos_mumag/scripts/*.py", # scripts
+  "src/mammos_mumag/src/*.py", # scripts
   "src/mammos_mumag/tofly.py",
 ]
 [tool.ruff.lint]
