@@ -11,6 +11,9 @@ from typing import Any
 
 import jax
 import jax.numpy as jnp
+import mammos_entity as me
+import mammos_units as u
+
 from energies import (
     brown_energy_and_grad_from_m,
     brown_energy_and_grad_from_scalar_potential,
@@ -1029,6 +1032,17 @@ def step7_demag_sweep(
             f"{'Jx(T)':>10} {'Jy(T)':>10} {'Jz(T)':>10} "
             f"{'e(J/m3)':>10} {'e_ms(J/m3)':>10} {'e_ex(J/m3)':>10} {'e_an(J/m3)':>10} {'e_ze(J/m3)':>10}\n"
         )
+    list_vtu = []
+    mu0_Hext = []
+    J_H = []
+    Jx = []
+    Jy = []
+    Jz = []
+    E_tot = []
+    E_dem = []
+    E_exc = []
+    E_ani = []
+    E_zee = []
 
     print(
         f"# {'mu0 Hext(T)':>13} {'J.h(T)':>13} "
@@ -1225,6 +1239,17 @@ def step7_demag_sweep(
                 f"{float(Mx * MU0):10.3e} {float(My * MU0):10.3e} {float(Mz * MU0):10.3e} "
                 f"{E_density:10.3e} {S_density:10.3e} {Ex_density:10.3e} {An_density:10.3e} {Ze_density:10.3e}\n"
             )
+        list_vtu.append(vtu_written_id)
+        mu0_Hext.append(hmag * MU0)
+        J_H.append(MH * MU0)
+        Jx.append(Mx * MU0)
+        Jy.append(My * MU0)
+        Jz.append(Mz * MU0)
+        E_tot.append(E_density)
+        E_dem.append(S_density)
+        E_exc.append(Ex_density)
+        E_ani.append(An_density)
+        E_zee.append(Ze_density)
 
         aux_prev = aux_star
 
@@ -1236,6 +1261,70 @@ def step7_demag_sweep(
     print(f" total wall time: {t_total:.3f} s")
     print(f" total function evaluations: {total_fun_evals}")
     print(f" total nonlinear iterations ({method_used}): {total_outer_iters}")
+    me.EntityCollection(
+        "Hysteresis loop.",
+        configuration_type=list_vtu,
+        mu0_Hext=me.Entity(
+            "MagneticFluxDensity",
+            value=mu0_Hext,
+            unit=u.T,
+            description="Magnetic flux density component `mu_0 * H_ext`  of the external field.",
+        ),
+        J_H=me.Entity(
+            "MagneticPolarisation",
+            value=J_H,
+            unit=u.T,
+            description="Polarisation strength evaluated parallel to the applied field axis.",
+        ),
+        Jx=me.Entity(
+            "MagneticPolarisation",
+            value=Jx,
+            unit=u.T,
+            description="Cartesian component x of the polarisation.",
+        ),
+        Jy=me.Entity(
+            "MagneticPolarisation",
+            value=Jy,
+            unit=u.T,
+            description="Cartesian component y of the polarisation.",
+        ),
+        Jz=me.Entity(
+            "MagneticPolarisation",
+            value=Jz,
+            unit=u.T,
+            description="Cartesian component z of the polarisation.",
+        ),
+        E_tot=me.Entity(
+            "EnergyDensity",
+            value=E_tot,
+            unit=u.J / u.m**3,
+            description="Total energy density of the system.",
+        ),
+        E_dem=me.Entity(
+            "EnergyDensity",
+            value=E_dem,
+            unit=u.J / u.m**3,
+            description="Stray-field energy (demagnetizing field) component of the total energy density.",
+        ),
+        E_exc=me.Entity(
+            "EnergyDensity",
+            value=E_exc,
+            unit=u.J / u.m**3,
+            description="Exchange energy component of the total energy density.",
+        ),
+        E_ani=me.Entity(
+            "EnergyDensity",
+            value=E_ani,
+            unit=u.J / u.m**3,
+            description="Magnetocrystalline anisotropy energy component of the total energy density.",
+        ),
+        E_zee=me.Entity(
+            "EnergyDensity",
+            value=E_zee,
+            unit=u.J / u.m**3,
+            description="Zeeman energy component of the total energy density.",
+        ),
+    ).to_csv(f"{basename}.csv")
 
 
 # ---------------------------------- CLI --------------------------------------
