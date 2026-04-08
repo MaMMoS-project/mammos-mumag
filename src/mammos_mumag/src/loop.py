@@ -1264,13 +1264,13 @@ def step7_demag_sweep(
     me.EntityCollection(
         "Hysteresis loop.",
         configuration_type=list_vtu,
-        mu0_Hext=me.Entity(
+        B_ext=me.Entity(
             "MagneticFluxDensity",
             value=mu0_Hext,
             unit=u.T,
             description="Magnetic flux density component `mu_0 * H_ext`  of the external field.",
         ),
-        J_H=me.Entity(
+        J=me.Entity(
             "MagneticPolarisation",
             value=J_H,
             unit=u.T,
@@ -1294,7 +1294,7 @@ def step7_demag_sweep(
             unit=u.T,
             description="Cartesian component z of the polarisation.",
         ),
-        E_tot=me.Entity(
+        energy_density=me.Entity(
             "EnergyDensity",
             value=E_tot,
             unit=u.J / u.m**3,
