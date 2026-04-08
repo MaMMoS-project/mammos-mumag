@@ -40,7 +40,7 @@ def test_h_vect():
     assert par.h == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
 
 
-def test_parameters_file(DATA, tmp_path):
+def test_parameters_file(tmp_path):
     """Test parameters files i/o.
 
     This test defines a :py:class:`~mammos_mumag.parameters.Parameters` instance.

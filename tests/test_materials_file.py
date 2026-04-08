@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from mammos_mumag.materials import MaterialDomain, Materials
 
 
-def test_materials_file(DATA, tmp_path):
+def test_materials_file(tmp_path):
     """Test materials files i/o.
 
     This test defines a :py:class:`~mammos_mumag.materials.Materials` instance
