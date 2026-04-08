@@ -1300,30 +1300,31 @@ def step7_demag_sweep(
             unit=u.J / u.m**3,
             description="Total energy density of the system.",
         ),
-        E_dem=me.Entity(
-            "EnergyDensity",
-            value=E_dem,
-            unit=u.J / u.m**3,
-            description="Stray-field energy (demagnetizing field) component of the total energy density.",
-        ),
-        E_exc=me.Entity(
-            "EnergyDensity",
-            value=E_exc,
-            unit=u.J / u.m**3,
-            description="Exchange energy component of the total energy density.",
-        ),
-        E_ani=me.Entity(
-            "EnergyDensity",
-            value=E_ani,
-            unit=u.J / u.m**3,
-            description="Magnetocrystalline anisotropy energy component of the total energy density.",
-        ),
-        E_zee=me.Entity(
-            "EnergyDensity",
-            value=E_zee,
-            unit=u.J / u.m**3,
-            description="Zeeman energy component of the total energy density.",
-        ),
+        # TODO: add energy components to output csv
+        # E_dem=me.Entity(
+        #     "EnergyDensity",
+        #     value=E_dem,
+        #     unit=u.J / u.m**3,
+        #     description="Stray-field energy (demagnetizing field) component of the total energy density.",
+        # ),
+        # E_exc=me.Entity(
+        #     "EnergyDensity",
+        #     value=E_exc,
+        #     unit=u.J / u.m**3,
+        #     description="Exchange energy component of the total energy density.",
+        # ),
+        # E_ani=me.Entity(
+        #     "EnergyDensity",
+        #     value=E_ani,
+        #     unit=u.J / u.m**3,
+        #     description="Magnetocrystalline anisotropy energy component of the total energy density.",
+        # ),
+        # E_zee=me.Entity(
+        #     "EnergyDensity",
+        #     value=E_zee,
+        #     unit=u.J / u.m**3,
+        #     description="Zeeman energy component of the total energy density.",
+        # ),
     ).to_csv(f"{basename}.csv")
 
 
