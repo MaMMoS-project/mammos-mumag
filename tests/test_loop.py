@@ -21,9 +21,9 @@ def test_loop(DATA, tmp_path):
     content_1 = me.from_csv(DATA / "loop" / "cube.csv")
     content_2 = me.from_csv(tmp_path / "cube.csv")
     assert np.all(content_1.configuration_type == content_2.configuration_type)
-    assert content_1.B_ext == content_2.B_ext
-    assert content_1.J == content_2.J
-    assert content_1.Jx == content_2.Jx
-    assert content_1.Jy == content_2.Jy
-    assert content_1.Jz == content_2.Jz
-    assert content_1.energy_density == content_2.energy_density
+    assert np.allclose(content_1.B_ext.q, content_2.B_ext.q)
+    assert np.allclose(content_1.J.q, content_2.J.q)
+    assert np.allclose(content_1.Jx.q, content_2.Jx.q)
+    assert np.allclose(content_1.Jy.q, content_2.Jy.q)
+    assert np.allclose(content_1.Jz.q, content_2.Jz.q)
+    assert np.allclose(content_1.energy_density.q, content_2.energy_density.q)
