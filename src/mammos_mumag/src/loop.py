@@ -1178,7 +1178,6 @@ def step7_demag_sweep(
             or (hmag == h_vals[-1])
             or (abs(hmag) < 1e-12)
         )
-        vtu_written_id = 0
         if write_now:
             vtu_index += 1
             if ms_mode == "A":
@@ -1205,9 +1204,7 @@ def step7_demag_sweep(
                 B_elems=B_e,
                 index=vtu_index,
             )
-            vtu_written_id = vtu_index
-            last_MH_mu0 = MH_mu0
-            # Persist state at the same index as the VTU
+            last_MH_mu0 = MH_mu0  # Persist state at the same index as the VTU
             try:
                 _ = save_state_with_index(
                     basename=basename,
@@ -1234,12 +1231,12 @@ def step7_demag_sweep(
         # ---- .dat output
         with open(dat_path, "a", encoding="utf-8") as f:
             f.write(
-                f"{vtu_written_id:03d} "
+                f"{vtu_index:03d} "
                 f"{float(hmag * MU0):13.6e} {float(MH * MU0):12.5e} "
                 f"{float(Mx * MU0):10.3e} {float(My * MU0):10.3e} {float(Mz * MU0):10.3e} "
                 f"{E_density:10.3e} {S_density:10.3e} {Ex_density:10.3e} {An_density:10.3e} {Ze_density:10.3e}\n"
             )
-        list_vtu.append(vtu_written_id)
+        list_vtu.append(vtu_index)
         mu0_Hext.append(hmag * MU0)
         J_H.append(MH * MU0)
         Jx.append(Mx * MU0)
