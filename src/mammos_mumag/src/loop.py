@@ -1175,8 +1175,8 @@ def step7_demag_sweep(
         write_now = (
             (last_MH_mu0 is None)
             or (abs(MH_mu0 - last_MH_mu0) >= field.mstep)
-            or (hmag == h_vals[-1])
-            or (abs(hmag) < 1e-12)
+            # or (hmag == h_vals[-1])  # TODO: implement extra vtu saving at final step
+            # or (abs(hmag) < 1e-12)  # TODO: implement extra vtu saving when h=0
         )
         if write_now:
             vtu_index += 1
