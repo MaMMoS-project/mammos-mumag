@@ -3,9 +3,9 @@
 import datetime
 import json
 import os
-import pathlib
 import shlex
 import subprocess
+from pathlib import Path
 from typing import Any
 
 from pydantic import Field, field_validator
@@ -24,39 +24,58 @@ IS_POSIX = os.name == "posix"
 class Simulation:
     """Simulation class.
 
-    Args:
-        materials: :py:class:`~mammos_mumag.materials.Materials` instance containing
-            information about the material.
-        material_domain_list: List of :py:class:`~mammos_mumag.materials.MaterialDomain`
-            objects. Each object contains the intrinsic properties in any uniform
-            subdomain. If specified, this material information overwrites the
-            :py:attr:`~mammos_mumag.simulation.Simulation.materials` attribute.
-        materials_filepath: Location of materials file to read. If specified, the
-            material parameters read from file will overwrite any material information
-            defined via the :py:attr:`~mammos_mumag.simulation.Simulation.materials` or
-            :py:attr:`~mammos_mumag.simulation.Simulation.material_domain_list`
-            attributes.
-        mesh: Mesh object.
-        parameters: :py:class:`~mammos_mumag.parameters.Parameters` instance containing
-            information about simulation parameters.
-        parameters_filepath: Location of parameter file to read. If specified, all the
-            parameters stored in the
-            :py:attr:`~mammos_mumag.simulation.Simulation.parameters` attribute will be
-            overwritten.
+    Three objects are needed in most simulations:
+
+    * a mesh describing the material's geometry,
+    * a :py:class:`~mammos_mumag.materials.Materials` instance for the magnetic
+      properties of the different domains,
+    * a :py:class:`~mammos_mumag.parameters.Parameters` instance for the simulation
+      and optimization parameters.
+
+    However, in some cases we are interested in simulations that do not require one or
+    more of the objects. For example, evaluating a hysteresis loop using the script
+    ``"loop"`` needs all three objects, while the script ``"materials"`` (used for
+    outputting a material ``.vtu`` file) only requires the mesh and the materials
+    objects.
+
+    Therefore, only :py:attr:`~mammos_mumag.simulation.Simulation.mesh` is a required
+    attribute and the other attributes are optional. When executing a script, the
+    first step will be checking that the required simulation attributes are defined.
     """
 
     mesh: mammos_mumag.mesh.Mesh
-    material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
-    materials_filepath: pathlib.Path | None = Field(default=None, repr=False)
-    parameters_filepath: pathlib.Path | None = Field(default=None, repr=False)
+    """Mesh of the material. The mesh can either be given as a
+    :py:class:`~mammos_mumag.mesh.Mesh` instance, as a string for Zenodo meshes
+    available through :py:mod:`mammos_mumag`, or as a path
+    for local meshes. The only
+    recognized mesh format is ``.fly``."""
     materials: Materials | None = Field(default=None)
+    """Materials parameters."""
+    material_domain_list: list[MaterialDomain] | None = Field(default=None, repr=False)
+    """List of :py:class:`~mammos_mumag.materials.MaterialDomain` objects. Each object
+    contains the intrinsic properties in any uniform subdomain. If specified, this
+    material information overwrites the
+    :py:attr:`~mammos_mumag.simulation.Simulation.materials` attribute.
+    However, if the attribute
+    :py:attr:`~mammos_mumag.simulation.Simulation.materials_filepath`
+    is also defined, it will have the priority."""
+    materials_filepath: os.PathLike | str | None = Field(default=None, repr=False)
+    """Location of materials file to read. If specified, the material parameters read
+    from file will overwrite any material information defined via the
+    :py:attr:`~mammos_mumag.simulation.Simulation.materials` or
+    :py:attr:`~mammos_mumag.simulation.Simulation.material_domain_list` attributes."""
     parameters: Parameters | None = Field(default=None)
+    """Simulation parameters."""
+    parameters_filepath: os.PathLike | str | None = Field(default=None, repr=False)
+    """Location of parameter file to read. If specified, all the parameters stored in
+    the :py:attr:`~mammos_mumag.simulation.Simulation.parameters` attribute will be
+    overwritten."""
 
     @field_validator("mesh", mode="before")
     @classmethod
     def _convert_mesh(cls, mesh: Any) -> Any:
         """Convert  string or path to local Mesh instance."""
-        if isinstance(mesh, str | pathlib.Path):
+        if isinstance(mesh, str | os.PathLike):
             mesh = Mesh(mesh)
         return mesh
 
@@ -64,6 +83,18 @@ class Simulation:
         """Post-initialization.
 
         Define `Materials` and `Parameters` instance if they have been defined.
+
+        Reading from files has the precedence over the other attributes. The hierarchy
+        for assigning :py:attr:`~mammos_mumag.simulation.Simulation.materials` is:
+
+        * If the attribute :py:attr:`~mammos_mumag.simulation.Simulation.
+          materials_filepath` is not ``None``, the materials file is read.
+        * If the attribute :py:attr:`~mammos_mumag.simulation.Simulation.
+          materials_domain_list` is defined instead, the materials object is assembled
+          from the domains.
+        * If the other attributes are not set, :py:attr:`~mammos_mumag.simulation.
+          Simulation.materials` keeps its assigned value.
+
         """
         if self.material_domain_list is not None:
             self.materials = Materials(domains=self.material_domain_list)
@@ -73,10 +104,10 @@ class Simulation:
             self.parameters = Parameters(filepath=self.parameters_filepath)
 
     def check_attribute(self, *args) -> None:
-        """Check existence of attributes.
+        """Check existence of the attributes.
 
         Args:
-            *args: Attribtes to check.
+            *args: Attributes to check.
 
         Raises:
             AttributeError: Attribute has not been defined yet.
@@ -96,9 +127,9 @@ class Simulation:
 
     @classmethod
     def run_file(
-        cls, file: str | pathlib.Path, outdir: str | pathlib.Path = "out"
+        cls, file: str | os.PathLike, outdir: str | os.PathLike = "out"
     ) -> None:
-        """Run python file using `esys.escript`.
+        """Run python file using ``esys.escript``.
 
         Args:
             file: Path to simulation script.
@@ -113,13 +144,13 @@ class Simulation:
         _run_subprocess(cmd, cwd=outdir)
 
     @classmethod
-    def _run_script(cls, script: str, outdir: str | pathlib.Path, name: str) -> None:
+    def _run_script(cls, script: str, outdir: str | os.PathLike, name: str) -> None:
         """Run pre-defined script.
 
         Args:
             script: Name of pre-defined script.
             outdir: Working directory
-            name: System name
+            name: System name. This will appear in the output files, if present.
 
         """
         check_esys_escript()
@@ -142,7 +173,7 @@ class Simulation:
 
     def run_exani(
         self,
-        outdir: str | pathlib.Path = "exani",
+        outdir: str | os.PathLike = "exani",
         name: str = "out",
     ) -> None:
         r"""Run "exani" script.
@@ -156,17 +187,14 @@ class Simulation:
         and :math:`\mathbf{k}` is the anisotropy direction. :math:`K` is the
         magnetocrystalline anisotropy constant.
 
-        This scripts creates the following files in `outdir`:
+        This scripts creates the following files in ``outdir``:
 
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>_uniform.csv`: table containing information about
+        * ``<name>.fly``: mesh file.
+        * ``<name>.krn``: materials file.
+        * ``<name>_uniform.csv``: table containing information about
           the exchange anisotropy energy evaluated with different
           methods on a uniformly  magnetized cube.
-
-        * `<name>_vortex.csv`: table containing information about
+        * ``<name>_vortex.csv``: table containing information about
           the exchange anisotropy energy evaluated with different
           methods on a vortex.
 
@@ -175,7 +203,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
@@ -190,22 +218,19 @@ class Simulation:
 
     def run_external(
         self,
-        outdir: str | pathlib.Path = "external",
+        outdir: str | os.PathLike = "external",
         name: str = "out",
     ) -> None:
-        r"""Run "external" script.
+        """Run "external" script.
 
         Compute the Zeemann energy by finite elements and analytically.
 
         This scripts creates the following files in `outdir`:
 
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>.p2`: simulation parameters file.
-
-        * `<name>.csv`: table containing information about
+        * ``<name>.fly``: mesh file.
+        * ``<name>.krn``: materials file.
+        * ``<name>.p2``: simulation parameters file.
+        * ``<name>.csv``: table containing information about
           the Zeeman energy evaluated with different methods.
 
         Args:
@@ -213,7 +238,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
@@ -227,7 +252,7 @@ class Simulation:
             name=name,
         )
 
-    def run_hmag(self, outdir: str | pathlib.Path = "hmag", name: str = "out") -> None:
+    def run_hmag(self, outdir: str | os.PathLike = "hmag", name: str = "out") -> None:
         r"""Run "hmag" script.
 
         This script evaluates the magnetostatic energy density
@@ -240,11 +265,9 @@ class Simulation:
 
         This scripts creates the following files in `outdir`:
 
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>.csv`: table containing information about the magnetostatic
+        * ``<name>.fly``: mesh file.
+        * ``<name>.krn``: materials file.
+        * ``<name>.csv``: table containing information about the magnetostatic
           energy density evaluated with different methods.
           Three energy values are compared:
 
@@ -276,7 +299,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
@@ -289,38 +312,30 @@ class Simulation:
             name=name,
         )
 
-    def run_loop(self, outdir: str | pathlib.Path = "loop", name: str = "out") -> None:
+    def run_loop(self, outdir: str | os.PathLike = "loop", name: str = "out") -> None:
         r"""Run "loop" script.
 
         Compute demagnetization curves.
 
         This scripts creates the following files in `outdir`:
 
-        * `<name>.fly`: mesh file.
-
-        * `<name>.krn`: materials file.
-
-        * `<name>.p2`: simulation parameters file.
-
-        * `<name>_{i}.vtu`: saved configurations. The amount of configurations stored
+        * ``<name>.fly``: mesh file.
+        * ``<name>.krn``: materials file.
+        * ``<name>.p2``: simulation parameters file.
+        * ``<name>_{i}.vtu``: saved configurations. The amount of configurations stored
           depends on the simulation parameter
           :py:attr:`~mammos_mumag.parameters.Parameters.m_step`.
-
-        * `<name>_stats.txt`: memory usage information.
-
-        * `<name>.dat`: table data regarding the demagnetization curve.
+        * ``<name>_stats.txt``: memory usage information.
+        * ``<name>.dat``: table data regarding the demagnetization curve.
           The columns of the file are:
 
           * the number of the `vtk` file that corresponds
             to the field and magnetic polarisation values in the line.
-
           * value of :math:`\mu_0 H_{\mathsf{ext}}` in Tesla, where :math:`\mu_0` is
             the permability of vacuum and :math:`H_{\mathsf{ext}}` is the external
             value of the external field.
-
           * the componenent of magnetic polarisation (in Tesla)
             parallel to the direction of the external field.
-
           * the energy density (:math:`\mathrm{J}/\mathrm{m}^3`) of the current state.
 
         Args:
@@ -328,7 +343,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
@@ -344,19 +359,19 @@ class Simulation:
 
     def run_magnetization(
         self,
-        outdir: str | pathlib.Path = "magnetization",
+        outdir: str | os.PathLike = "magnetization",
         name: str = "out",
     ) -> None:
         """Run "magnetization" script.
 
-        Creates the `vtk` file for the visualisation of the material properties.
+        Creates the ``vtk`` file for the visualisation of the material properties.
 
         Args:
             outdir: Working directory.
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
@@ -372,7 +387,7 @@ class Simulation:
 
     def run_mapping(
         self,
-        outdir: str | pathlib.Path = "mapping",
+        outdir: str | os.PathLike = "mapping",
         name: str = "out",
     ) -> None:
         """Run "mapping" script.
@@ -386,7 +401,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
@@ -401,18 +416,18 @@ class Simulation:
         )
 
     def run_materials(
-        self, outdir: str | pathlib.Path = "materials", name: str = "out"
+        self, outdir: str | os.PathLike = "materials", name: str = "out"
     ) -> None:
         """Run "materials" script.
 
-        This script generates a `vtu` file that shows the material.
+        This script generates a ``vtu`` file that shows the material.
 
         Args:
             outdir: Working directory.
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials")
         self.check_numgrains()
@@ -425,9 +440,7 @@ class Simulation:
             name=name,
         )
 
-    def run_store(
-        self, outdir: str | pathlib.Path = "store", name: str = "out"
-    ) -> None:
+    def run_store(self, outdir: str | os.PathLike = "store", name: str = "out") -> None:
         """Run "store" script.
 
         The sparse matrices used for computation can be stored
@@ -438,7 +451,7 @@ class Simulation:
             name: System name.
 
         """
-        outdir = pathlib.Path(outdir)
+        outdir = Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
         self.check_attribute("mesh", "materials", "parameters")
         self.check_numgrains()
@@ -453,7 +466,7 @@ class Simulation:
         )
 
 
-def _run_subprocess(cmd: list[str], cwd: str | pathlib.Path) -> None:
+def _run_subprocess(cmd: list[str], cwd: str | os.PathLike) -> None:
     """Run command using `subprocess` in the specified directory.
 
     Args:

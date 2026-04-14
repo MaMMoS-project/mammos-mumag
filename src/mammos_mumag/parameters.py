@@ -1,7 +1,13 @@
-"""Parameters class."""
+"""Parameters class.
+
+The simulation parameters define discretization parameters such as the scale of the
+system, initial values such as initial magnetization state, and solver options
+such as the convergence tolerance.
+"""
 
 import configparser
-import pathlib
+import os
+from pathlib import Path
 from typing import Any
 
 import mammos_entity as me
@@ -18,91 +24,165 @@ from pydantic.dataclasses import dataclass
     )
 )
 class Parameters:
-    r"""Class storing simulation parameters.
+    """Class storing simulation parameters.
 
-    Args:
-        size: Size of the mesh. This factor usually indicates the magnitude of the
-            geometry, i.e., 1e-9 for nanometer meshes, 1e-6 for micrometer, etc.
-        scale: Scale of the mesh. This factor can include other scaling, so that
-            the total scale of the mesh is `size` * `scale`.
-        state: Name of the initial magnetization state. Scripts recognize the strings
-            `flower`, `vortex`, `twisted`, and `random`. Other strings are interpreted
-            as the default case. The default case is a uniformly magnetized state.
-        h_mag_on: Whether the external field is on (True) or off (False).
-        h_start: Strength of the external field that the hysteresis loop starts from.
-        h_final: Strength of the external field that the hysteresis loop finishes at.
-        h_step: Difference in field strength between two hysteresis loop measurements.
-        h_vect: External field vector :math:`\mathbf{h}` as a list of floats or a
-            `Vector` entity. This vector is not necessarily normal. The property `h`
-            will be the normalized field. If not defined, the external field is zero.
-        m_step: Threshold at which the magnetization is saved. If in the hysteresis
-            calculation the difference between two consecutive values of magnetization
-            along the external field vector is bigger than this value, a new
-            configuration index will appear on the output csv table. Different
-            configurations mean that the magnetization is behaving differently,
-            possibly changing states.
-        m_final: Value of magnetization (along the external field direction) at which
-            the hysteresis calculation will stop.
-        m_vect: Magnetization field :math:`\mathbf{m}` as a list of floats or a `Vector`
-            entity.
-        precond_iter: Conjugate gradient iterations for inverse Hessian approximation.
-        tol_fun: Total energy tolerance to obtain the equilibrium configuration.
-        tol_h_mag_factor: Factor defining the tolerance for the magnetostatic scalar
-            potential according to the formula `tol_u = tol_fun * tol_h_mag_factor`.
-        filepath: Path of parameter file to read at initialization. In this case all
-            other parameters will be overwritten (if specified in the parameter file).
+    They include discretization parameters, initial values, and solver options.
     """
 
     size: float = 1.0e-09
+    """Size of the mesh. This factor usually indicates the magnitude of the
+    geometry, i.e., ``1e-9`` for nanometer meshes, ``1e-6`` for micrometer, etc."""
     scale: float = 0.0
-    state: str = Field(default_factory=lambda: "")
+    """This factor can be used to define the volume of the magnetic material.
+    If ``scale`` is different from 0, the volume of the magnetic material is evaluated
+    as ``scale ** 3``. This only makes sense if the system is a cube with side
+    length equal to ``scale``.
+
+    If equal to 0, this parameter is ignored, and the volume
+    is evaluated by integrating the constant 1 over the domain where spontaneous
+    magnetization of the material is positive. In those case where the system is a
+    multigrain cube with possible non-magnetic integranular phases, evaluating the
+    volume using the ``scale`` parameter can be more accurate."""
+    state: str = ""
+    r"""Name of the initial magnetization state. The following strings are recognized:
+
+    * ``"flower"`` for a flower state. The magnetization is defined as:
+
+      .. math::
+        \mathbf{m} = \left[\begin{array}{c}
+          \frac{xz}{10s} \\
+          \frac{yz}{10s} \\
+          1
+        \end{array}\right],
+
+      where :math:`s = \max \{x,y,z\}` is the maximum value over all components and
+      all mesh points.
+
+    * ``"vortex"`` for a vortex state on the :math:`xy` plane. If
+      :math:`r = r(x,y) = \sqrt{x^2 + y^2}` is the radial variable on such plane, the
+      magnetization is defined as:
+
+      .. math::
+        \mathbf{m} = \left[\begin{array}{c}
+          e^{-2 r / R} \\
+          - \frac{z}{r} \sqrt{1 - e^{-4 r^2 / R^2}} \\
+          \frac{y}{r} \sqrt{1 - e^{-4 r^2 / R^2}}
+        \end{array}\right],
+
+      where :math:`R = 0.14 * \max r(x,y)`.
+
+    * ``"twisted"`` for a twisted state. This is a mixture of vortex and flower, where
+      the vortex appears on the :math:`xy` plane and the flower in the :math:`z`
+      direction connects the two vortices with opposing chirality. If also in this case
+      :math:`r = r(x,y) = \sqrt{x^2 + y^2}` is the radial variable on the :math:`xy`
+      plane, the magnetization is defined as:
+
+      .. math::
+        \mathbf{m} = \left[\begin{array}{c}
+          \frac{xz}{10s} - 4 \frac{yz}{rs} \\
+          \frac{yz}{10s} + 4 \frac{xz}{rs} \\
+          1
+        \end{array}\right],
+
+      where :math:`s = \max \{x,y,z\}` is the maximum value over all components and
+      all mesh points.
+
+    * ``"random"`` for a randomly magnetized state. In particular, each magnetization
+      component is generated uniformly in :math:`[-1, 1]`.
+
+
+    Other strings are interpreted as a uniformly magnetized state.
+    The default value is ``""`` and defines a uniformly magnetized state.
+    """
     h_mag_on: bool = True
+    """Whether the external field is on (True) or off (False)."""
     h_start: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "ExternalMagneticField",
             (10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
+    """Initial strength of the external field as an :entity:`ExternalMagneticField`.
+    Interpreted in A/m if passed without unit.
+    The default value is the equivalent of 10 Tesla."""
     h_final: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "ExternalMagneticField",
             (-10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
+    """Final strength of the external field as an :entity:`ExternalMagneticField`.
+    Interpreted in A/m if passed without unit.
+    The default value is the equivalent of -10 Tesla."""
     h_step: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "ExternalMagneticField",
             (-1 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
+    """Step size of external magnetic field in the hysteresis loop as an
+    :entity:`ExternalMagneticField`. Interpreted in A/m if passed without unit.
+    The default value is the equivalent of -1 Tesla."""
     h_vect: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "Vector",
             [0, 0, 1],
         )
     )
+    r"""External field direction vector :math:`\mathbf{h}` as a :entity:`Vector`.
+    If any iterable of floats is used (such as a list or a tuple of length 3), it will
+    be casted internally. This vector must not be normal. A private property is
+    internally used to normalize it. The default value is the unit vector [0, 0, 1]."""
     m_step: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "Magnetization",
             (1 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
+    """Threshold determining when magnetization profiles are saved as a
+    :entity:`Magnetization`. If in the hysteresis calculation the difference
+    between two consecutive values of magnetization (intended along the direction of the
+    external field :py:attr:`~mammos_mumag.parameters.Parameters.h_vect`) is bigger than
+    this value, the current magnetization field is saved as a ``vtu`` file and the
+    configuration index (appearing in :py:attr:`~mammos_mumag.hysteresis.Result`) will
+    increase. In practice this value determines how often we save a magnetization file.
+    A very low value will impact performance as every step will produce such a file.
+    Interpreted in A/m if passed without unit.
+    The default value is the equivalent of -2 Tesla."""
     m_final: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "Magnetization",
             (-2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         ),
     )
+    """Value of :entity:`Magnetization` (along the external field direction) at which
+    the hysteresis calculation will stop. Interpreted in A/m if passed without unit."""
     m_vect: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "Vector",
             [0, 0, 1],
         )
     )
+    """Initial magnetization direction as a :entity:`Vector`. This value will be
+    modified by the choice :py:attr:`~mammos_mumag.parameters.Parameters.state` unless
+    a uniform state is selected. If any iterable of floats is used (such as a list or a
+    tuple of length 3), it will be casted into the ``Vector`` entity internally. This
+    vector must not be normal. A private property is internally used to normalize it.
+    The default value is the unit vector [0, 0, 1]."""
     precond_iter: int = 10
+    """Number of iteration for the approximation of the inverse Hessian in the conjugate
+    gradient optimization."""
     tol_fun: float = 1e-10
+    """Total energy tolerance to obtain the equilibrium configuration."""
     tol_h_mag_factor: float = 1.0
-    filepath: pathlib.Path | None = Field(default=None, repr=False)
+    """Factor defining the tolerance for the magnetostatic scalar
+    potential according to the formula ``tol_u``
+    = :py:attr:`~mammos_mumag.parameters.Parameters.tol_fun` *
+    :py:attr:`~mammos_mumag.parameters.Parameters.tol_h_mag_factor`."""
+    filepath: os.PathLike | str | None = Field(default=None, repr=False)
+    """Path of parameter file (in format ``p2`` or ``yaml``) to read at initialization.
+    In this case, all other parameters will be overwritten if specified in the parameter
+    file."""
 
     @field_validator("h_start", mode="before")
     @classmethod
@@ -178,17 +258,23 @@ class Parameters:
         """Direction of the external field."""
         return _normalize(self.h_vect)
 
-    def read(self, fname: str | pathlib.Path) -> None:
+    def read(self, fname: str | os.PathLike) -> None:
         """Read parameter file.
 
+        This function only overwrites the parameters defined in the file.
+
+        Supported format are ``p2`` (with extension ``.p2``) and ``yaml``
+        (with extensions ``.yaml`` or ``.yml``).
+
         Args:
-            fname: File path
+            fname: File to read.
 
         Raises:
+            FileNotFoundError: Parameter file not found.
             NotImplementedError: Wrong file format.
 
         """
-        fpath = pathlib.Path(fname)
+        fpath = Path(fname)
         if not fpath.is_file():
             raise FileNotFoundError(f"File {fpath} not found.")
 
@@ -203,15 +289,16 @@ class Parameters:
                 f"{fpath.suffix} parameter file is not supported."
             )
 
-    def _read_p2(self, fpath: str | pathlib.Path) -> None:
-        """Read parameter file in `p2` format.
+    def _read_p2(self, fpath: str | os.PathLike) -> None:
+        """Read parameter file in ``p2`` format.
 
         The speciality of this file format is that magnetization values are stored
         in Tesla for readability. Hence, they need to be converted to A/m first.
-        Furthermore, in this format some of the names have a special formatting.
+        Furthermore, in this format some of the names have a specific formatting
+        different than the one used in the attributes of this class.
 
         Args:
-            fpath: Parameter file path.
+            fpath: File to read.
         """
         u.set_enabled_equivalencies(u.magnetic_flux_field())
         pars = configparser.ConfigParser()
@@ -268,15 +355,15 @@ class Parameters:
         if "truncation" in minimizer:
             self.truncation = int(minimizer["truncation"])
 
-    def _read_yaml(self, fpath: str | pathlib.Path) -> None:
-        """Read parameter file in `yaml` format.
+    def _read_yaml(self, fpath: str | os.PathLike) -> None:
+        """Read parameter file in ``yaml`` format.
 
         We expect the parameters to be saved in the mammos yaml format. See
         :py:func:`mammos_entity.EntityCollection.to_yaml` for more information
         on this format.
 
         Args:
-            fpath: Parameter file path.
+            fpath: File to read.
         """
         content = me.from_yaml(fpath)
         self.size = content.mesh_size
@@ -294,11 +381,11 @@ class Parameters:
         self.tol_h_mag_factor = content.minimizer_tol_h_mag_factor
         self.precond_iter = content.minimizer_precond_iter
 
-    def write_p2(self, fname: str | pathlib.Path) -> None:
-        """Write parameter `p2` file.
+    def write_p2(self, fname: str | os.PathLike) -> None:
+        """Write parameter file in the ``p2`` format.
 
         Args:
-            fname: File path
+            fname: File to write.
 
         Examples:
             >>> from mammos_mumag.parameters import Parameters
@@ -331,11 +418,11 @@ class Parameters:
         with open(fname, "w") as file:
             file.write(template.render(parameters_dict))
 
-    def write_yaml(self, fname: str | pathlib.Path) -> None:
-        """Write parameter `yaml` file.
+    def write_yaml(self, fname: str | os.PathLike) -> None:
+        """Write parameter file in the  ``yaml`` format.
 
         Args:
-            fname: File path
+            fname: File to write.
 
         Examples:
             >>> from mammos_mumag.parameters import Parameters
