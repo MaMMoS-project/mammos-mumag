@@ -102,7 +102,7 @@ class Parameters:
             (10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
-    """Initial strength of the external field as an ``ExternalMagneticField``.
+    """Initial strength of the external field as an :entity:`ExternalMagneticField`.
     Interpreted in A/m if passed without unit.
     The default value is the equivalent of 10 Tesla."""
     h_final: me.Entity = Field(
@@ -111,7 +111,7 @@ class Parameters:
             (-10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         )
     )
-    """Final strength of the external field as an ``ExternalMagneticField``.
+    """Final strength of the external field as an :entity:`ExternalMagneticField`.
     Interpreted in A/m if passed without unit.
     The default value is the equivalent of -10 Tesla."""
     h_step: me.Entity = Field(
@@ -121,7 +121,7 @@ class Parameters:
         )
     )
     """Step size of external magnetic field in the hysteresis loop as an
-    ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+    :entity:`ExternalMagneticField`. Interpreted in A/m if passed without unit.
     The default value is the equivalent of -1 Tesla."""
     h_vect: me.Entity = Field(
         default_factory=lambda: me.Entity(
@@ -129,7 +129,7 @@ class Parameters:
             [0, 0, 1],
         )
     )
-    r"""External field direction vector :math:`\mathbf{h}` as a ``Vector``.
+    r"""External field direction vector :math:`\mathbf{h}` as a :entity:`Vector`.
     If any iterable of floats is used (such as a list or a tuple of length 3), it will
     be casted internally. This vector must not be normal. A private property is
     internally used to normalize it. The default value is the unit vector [0, 0, 1]."""
@@ -140,7 +140,7 @@ class Parameters:
         )
     )
     """Threshold determining when magnetization profiles are saved as a
-    ``Magnetization``. If in the hysteresis calculation the difference
+    :entity:`Magnetization`. If in the hysteresis calculation the difference
     between two consecutive values of magnetization (intended along the direction of the
     external field :py:attr:`~mammos_mumag.parameters.Parameters.h_vect`) is bigger than
     this value, the current magnetization field is saved as a ``vtu`` file and the
@@ -155,20 +155,19 @@ class Parameters:
             (-2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
         ),
     )
-    """Value of magnetization (along the external field direction) at which the
-    hysteresis calculation will stop as a ``Magnetization``. Interpreted in
-    A/m if passed without unit."""
+    """Value of :entity:`Magnetization` (along the external field direction) at which
+    the hysteresis calculation will stop. Interpreted in A/m if passed without unit."""
     m_vect: me.Entity = Field(
         default_factory=lambda: me.Entity(
             "Vector",
             [0, 0, 1],
         )
     )
-    """Initial magnetization direction as a ``Vector``. This value will be modified by
-    the choice :py:attr:`~mammos_mumag.parameters.Parameters.state` unless a uniform
-    state is selected. If any iterable of floats is used (such as a list or a tuple of
-    length 3), it will be casted into the ``Vector`` entity internally. This vector must
-    not be normal. A private property is internally used to normalize it.
+    """Initial magnetization direction as a :entity:`Vector`. This value will be
+    modified by the choice :py:attr:`~mammos_mumag.parameters.Parameters.state` unless
+    a uniform state is selected. If any iterable of floats is used (such as a list or a
+    tuple of length 3), it will be casted into the ``Vector`` entity internally. This
+    vector must not be normal. A private property is internally used to normalize it.
     The default value is the unit vector [0, 0, 1]."""
     precond_iter: int = 10
     """Number of iteration for the approximation of the inverse Hessian in the conjugate

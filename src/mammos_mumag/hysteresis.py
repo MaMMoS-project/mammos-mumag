@@ -67,36 +67,34 @@ def run(
     see the :py:mod:`mammos_mumag.mesh` module.
 
     Args:
-        Ms: Spontaneous magnetization as ``SpontaneousMagnetization``.
-            Interpreted in A/m if passed without unit.
-        A: Exchange stiffness constant as ``ExchangeStiffnessConstant``.
-            Interpreted in J/m if passed without unit.
-        K1: First magnetocrystalline anisotropy constant as
-            ``MagnetocrystallineAnisotropyConstantK1``, defined by the uniaxial
-            anisotropy energy density :math:`K_1 \sin^2(\theta)`, where
-            :math:`\theta` is the angle between the anisotropy axis and the
-            magnetization. Interpreted in J/m³ if passed without unit.
-        theta: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`z`-direction as an ``Angle``.
-            Interpreted in radians if passed without unit.
-        phi: Angle of the magnetocrystalline anisotropy axis from the
-            :math:`x`-direction as an ``Angle``.
-            Interpreted in radians if passed without unit.
+        Ms: :entity:`SpontaneousMagnetization`. Interpreted in A/m if passed
+            without unit.
+        A: :entity:`ExchangeStiffnessConstant`. Interpreted in J/m if passed
+            without unit.
+        K1: First uniaxial magnetocrystalline anisotropy constant as
+            :entity:`MagnetocrystallineAnisotropyConstantK1`, defined by
+            :math:`K_1 \sin^2(\theta)`, where :math:`\theta` is the angle between
+            the anisotropy axis and the magnetization. Interpreted in J/m³ if
+            passed without unit.
+        theta: :entity:`Angle` of the magnetocrystalline anisotropy axis from the
+            :math:`z`-direction. Interpreted in radians if passed without unit.
+        phi: :entity:`Angle` of the magnetocrystalline anisotropy axis from the
+            :math:`x`-direction. Interpreted in radians if passed without unit.
         mesh: Mesh of the material. The mesh can either be given as a
             :py:class:`~mammos_mumag.mesh.Mesh` instance, as a string for Zenodo meshes
             available through :py:mod:`mammos_mumag`, or as a path for local meshes.
             The only recognized mesh format is ``.fly``.
         h_start: Initial strength of the external field as an
-            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+            :entity:`ExternalMagneticField`. Interpreted in A/m if passed without unit.
         h_final: Final strength of the external field as an
-            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+            :entity:`ExternalMagneticField`. Interpreted in A/m if passed without unit.
         h_step: Step size of external magnetic field in the hysteresis loop as an
-            ``ExternalMagneticField``. Interpreted in A/m if passed without unit.
+            :entity:`ExternalMagneticField`. Interpreted in A/m if passed without unit.
         h_n_steps: Number of steps in the field sweep. If ``h_step`` is given, this
             argument is ignored.
-        m_final: Value of magnetization (along the external field direction) at which
-            the hysteresis calculation will stop as a ``Magnetization``.
-            Interpreted in A/m if passed without unit.
+        m_final: :entity:`Magnetization` value (along the external field direction) at
+            which the hysteresis calculation will stop. Interpreted in A/m if
+            passed without unit.
         outdir: Directory where simulation results are written to.
 
     Returns:
@@ -248,7 +246,7 @@ class Result:
     applied external field, one needs to read the input file `<name>.p2`.
 
     The resultant magnetization values are denoted using the letter "M". Without
-    suffix, ``M`` indicates the strength of the magnetization in the direction
+    suffix, ``M`` indicates the strength of the magnetization along the direction
     of the external field axis. The other values, ``Mx``, ``My``, and ``Mz``,
     are the Cartesian component of the magnetization.
 

@@ -36,25 +36,25 @@ class MaterialDomain:
     """
 
     theta: me.Entity = Field(default=me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction
-    as an ``Angle``. Interpreted in radians if passed without unit.
+    """:entity:`Angle` of the magnetocrystalline anisotropy axis from the
+    :math:`z`-direction. Interpreted in radians if passed without unit.
     Default value is zero."""
     phi: me.Entity = Field(default=me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction
-    as an ``Angle``. Interpreted in radians if passed without unit.
+    """:entity:`Angle` of the magnetocrystalline anisotropy axis from the
+    :math:`x`-direction. Interpreted in radians if passed without unit.
     Default value is zero."""
     K1: me.Entity = Field(default=me.Entity("MagnetocrystallineAnisotropyConstantK1"))
-    r"""First magnetocrystalline anisotropy constant as
-    `MagnetocrystallineAnisotropyConstantK1`, defined by the uniaxial anisotropy energy
-    density :math:`K_1 \sin^2(\theta)`, where :math:`\theta` is the angle between the
-    anisotropy axis and the magnetization. Interpreted in J/m³ if passed without unit.
+    r"""First uniaxial magnetocrystalline anisotropy constant as
+    :entity:`MagnetocrystallineAnisotropyConstantK1`, defined by the uniaxial
+    anisotropy energy density :math:`K_1 \sin^2(\theta)`, where :math:`\theta` is the
+    angle between the anisotropy axis and the magnetization. Interpreted in J/m³ if
+    passed without unit.
     """
     Ms: me.Entity = Field(default=me.Entity("SpontaneousMagnetization"))
-    """Spontaneous magnetization as ``SpontaneousMagnetization``.
-    Interpreted in A/m if passed without unit."""
+    """:entity:`SpontaneousMagnetization`. Interpreted in A/m if passed without unit."""
     A: me.Entity = Field(default=me.Entity("ExchangeStiffnessConstant"))
-    """Exchange stiffness constant as ``ExchangeStiffnessConstant``.
-    Interpreted in J/m if passed without unit."""
+    """:entity:`ExchangeStiffnessConstant`. Interpreted in J/m if passed without
+    unit."""
 
     @field_validator("theta", mode="before")
     @classmethod
