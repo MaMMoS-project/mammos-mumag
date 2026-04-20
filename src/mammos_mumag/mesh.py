@@ -15,20 +15,18 @@ def _get_mesh_json():
         return json.load(f)
 
 
-def find_mesh(mesh_name: str | None = None) -> list[str]:
+def find_mesh(mesh_name: str = "") -> list[str]:
     """Find available meshes matching given name.
 
     Args:
-        mesh_name: Desired mesh name. If None, returns all available meshes.
+        mesh_name: Desired mesh name. If empty string or not given,
+            returns all available meshes.
 
     Returns:
         List of matches with given name. Empty list if no matches are found.
     """
     meshes = _get_mesh_json()["meshes"]
-    if mesh_name is None:
-        return list(meshes.keys())
-    else:
-        return [mm for mm in meshes if mesh_name in mm]
+    return [mm for mm in meshes if mesh_name in mm]
 
 
 class Mesh:
