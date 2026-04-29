@@ -13,14 +13,13 @@ import numpy as np
 import pandas
 import pandas as pd
 import pyvista as pv
-from pydantic import ConfigDict
-from pydantic.dataclasses import dataclass
 
 from mammos_mumag.materials import MaterialDomain, Materials
 from mammos_mumag.parameters import Parameters
 from mammos_mumag.simulation import Simulation
 
 if TYPE_CHECKING:
+    import mammos_entity
     import matplotlib
     import pyvista
 
@@ -201,31 +200,75 @@ def read_result(
     )
 
 
-@dataclass(config=ConfigDict(arbitrary_types_allowed=True, frozen=True))
-class Result:
-    """Hysteresis loop Result."""
+@me._entity_collection.frozen_collection
+class Result(me.EntityCollection):
+    """Hysteresis loop Result.
 
-    H: me.Entity
-    r"""Array of external field strengths in :math:`\mathrm{A}/\mathrm{m}`."""
-    M: me.Entity
-    r"""Array of magnetization values for the field strengths in the
-    direction of H in :math:`\mathrm{A}/\mathrm{m}`."""
-    Mx: me.Entity
-    r"""Component x of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
-    My: me.Entity
-    r"""Component y of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
-    Mz: me.Entity
-    r"""Component z of the magnetization in
-    :math:`\mathrm{A}/\mathrm{m}`."""
-    energy_density: me.Entity | None = None
-    r"""Array of energy densities for the field strengths in
-    :math:`\mathrm{J}/\mathrm{m^3}`."""
-    configuration_type: np.ndarray | None = None
-    """Array of indices of representative configurations for the field strengths."""
-    configurations: dict[int, pathlib.Path] | None = None
-    """Mapping of configuration indices to file paths."""
+    Stores the external field strengths, magnetization components,
+    energy densities, and configuration information from a hysteresis
+    loop simulation.
+    """
+
+    def __init__(
+        self,
+        H: mammos_entity.Entity,
+        M: mammos_entity.Entity,
+        Mx: mammos_entity.Entity,
+        My: mammos_entity.Entity,
+        Mz: mammos_entity.Entity,
+        energy_density: mammos_entity.Entity | None = None,
+        configuration_type: np.ndarray | None = None,
+        configurations: dict[int, pathlib.Path] | None = None,
+        description: str = "",
+    ) -> None:
+        """Initialize Result.
+
+        Args:
+            H: Array of external field strengths in A/m as
+                :entity:`ExternalMagneticField`.
+            M: Array of magnetization values for the field strengths in the
+                direction of H in A/m as :entity:`Magnetization`.
+            Mx: Component x of the magnetization in A/m as
+                :entity:`Magnetization`.
+            My: Component y of the magnetization in A/m as
+                :entity:`Magnetization`.
+            Mz: Component z of the magnetization in A/m as
+                :entity:`Magnetization`.
+            energy_density: Array of energy densities for the field strengths
+                in J/m^3 as :entity:`EnergyDensity`.
+            configuration_type: Array of indices of representative
+                configurations for the field strengths.
+            configurations: Mapping of configuration indices to file paths.
+            description: Description of the collection.
+        """
+        me._entity.ensure_entity("ExternalMagneticField", H=H)
+        me._entity.ensure_entity("Magnetization", M=M)
+        me._entity.ensure_entity("Magnetization", Mx=Mx)
+        me._entity.ensure_entity("Magnetization", My=My)
+        me._entity.ensure_entity("Magnetization", Mz=Mz)
+        if energy_density is not None:
+            me._entity.ensure_entity("EnergyDensity", energy_density=energy_density)
+        super().__init__(
+            description=description,
+            H=H,
+            M=M,
+            Mx=Mx,
+            My=My,
+            Mz=Mz,
+            energy_density=energy_density,
+        )
+        self._configuration_type = configuration_type
+        self._configurations = configurations
+
+    @property
+    def configuration_type(self) -> np.ndarray | None:
+        """Array of indices of representative configurations."""
+        return self._configuration_type
+
+    @property
+    def configurations(self) -> dict[int, pathlib.Path] | None:
+        """Mapping of configuration indices to file paths."""
+        return self._configurations
 
     @property
     def dataframe(self) -> pandas.DataFrame:
