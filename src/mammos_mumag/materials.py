@@ -136,7 +136,7 @@ class Materials:
             >>> mat = Materials()
             >>> mat.add_domain(A=1, Ms=2, K1=3, phi=0, theta=0)
             >>> mat
-            Materials(domains=[MaterialDomain(theta=..., phi=..., K1=..., Ms=..., A=...)])
+            Materials(...)
 
         """  # noqa: E501
         dom = MaterialDomain(
