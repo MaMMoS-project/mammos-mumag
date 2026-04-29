@@ -1,182 +1,141 @@
 """Parameters class."""
 
+from __future__ import annotations
+
 import configparser
 import pathlib
-from typing import Any
+from typing import TYPE_CHECKING
 
 import mammos_entity as me
 import mammos_units as u
 import numpy as np
 from jinja2 import Environment, PackageLoader, select_autoescape
-from pydantic import ConfigDict, Field, field_validator
-from pydantic.dataclasses import dataclass
+
+if TYPE_CHECKING:
+    import mammos_entity
+    import mammos_units
+    import numpy.typing
 
 
-@dataclass(
-    config=ConfigDict(
-        arbitrary_types_allowed=True, extra="forbid", validate_assignment=True
-    )
-)
-class Parameters:
-    r"""Class storing simulation parameters.
+class Parameters(me.EntityCollection):
+    r"""Class storing simulation parameters."""
 
-    Args:
-        size: Size of the mesh. This factor usually indicates the magnitude of the
-            geometry, i.e., 1e-9 for nanometer meshes, 1e-6 for micrometer, etc.
-        scale: Scale of the mesh. This factor can include other scaling, so that
-            the total scale of the mesh is `size` * `scale`.
-        state: Name of the initial magnetization state. Scripts recognize the strings
-            `flower`, `vortex`, `twisted`, and `random`. Other strings are interpreted
-            as the default case. The default case is a uniformly magnetized state.
-        h_mag_on: Whether the external field is on (True) or off (False).
-        h_start: Strength of the external field that the hysteresis loop starts from.
-        h_final: Strength of the external field that the hysteresis loop finishes at.
-        h_step: Difference in field strength between two hysteresis loop measurements.
-        h_vect: External field vector :math:`\mathbf{h}` as a list of floats or a
-            `Vector` entity. This vector is not necessarily normal. The property `h`
-            will be the normalized field. If not defined, the external field is zero.
-        m_step: Threshold at which the magnetization is saved. If in the hysteresis
-            calculation the difference between two consecutive values of magnetization
-            along the external field vector is bigger than this value, a new
-            configuration index will appear on the output csv table. Different
-            configurations mean that the magnetization is behaving differently,
-            possibly changing states.
-        m_final: Value of magnetization (along the external field direction) at which
-            the hysteresis calculation will stop.
-        m_vect: Magnetization field :math:`\mathbf{m}` as a list of floats or a `Vector`
-            entity.
-        precond_iter: Conjugate gradient iterations for inverse Hessian approximation.
-        tol_fun: Total energy tolerance to obtain the equilibrium configuration.
-        tol_h_mag_factor: Factor defining the tolerance for the magnetostatic scalar
-            potential according to the formula `tol_u = tol_fun * tol_h_mag_factor`.
-        filepath: Path of parameter file to read at initialization. In this case all
-            other parameters will be overwritten (if specified in the parameter file).
-    """
+    def __init__(
+        self,
+        size: float = 1.0e-09,
+        scale: float = 0.0,
+        state: str = "",
+        h_mag_on: bool = True,
+        h_start: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = 10e6,
+        h_final: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = -10e6,
+        h_step: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = -1e6,
+        h_vect: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = (0, 0, 1),
+        m_step: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = 1e6,
+        m_final: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = -2e6,
+        m_vect: mammos_entity.Entity
+        | mammos_units.Quantity
+        | numpy.typing.ArrayLike = (0, 0, 1),
+        precond_iter: int = 10,
+        tol_fun: float = 1e-10,
+        tol_h_mag_factor: float = 1.0,
+        filepath: pathlib.Path | str = "",
+    ):
+        r"""Create a new Parameters instance.
 
-    size: float = 1.0e-09
-    scale: float = 0.0
-    state: str = Field(default_factory=lambda: "")
-    h_mag_on: bool = True
-    h_start: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "ExternalMagneticField",
-            (10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+        Args:
+            size: Size of the mesh. This factor usually indicates the magnitude of the
+                geometry, i.e., 1e-9 for nanometer meshes, 1e-6 for micrometer, etc.
+            scale: Scale of the mesh. This factor can include other scaling, so that
+                the total scale of the mesh is `size` * `scale`.
+            state: Name of the initial magnetization state. Scripts recognize the
+                strings `flower`, `vortex`, `twisted`, and `random`. Other strings are
+                interpreted as the default case. The default case is a uniformly
+                magnetized state.
+            h_mag_on: Whether the external field is on (True) or off (False).
+            h_start: Strength of the external field that the hysteresis loop starts
+                from.
+            h_final: Strength of the external field that the hysteresis loop finishes
+                at.
+            h_step: Difference in field strength between two hysteresis loop
+                measurements.
+            h_vect: External field vector :math:`\mathbf{h}` as a list of floats or a
+                `Vector` entity. This vector is not necessarily normal. The property `h`
+                will be the normalized field. If not defined, the external field is
+                zero.
+            m_step: Threshold at which the magnetization is saved. If in the hysteresis
+                calculation the difference between two consecutive values of
+                magnetization along the external field vector is bigger than this value,
+                a new configuration index will appear on the output csv table. Different
+                configurations mean that the magnetization is behaving differently,
+                possibly changing states.
+            m_final: Value of magnetization (along the external field direction) at
+                which the hysteresis calculation will stop.
+            m_vect: Magnetization field :math:`\mathbf{m}` as a list of floats or a
+                `Vector` entity.
+            precond_iter: Conjugate gradient iterations for inverse Hessian
+                approximation.
+            tol_fun: Total energy tolerance to obtain the equilibrium configuration.
+            tol_h_mag_factor: Factor defining the tolerance for the magnetostatic scalar
+                potential according to the formula `tol_u = tol_fun * tol_h_mag_factor`.
+            filepath: Path of parameter file to read at initialization. If given, all
+                the other parameters will be overwritten (if specified in the parameter
+                file).
+        """
+        h_start = me._entity.from_compatible(
+            "ExternalMagneticField", "A/m", h_start=h_start, enforce_unit=True
         )
-    )
-    h_final: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "ExternalMagneticField",
-            (-10 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+        h_final = me._entity.from_compatible(
+            "ExternalMagneticField", "A/m", h_final=h_final, enforce_unit=True
         )
-    )
-    h_step: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "ExternalMagneticField",
-            (-1 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
+        h_step = me._entity.from_compatible(
+            "ExternalMagneticField", "A/m", h_step=h_step, enforce_unit=True
         )
-    )
-    h_vect: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "Vector",
-            [0, 0, 1],
-        )
-    )
-    m_step: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "Magnetization",
-            (1 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
-        )
-    )
-    m_final: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "Magnetization",
-            (-2 * u.T).to(u.A / u.m, equivalencies=u.magnetic_flux_field()),
-        ),
-    )
-    m_vect: me.Entity = Field(
-        default_factory=lambda: me.Entity(
-            "Vector",
-            [0, 0, 1],
-        )
-    )
-    precond_iter: int = 10
-    tol_fun: float = 1e-10
-    tol_h_mag_factor: float = 1.0
-    filepath: pathlib.Path | None = Field(default=None, repr=False)
-
-    @field_validator("h_start", mode="before")
-    @classmethod
-    def _convert_h_start(cls, h_start: Any) -> me.Entity:
-        """Convert h_start to the rigth Entity."""
-        h_start = me.Entity("ExternalMagneticField", h_start, unit=u.A / u.m)
-        return h_start
-
-    @field_validator("h_final", mode="before")
-    @classmethod
-    def _convert_h_final(cls, h_final: Any) -> me.Entity:
-        """Convert h_final to the right Entity."""
-        h_final = me.Entity("ExternalMagneticField", h_final, unit=u.A / u.m)
-        return h_final
-
-    @field_validator("h_step", mode="before")
-    @classmethod
-    def _convert_h_step(cls, h_step: Any) -> me.Entity:
-        """Convert h_step to the right Entity."""
-        h_step = me.Entity("ExternalMagneticField", h_step, unit=u.A / u.m)
-        return h_step
-
-    @field_validator("h_vect", mode="before")
-    @classmethod
-    def _convert_h_vect(cls, h_vect: Any) -> me.Entity:
-        """Convert h_vect to the right Entity."""
-        h_vect = me.Entity("Vector", h_vect)
+        h_vect = me._entity.from_compatible("Vector", "", h_vect=h_vect)
         if h_vect.q.size != 3:
             raise ValueError(
                 f"`h_vect` has the wrong size ({h_vect.q.size} instead of 3)."
             )
-        return h_vect
-
-    @field_validator("m_step", mode="before")
-    def _convert_m_step(cls, m_step: Any) -> me.Entity:
-        """Convert m_step to the right Entity."""
-        m_step = me.Entity("Magnetization", m_step, unit=u.A / u.m)
-        return m_step
-
-    @field_validator("m_final", mode="before")
-    def _convert_m_final(cls, m_final: Any) -> me.Entity:
-        """Convert m_final to the right Entity."""
-        m_final = me.Entity("Magnetization", m_final, unit=u.A / u.m)
-        return m_final
-
-    @field_validator("m_vect", mode="before")
-    @classmethod
-    def _convert_m_vect(cls, m_vect: Any) -> me.Entity:
-        """Convert m_vect to the right Entity."""
-        m_vect = me.Entity("Vector", m_vect)
+        m_step = me._entity.from_compatible(
+            "Magnetization", "A/m", m_step=m_step, enforce_unit=True
+        )
+        m_final = me._entity.from_compatible(
+            "Magnetization", "A/m", m_final=m_final, enforce_unit=True
+        )
+        m_vect = me._entity.from_compatible("Vector", "", m_vect=m_vect)
         if m_vect.q.size != 3:
             raise ValueError(
                 f"`m_vect` has the wrong size ({m_vect.q.size} instead of 3)."
             )
-        return m_vect
-
-    def __post_init__(self) -> None:
-        """Initialize parameters with a file.
-
-        If the parameters is initialized with a not-`None` `filepath`
-        attribute, the materials files will be read automatically.
-        """
-        if self.filepath is not None:
-            self.read(self.filepath)
-
-    @property
-    def m(self) -> list[float]:
-        """Normalized magnetization."""
-        return _normalize(self.m_vect)
-
-    @property
-    def h(self) -> list[float]:
-        """Direction of the external field."""
-        return _normalize(self.h_vect)
+        super().__init__(
+            size=size,
+            scale=scale,
+            state=state,
+            h_mag_on=h_mag_on,
+            h_start=h_start,
+            h_final=h_final,
+            h_step=h_step,
+            h_vect=h_vect,
+            m_step=m_step,
+            m_final=m_final,
+            m_vect=m_vect,
+            precond_iter=precond_iter,
+            tol_fun=tol_fun,
+            tol_h_mag_factor=tol_h_mag_factor,
+        )
+        if filepath != "":
+            self.read(filepath)
 
     def read(self, fname: str | pathlib.Path) -> None:
         """Read parameter file.
@@ -226,11 +185,14 @@ class Parameters:
         initial_state = pars["initial state"]
         if "state" in initial_state:
             self.state = str(initial_state["state"])
-        self.m_vect = [
-            float(initial_state["mx"]),
-            float(initial_state["my"]),
-            float(initial_state["mz"]),
-        ]
+        self.m_vect = me.Entity(
+            "Vector",
+            [
+                float(initial_state["mx"]),
+                float(initial_state["my"]),
+                float(initial_state["mz"]),
+            ],
+        )
 
         field = pars["field"]
         if "hmag_on" in field:
@@ -244,11 +206,14 @@ class Parameters:
         self.h_step = me.Entity(
             "ExternalMagneticField", (float(field["hstep"]) * u.T).to(u.A / u.m)
         )
-        self.h_vect = [
-            float(field["hx"]),
-            float(field["hy"]),
-            float(field["hz"]),
-        ]
+        self.h_vect = me.Entity(
+            "Vector",
+            [
+                float(field["hx"]),
+                float(field["hy"]),
+                float(field["hz"]),
+            ],
+        )
         if "mstep" in field:
             self.m_step = me.Entity(
                 "Magnetization", (float(field["mstep"]) * u.T).to(u.A / u.m)
@@ -312,14 +277,16 @@ class Parameters:
             autoescape=select_autoescape(),
         )
         template = env.get_template("p2.jinja")
+        m_normalized = _normalize(self.m_vect)
+        h_normalized = _normalize(self.h_vect)
         parameters_dict = {
-            **self.__dict__,
-            "mx": self.m[0],
-            "my": self.m[1],
-            "mz": self.m[2],
-            "hx": self.h[0],
-            "hy": self.h[1],
-            "hz": self.h[2],
+            **self._entities,
+            "mx": m_normalized[0],
+            "my": m_normalized[1],
+            "mz": m_normalized[2],
+            "hx": h_normalized[0],
+            "hy": h_normalized[1],
+            "hz": h_normalized[2],
             "hmag_on": int(self.h_mag_on),
             "hstart": self.h_start.q.to(u.T).value,
             "hfinal": self.h_final.q.to(u.T).value,
@@ -343,21 +310,23 @@ class Parameters:
             >>> par.write_yaml("parameters.yaml")
 
         """
+        m_normalized = _normalize(self.m_vect)
+        h_normalized = _normalize(self.h_vect)
         collection = me.EntityCollection(
             description="File containing simulation parameters.",
             mesh_size=self.size,
             mesh_scale=self.scale,
             initial_state=self.state,
-            initial_mx=self.m[0],
-            initial_my=self.m[1],
-            initial_mz=self.m[2],
+            initial_mx=m_normalized[0],
+            initial_my=m_normalized[1],
+            initial_mz=m_normalized[2],
             h_mag_on=self.h_mag_on,
             h_start=self.h_start,
             h_final=self.h_final,
             h_step=self.h_step,
-            hx=self.h[0],
-            hy=self.h[1],
-            hz=self.h[2],
+            hx=h_normalized[0],
+            hy=h_normalized[1],
+            hz=h_normalized[2],
             m_step=self.m_step,
             m_final=self.m_final,
             minimizer_tol_fun=self.tol_fun,
