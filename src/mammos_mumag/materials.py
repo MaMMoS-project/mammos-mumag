@@ -1,100 +1,120 @@
 """Materials class."""
 
-import numbers
+from __future__ import annotations
+
+import os
 import pathlib
-from typing import Any
+from textwrap import indent
+from typing import TYPE_CHECKING
 
 import mammos_entity as me
 import mammos_units as u
 import yaml
 from jinja2 import Environment, PackageLoader, select_autoescape
-from pydantic import ConfigDict, Field, field_validator
-from pydantic.dataclasses import dataclass
+
+if TYPE_CHECKING:
+    import numbers
+
+    import mammos_entity
+    import mammos_units
 
 
-@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
-class MaterialDomain:
+class MaterialDomain(me.EntityCollection):
     """Uniform material domain.
 
     It collects material parameters, constant in a certain domain.
     """
 
-    theta: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`z`-direction in
-    radians."""
-    phi: me.Entity = Field(default_factory=lambda x: me.Entity("Angle"))
-    """Angle of the magnetocrystalline anisotropy axis from the :math:`x`-direction in
-    radians."""
-    K1: me.Entity = Field(default_factory=me.Ku)
-    r"""First magnetocrystalline anisotropy constant in
-    :math:`\mathrm{J}/\mathrm{m}^3`."""
-    Ms: me.Entity = Field(default_factory=me.Ms)
-    r"""Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`."""
-    A: me.Entity = Field(default_factory=me.A)
-    r"""Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`."""
+    def __init__(
+        self,
+        theta: mammos_entity.Entity | mammos_units.Quantity | numbers.Real = 0,
+        phi: mammos_entity.Entity | mammos_units.Quantity | numbers.Real = 0,
+        K1: mammos_entity.Entity | mammos_units.Quantity | numbers.Real = 0,
+        Ms: mammos_entity.Entity | mammos_units.Quantity | numbers.Real = 0,
+        A: mammos_entity.Entity | mammos_units.Quantity | numbers.Real = 0,
+        description: str = "",
+    ):
+        r"""Create a new MaterialDomain instance.
 
-    @field_validator("theta", mode="before")
-    @classmethod
-    def _convert_theta(cls, theta: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(theta, u.Quantity):
-            with u.set_enabled_equivalencies(u.dimensionless_angles()):
-                theta = theta.to("")
-        return me.Entity("Angle", theta)
-
-    @field_validator("phi", mode="before")
-    @classmethod
-    def _convert_phi(cls, phi: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(phi, u.Quantity):
-            with u.set_enabled_equivalencies(u.dimensionless_angles()):
-                phi = phi.to("")
-        return me.Entity("Angle", phi)
-
-    @field_validator("K1", mode="before")
-    @classmethod
-    def _convert_K1(cls, K1: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(K1, numbers.Real | u.Quantity):
-            K1 = me.Ku(K1, unit=u.J / u.m**3)
-        return K1
-
-    @field_validator("A", mode="before")
-    @classmethod
-    def _convert_A(cls, A: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(A, float | int | u.Quantity):
-            A = me.A(A, unit=u.J / u.m)
-        return A
-
-    @field_validator("Ms", mode="before")
-    @classmethod
-    def _convert_Ms(cls, Ms: Any) -> Any:
-        """Convert number or Quantity to Entity."""
-        if isinstance(Ms, float | int | u.Quantity):
-            Ms = me.Ms(Ms, unit=u.A / u.m)
-        return Ms
+        Args:
+            theta: :entity:`Angle` of the magnetocrystalline anisotropy axis from the
+                :math:`z`-direction. Interpreted in radians if passed without unit.
+            phi: :entity:`Angle` of the magnetocrystalline anisotropy axis from the
+                :math:`x`-direction. Interpreted in radians if passed without unit.
+            K1: First uniaxial magnetocrystalline anisotropy constant as
+                :entity:`UniaxialAnisotropyConstant`. Interpreted in J/m³ if
+                passed without unit.
+            Ms: :entity:`SpontaneousMagnetization`. Interpreted in A/m if passed
+                without unit.
+            A: :entity:`ExchangeStiffnessConstant`. Interpreted in J/m if passed
+                without unit.
+            description: Description of the domain.
+        """
+        with u.set_enabled_equivalencies(u.dimensionless_angles()):
+            if isinstance(theta, u.Quantity):
+                theta = theta.to("rad").value
+            if isinstance(phi, u.Quantity):
+                phi = phi.to("rad").value
+        theta = me._entity.from_compatible("Angle", "", theta=theta, enforce_unit=True)
+        phi = me._entity.from_compatible("Angle", "", phi=phi, enforce_unit=True)
+        Ms = me._entity.from_compatible(
+            "SpontaneousMagnetization", "A/m", Ms=Ms, enforce_unit=True
+        )
+        K1 = me._entity.from_compatible(
+            "UniaxialAnisotropyConstant", "J/m3", K1=K1, enforce_unit=True
+        )
+        A = me._entity.from_compatible(
+            "ExchangeStiffnessConstant", "J/m", A=A, enforce_unit=True
+        )
+        super().__init__(
+            description=description, theta=theta, phi=phi, K1=K1, Ms=Ms, A=A
+        )
 
 
-@dataclass
 class Materials:
     """This class stores, reads, and writes material parameters."""
 
-    domains: list[MaterialDomain] = Field(default_factory=list)
-    """Each domain is a MaterialDomain class of material parameters, constant in each
-    region."""
-    filepath: pathlib.Path | None = Field(default=None, repr=False)
-    """Material file path."""
+    def __init__(
+        self,
+        domains: list[MaterialDomain] | None = None,
+        filepath: os.PathLike | str = "",
+    ):
+        """Create a new Materials instance.
 
-    def __post_init__(self) -> None:
-        """Initialize materials with a file.
-
-        If the materials is initialized with an empty `domains` attribute
-        and with a not-`None` `filepath` attribute, the materials files
-        will be read automatically.
+        Args:
+            domains: Each domain is a MaterialDomain class of material parameters,
+                constant in each region.
+            filepath: Material file path. If the materials is initialized with a
+                non-empty ``filepath`` attribute, the materials file will be read
+                automatically and the ``domains`` attribute will be overwritten.
         """
-        if (len(self.domains) == 0) and (self.filepath is not None):
-            self.read(self.filepath)
+        if domains is None:
+            self.domains = []
+        elif not (isinstance(domains, list)):
+            raise ValueError(
+                "Input `domains` should be a list of `MaterialDomain`s. "
+                f"Given object: {domains}."
+            )
+        else:
+            self.domains = []
+            for dom in domains:
+                if isinstance(dom, MaterialDomain):
+                    self.domains.append(dom)
+                elif isinstance(dom, dict):
+                    self.domains.append(MaterialDomain(**dom))
+        if filepath != "":
+            self.read(filepath)
+
+    def __repr__(self):
+        """Repr string."""
+        out = "Materials(\n"
+        if len(self.domains) > 0:
+            out += indent("domains=[\n", " " * 4)
+            for dd in self.domains:
+                out += indent(f"{dd},\n", " " * 8)
+            out += indent("]\n", " " * 4)
+        out += ")"
+        return out
 
     def add_domain(
         self, A: float, Ms: float, K1: float, phi: float, theta: float
