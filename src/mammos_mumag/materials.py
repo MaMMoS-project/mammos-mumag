@@ -87,13 +87,16 @@ class Materials:
             filepath: Material file path. If the materials is initialized with a
                 non-empty ``filepath`` attribute, the materials file will be read
                 automatically and the ``domains`` attribute will be overwritten.
+
+        Raises:
+            ValueError: Input `domains` is not a list.
+
         """
         if domains is None:
             self.domains = []
         elif not (isinstance(domains, list)):
             raise ValueError(
-                "Input `domains` should be a list of `MaterialDomain`s. "
-                f"Given object: {domains}."
+                f"Input `domains` should be a list. Given object: {domains}."
             )
         else:
             self.domains = []
