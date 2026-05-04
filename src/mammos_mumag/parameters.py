@@ -92,6 +92,11 @@ class Parameters(me.EntityCollection):
             filepath: Path of parameter file to read at initialization. If given, all
                 the other parameters will be overwritten (if specified in the parameter
                 file).
+
+        Raises:
+            ValueError: Array `h_vect` has the wrong size.
+            ValueError: Array `m_vect` has the wrong size.
+
         """
         h_start = me._entity.from_compatible(
             "ExternalMagneticField", "A/m", h_start=h_start, enforce_unit=True
