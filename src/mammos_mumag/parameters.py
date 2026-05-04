@@ -70,7 +70,7 @@ class Parameters(me.EntityCollection):
                 at.
             h_step: Difference in field strength between two hysteresis loop
                 measurements.
-            h_vect: External field vector :math:`\mathbf{h}` as a list of floats or a
+            h_vect: External field vector :math:`\mathbf{h}` as a list of 3 floats or a
                 `Vector` entity. This vector is not necessarily normal. The property `h`
                 will be the normalized field. If not defined, the external field is
                 zero.
@@ -82,7 +82,7 @@ class Parameters(me.EntityCollection):
                 possibly changing states.
             m_final: Value of magnetization (along the external field direction) at
                 which the hysteresis calculation will stop.
-            m_vect: Magnetization field :math:`\mathbf{m}` as a list of floats or a
+            m_vect: Magnetization field :math:`\mathbf{m}` as a list of 3 floats or a
                 `Vector` entity.
             precond_iter: Conjugate gradient iterations for inverse Hessian
                 approximation.
