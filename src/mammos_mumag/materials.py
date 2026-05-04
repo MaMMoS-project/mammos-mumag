@@ -141,7 +141,7 @@ class Materials:
             >>> mat
             Materials(...)
 
-        """  # noqa: E501
+        """
         dom = MaterialDomain(
             theta=theta,
             phi=phi,
