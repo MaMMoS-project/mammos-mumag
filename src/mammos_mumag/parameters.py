@@ -252,12 +252,14 @@ class Parameters(me.EntityCollection):
         self.size = content.mesh_size
         self.scale = content.mesh_scale
         self.state = content.initial_state
-        self.m_vect = [content.initial_mx, content.initial_my, content.initial_mz]
+        self.m_vect = me.Entity(
+            "Vector", [content.initial_mx, content.initial_my, content.initial_mz]
+        )
         self.h_mag_on = content.h_mag_on
         self.h_start = content.h_start
         self.h_final = content.h_final
         self.h_step = content.h_step
-        self.h_vect = [content.hx, content.hy, content.hz]
+        self.h_vect = me.Entity("Vector", [content.hx, content.hy, content.hz])
         self.m_step = content.m_step
         self.m_final = content.m_final
         self.tol_fun = content.minimizer_tol_fun
