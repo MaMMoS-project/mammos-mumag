@@ -1,0 +1,5 @@
+# https://docs.pyvista.org/getting-started/installation.html#running-on-mybinder
+libopengl0
+libgl1
+libegl1
+libxrender1

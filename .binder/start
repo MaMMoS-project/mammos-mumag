@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export PYVISTA_OFF_SCREEN=true
+export PYVISTA_TRAME_JUPYTER_MODE=extension
+
+exec "$@"

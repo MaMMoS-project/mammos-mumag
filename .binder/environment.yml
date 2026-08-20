@@ -1,8 +1,11 @@
+# https://docs.pyvista.org/getting-started/installation.html#running-on-mybinder
 name: mybinder-env
 channels:
   - conda-forge
 dependencies:
+  - esys-escript=5.10
   - python=3.11
+  - trame-jupyter-extension  # https://docs.pyvista.org/getting-started/installation.html#running-on-mybinder
   - pip
   - pip:
       - mammos-mumag==0.11.0
