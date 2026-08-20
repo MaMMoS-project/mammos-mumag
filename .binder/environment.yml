@@ -2,6 +2,7 @@ name: mybinder-env
 channels:
   - conda-forge
 dependencies:
+  - esys-escript=5.10
   - python=3.11
   - pip
   - pip:
