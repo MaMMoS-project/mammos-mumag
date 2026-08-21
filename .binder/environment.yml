@@ -7,5 +7,10 @@ dependencies:
   - pip
   - jupyter-server-proxy
   - trame-jupyter-extension
+  - pyvista
+  - trame
+  - trame-vuetify
+  - trame-vtk
+  - ipywidgets
   - pip:
       - mammos-mumag==0.11.0
