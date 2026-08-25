@@ -44,10 +44,13 @@ def run(
     r"""Run hysteresis loop.
 
     Args:
-        Ms: Spontaneous magnetisation in :math:`\mathrm{A}/\mathrm{m}`.
-        A: Exchange stiffness constant in :math:`\mathrm{J}/\mathrm{m}`.
-        K1: First magnetocrystalline anisotropy constant in
-            :math:`\mathrm{J}/\mathrm{m}^3`.
+        Ms: Spontaneous magnetisation :entity:`SpontaneousMagnetization`
+            in :math:`\mathrm{A}/\mathrm{m}`.
+        A: Exchange stiffness constant :entity:`ExchangeStiffnessConstant`
+            in :math:`\mathrm{J}/\mathrm{m}`.
+        K1: First magnetocrystalline anisotropy constant
+            :entity:`UniaxialAnisotropyConstant`
+            in :math:`\mathrm{J}/\mathrm{m}^3`.
         theta: Angle of the magnetocrystalline anisotropy axis from the
             :math:`z`-direction in radians.
         phi: Angle of the magnetocrystalline anisotropy axis from the
@@ -68,9 +71,15 @@ def run(
        Hysteresis result object.
 
     """
-    Ms = me.Ms(Ms, unit=u.A / u.m)
-    A = me.A(A, unit=u.J / u.m)
-    K1 = me.Ku(K1, unit=u.J / u.m**3)
+    Ms = me._entity.from_compatible(
+        "SpontaneousMagnetization", "A/m", Ms=Ms, enforce_unit=True
+    )
+    A = me._entity.from_compatible(
+        "ExchangeStiffnessConstant", "J/m", A=A, enforce_unit=True
+    )
+    K1 = me._entity.from_compatible(
+        "UniaxialAnisotropyConstant", "J/m^3", K1=K1, enforce_unit=True
+    )
     if isinstance(theta, u.Quantity):
         with u.set_enabled_equivalencies(u.dimensionless_angles()):
             theta = theta.to("")
