@@ -52,6 +52,7 @@ examples = [
   "mammos_analysis>=0.1.4",
   "mammos_dft>=0.3.2",
   "mammos_spindynamics>=0.2.3",
+  "h5py",
   "jupyterlab>3",
   "nbval",
 ]
