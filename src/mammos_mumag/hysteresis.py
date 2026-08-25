@@ -282,7 +282,7 @@ class Result:
             J = me.J(self.M.q.to("T", equivalencies=u.magnetic_flux_field()))
             df["x"] = B.q
             df["y"] = J.q
-            x_label = B.axis_label
+            x_label = r"$\mu_0$ External Magnetic Field (T)"  # B.axis_label
             y_label = J.axis_label
         else:
             df = df.rename(columns={"H": "x", "M": "y"})
