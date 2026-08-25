@@ -169,13 +169,13 @@ class Parameters:
             self.read(self.filepath)
 
     @property
-    def m(self) -> list[float]:
+    def _m(self) -> list[float]:
         """Normalized magnetization."""
         return _normalize(self.m_vect)
 
     @property
-    def h(self) -> list[float]:
-        """Direction of the external field."""
+    def _h(self) -> list[float]:
+        """Normal direction of the external field."""
         return _normalize(self.h_vect)
 
     def read(self, fname: str | pathlib.Path) -> None:
@@ -314,12 +314,12 @@ class Parameters:
         template = env.get_template("p2.jinja")
         parameters_dict = {
             **self.__dict__,
-            "mx": self.m[0],
-            "my": self.m[1],
-            "mz": self.m[2],
-            "hx": self.h[0],
-            "hy": self.h[1],
-            "hz": self.h[2],
+            "mx": self._m[0],
+            "my": self._m[1],
+            "mz": self._m[2],
+            "hx": self._h[0],
+            "hy": self._h[1],
+            "hz": self._h[2],
             "hmag_on": int(self.h_mag_on),
             "hstart": self.h_start.q.to(u.T).value,
             "hfinal": self.h_final.q.to(u.T).value,
@@ -348,16 +348,16 @@ class Parameters:
             mesh_size=self.size,
             mesh_scale=self.scale,
             initial_state=self.state,
-            initial_mx=self.m[0],
-            initial_my=self.m[1],
-            initial_mz=self.m[2],
+            initial_mx=self._m[0],
+            initial_my=self._m[1],
+            initial_mz=self._m[2],
             h_mag_on=self.h_mag_on,
             h_start=self.h_start,
             h_final=self.h_final,
             h_step=self.h_step,
-            hx=self.h[0],
-            hy=self.h[1],
-            hz=self.h[2],
+            hx=self._h[0],
+            hy=self._h[1],
+            hz=self._h[2],
             m_step=self.m_step,
             m_final=self.m_final,
             minimizer_tol_fun=self.tol_fun,
