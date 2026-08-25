@@ -10,9 +10,11 @@ version = "0.1.0"
 [dependencies]
 python = ">=3.13.3,<3.14"
 jupyterlab = ">=4.4.3,<5"
+matplotlib = "*"
 meshio = ">=5.3.5,<6"
 python-gmsh = "*"
-scikit-fem = ">=11.0.0,<12"
+#scikit-fem = ">=11.0.0,<12"
 scipy = "*"
 
 [pypi-dependencies]
+scikit-fem = { git = "https://github.com/MaMMoS-project/scikit-fem.git", branch = "refactor-meshio" }
