@@ -1,43 +1,43 @@
 """Test parameters file i/o."""
 
+import mammos_entity as me
 import mammos_units as u
 import numpy as np
 import pytest
-from pydantic import ValidationError
 
 from mammos_mumag.parameters import Parameters
 
 
 def test_m_vect():
     """Test type-checking of parameter `m_vect`."""
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(m_vect=1)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(m_vect=1.0)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(m_vect=[1])
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(m_vect=[1, 2])
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(m_vect=[1, 2, 3, 4])
     par = Parameters(m_vect=np.array([1, 2, 3]))
-    assert par.m == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
+    assert par.m_vect == me.Entity("Vector", [1.0, 2.0, 3.0])
 
 
 def test_h_vect():
     """Test type-checking of parameter `h_vect`."""
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(h_vect=1)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(h_vect=1.0)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(h_vect=[1])
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(h_vect=[1, 2])
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         Parameters(h_vect=[1, 2, 3, 4])
     par = Parameters(h_vect=np.array([1, 2, 3]))
-    assert par.h == [1.0 / np.sqrt(14), 2.0 / np.sqrt(14), 3.0 / np.sqrt(14)]
+    assert par.h_vect == me.Entity("Vector", [1.0, 2.0, 3.0])
 
 
 def test_parameters_file(DATA, tmp_path):
