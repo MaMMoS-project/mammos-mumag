@@ -87,42 +87,42 @@ MCONTACT = {
 }
 
 
-class ParseError(Exception):
+class _ParseError(Exception):
     pass
 
 
-class UnsupportedElementError(Exception):
+class _UnsupportedElementError(Exception):
     pass
 
 
-class EndOfFileError(Exception):
+class _EndOfFileError(Exception):
     pass
 
 
-class EndOfSectionError(Exception):
+class _EndOfSectionError(Exception):
     pass
 
 
-def scanUnv(file, exclude):
+def _scanUnv(file, exclude):
     index = {}
     groups = {}
     nodes = []
     contact = set()
-    t = findSection(file)
+    t = _findSection(file)
     while t is not None:
         if t == UNV_NODES:
-            indexNodes(nodes, file)
+            _indexNodes(nodes, file)
         elif t == UNV_ELEMS:
-            indexElems(index, file, exclude)
+            _indexElems(index, file, exclude)
         elif t == UNV_GROUPS:
-            parseGroups(groups, contact, file)
+            _parseGroups(groups, contact, file)
         else:
-            skipSection(file)
-        t = findSection(file)
+            _skipSection(file)
+        t = _findSection(file)
     return nodes, index, groups, contact
 
 
-def findSection(file):
+def _findSection(file):
     secType = ""
     line = file.readline()
     while line and secType == "":
@@ -135,28 +135,28 @@ def findSection(file):
     return secType
 
 
-def skipSection(file):
+def _skipSection(file):
     line = file.readline()
     while not line.startswith(UNV_DELIM):
         line = file.readline()
 
 
-def indexNodes(nodes, file):
-    data = (file.tell(), countUnvNodes(file))
+def _indexNodes(nodes, file):
+    data = (file.tell(), _countUnvNodes(file))
     nodes.append(data)
 
 
-def countUnvNodes(file):
+def _countUnvNodes(file):
     num = 7
     cnt = 0
-    data = parse(file, num, 0b1)
+    data = _parse(file, num, 0b1)
     while data:
-        data = parse(file, num, 0b1)
+        data = _parse(file, num, 0b1)
         cnt += 1
     return cnt
 
 
-def static_vars(**kwargs):
+def _static_vars(**kwargs):
     def decorate(func):
         for k in kwargs:
             setattr(func, k, kwargs[k])
@@ -165,11 +165,11 @@ def static_vars(**kwargs):
     return decorate
 
 
-@static_vars(rem=[])
-def parse(f, num, pattern):
-    cache = filter(parse.rem, 0, pattern)
-    wCnt = len(parse.rem)
-    parse.rem = []
+@_static_vars(rem=[])
+def _parse(f, num, pattern):
+    cache = _filter(_parse.rem, 0, pattern)
+    wCnt = len(_parse.rem)
+    _parse.rem = []
     line = ""
     words = []
     while wCnt < num:
@@ -177,18 +177,18 @@ def parse(f, num, pattern):
         if line.startswith(UNV_DELIM):
             break
         words = line.split()
-        new = filter(words, wCnt, pattern)
+        new = _filter(words, wCnt, pattern)
         cache.extend(new)
         wCnt += len(words)
     diff = wCnt - num
     if diff > 0:
-        parse.rem = words[len(words) - diff :]
+        _parse.rem = words[len(words) - diff :]
     if cache and wCnt < num:
-        raise EndOfSectionError()
+        raise _EndOfSectionError()
     return cache
 
 
-def filter(words, i, pattern):
+def _filter(words, i, pattern):
     ret = []
     for v in words:
         if ((1 << i) & pattern) > 0:
@@ -197,54 +197,54 @@ def filter(words, i, pattern):
     return ret
 
 
-def indexElems(index, file, exclude):
+def _indexElems(index, file, exclude):
     posPrev = file.tell()
-    curr = nextType(file)
+    curr = _nextType(file)
     prev = curr
     count = 0
     while curr is not None:
         count += 1
         pos = file.tell()
-        curr = nextType(file)
+        curr = _nextType(file)
         if curr != prev:
             if prev not in exclude:
                 data = (posPrev, count)
-                regIndex(prev, data, index)
+                _regIndex(prev, data, index)
             posPrev = pos
             prev = curr
             count = 0
 
 
-def regIndex(t, data, index):
+def _regIndex(t, data, index):
     list = index.get(t, [])
     list.append(data)
     index[t] = list
 
 
-def nextType(file):
-    data = parse(file, 6, 0b100010)
+def _nextType(file):
+    data = _parse(file, 6, 0b100010)
     if data:
         t = data[0]
         n = int(data[1])
         if t in UNV_BEAM:
             n += 3
-        data = parse(file, n, 0b1)
+        data = _parse(file, n, 0b1)
         if not data:
-            raise EndOfSectionError()
+            raise _EndOfSectionError()
         return t
     return None
 
 
-def parseGroups(groups, contact, file):
-    data = parse(file, 9, 0b110000000)
+def _parseGroups(groups, contact, file):
+    data = _parse(file, 9, 0b110000000)
     while data:
         num = int(data[0])
         group = data[1]
         elems = []
         while num > 0:
-            data = parse(file, 4, 0b0010)
+            data = _parse(file, 4, 0b0010)
             if not data:
-                raise EndOfSectionError()
+                raise _EndOfSectionError()
             (entity,) = data
             elems.append(entity)
             num -= 1
@@ -253,24 +253,24 @@ def parseGroups(groups, contact, file):
         else:
             for e in elems:
                 groups[e] = group
-        data = parse(file, 9, 0b110000000)
+        data = _parse(file, 9, 0b110000000)
 
 
-def writeFly(nodes, groups, index, contact, unvFile, flyFile, exclude):
-    writeHeader(flyFile)
-    convertNodes(nodes, unvFile, flyFile)
-    convertElemsContact(index, groups, contact, unvFile, flyFile)
+def _writeFly(nodes, groups, index, contact, unvFile, flyFile, exclude):
+    _writeHeader(flyFile)
+    _convertNodes(nodes, unvFile, flyFile)
+    _convertElemsContact(index, groups, contact, unvFile, flyFile)
     if UNV_index[2].issubset(exclude):  # if 2D is excluded
-        writeFooter(flyFile)
+        _writeFooter(flyFile)
     else:
-        writeFooter2(flyFile)
+        _writeFooter2(flyFile)
 
 
-def writeHeader(file):
+def _writeHeader(file):
     file.write(FLY_MESH_NAME + "\n")
 
 
-def convertNodes(nodes, unvFile, flyFile):
+def _convertNodes(nodes, unvFile, flyFile):
     sum = 0
     for pos, num in nodes:
         sum += num
@@ -278,14 +278,14 @@ def convertNodes(nodes, unvFile, flyFile):
     for pos, num in nodes:
         unvFile.seek(pos)
         while num > 0:
-            nId, x, y, z = parseNode(unvFile)
+            nId, x, y, z = _parseNode(unvFile)
             flyFile.write(
                 nId + " " + nId + " 0 " + str(x) + " " + str(y) + " " + str(z) + "\n"
             )
             num -= 1
 
 
-def writeFooter(fly):
+def _writeFooter(fly):
     fly.write("""Tri3 0
 Tri3_Contact 0
 Point1 0
@@ -293,18 +293,18 @@ Tags
 """)
 
 
-def writeFooter2(fly):
+def _writeFooter2(fly):
     fly.write("""Tri3_Contact 0
 Point1 0
 Tags
 """)
 
 
-def parseNode(file):
-    return parse(file, 7, 0b1110001)
+def _parseNode(file):
+    return _parse(file, 7, 0b1110001)
 
 
-def convertElemsContact(index, groups, contact, unv, fly):
+def _convertElemsContact(index, groups, contact, unv, fly):
     contactBuff = {}
     eCnt = 0
     for t, data in index.items():
@@ -312,22 +312,22 @@ def convertElemsContact(index, groups, contact, unv, fly):
         for pos, num in data:
             unv.seek(pos)
             while num > 0:
-                eId, ns = parseElem(t, unv)
+                eId, ns = _parseElem(t, unv)
                 grp = groups.get(eId, "-1")
                 line = grp + " " + " ".join(ns) + "\n"
                 if eId in contact:
                     sif = MCONTACT[t]
-                    addTo(contactBuff, sif, line)
+                    _addTo(contactBuff, sif, line)
                 else:
                     buff.append(line)
                 num -= 1
         if buff:
-            eCnt = writeBuffer(fly, buff, t, MNORMAL)
+            eCnt = _writeBuffer(fly, buff, t, MNORMAL)
     for sif, buff in contactBuff.items():
-        writeBuffer(fly, buff, sif, i=eCnt)
+        _writeBuffer(fly, buff, sif, i=eCnt)
 
 
-def writeBuffer(f, b, t, m=None, i=1):
+def _writeBuffer(f, b, t, m=None, i=1):
     if m is not None:
         t = m[t]
     f.write("%s %d\n" % (t, len(b)))
@@ -337,24 +337,24 @@ def writeBuffer(f, b, t, m=None, i=1):
     return i
 
 
-def addTo(m, k, d):
+def _addTo(m, k, d):
     ls = m.get(k, [])
     ls.append(d)
     m[k] = ls
 
 
-def parseElem(t, file):
-    eId, t, nStr = parse(file, 6, 0b100011)
+def _parseElem(t, file):
+    eId, t, nStr = _parse(file, 6, 0b100011)
     n = int(nStr)
     p = ~0b0
     if t in UNV_BEAM:
         n += 3
         p = ~0b111
-    data = parse(file, n, p)
+    data = _parse(file, n, p)
     return eId, data
 
 
-def get_exclude_set(exclude_list):
+def _get_exclude_set(exclude_list):
     return functools.reduce(
         lambda x, y: x.union(y),
         [UNV_index[i] for i in exclude_list],
@@ -379,8 +379,8 @@ def convert(
     infile = open(unv_path)
     pathlib.Path(fly_path).parent.mkdir(exist_ok=True, parents=True)
     outfile = open(fly_path, "w")
-    exclude_set = get_exclude_set(exclude_list)
-    nodes, index, groups, contact = scanUnv(infile, exclude_set)
-    writeFly(nodes, groups, index, contact, infile, outfile, exclude_set)
+    exclude_set = _get_exclude_set(exclude_list)
+    nodes, index, groups, contact = _scanUnv(infile, exclude_set)
+    _writeFly(nodes, groups, index, contact, infile, outfile, exclude_set)
     infile.close()
     outfile.close()
