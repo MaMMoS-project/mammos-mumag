@@ -1,4 +1,53 @@
 {
+  "creators": [
+    {
+      "name": "Schrefl, Thomas",
+      "orcid": "0000-0002-0871-0520",
+      "affiliation": "University for Continuing Education Krems"
+    },
+    {
+      "name": "Pathak, Swapneel Amit",
+      "orcid": "0000-0003-3840-955X",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter"
+    },
+    {
+      "name": "Petrocchi, Andrea",
+      "orcid": "0009-0005-1867-6732",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter"
+    },
+    {
+      "name": "Holt, Samuel",
+      "orcid": "0000-0003-3323-8958",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter"
+    },
+    {
+      "name": "Lang, Martin",
+      "orcid": "0000-0001-7104-7867",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter"
+    },
+    {
+      "name": "Adams, Michael",
+      "orcid": "0000-0001-9269-8087",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter"
+    },
+    {
+      "name": "Fangohr, Hans",
+      "orcid": "0000-0001-5494-7193",
+      "affiliation": "Max Planck Institute for the Structure and Dynamics of Matter, European XFEL GmbH, University of Southampton"
+    }
+  ],
+  "title": "mammos-mumag",
+  "description": "Finite element micromagnetic simulation tool.",
+  "upload_type": "software",
+  "license": "mit",
+  "language": "eng",
+  "keywords": [
+    "micromagnetics",
+    "finite element method",
+    "magnetic materials",
+    "hysteresis",
+    "MaMMoS"
+  ],
   "grants": [
     {
       "id": "10.13039/501100000780::101135546"
