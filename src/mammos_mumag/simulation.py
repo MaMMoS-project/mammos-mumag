@@ -72,19 +72,31 @@ class Simulation:
         if self.parameters_filepath is not None:
             self.parameters = Parameters(filepath=self.parameters_filepath)
 
-    def check_attribute(self, *args) -> None:
+    def _check_attributes(self, *args) -> None:
         """Check existence of attributes.
 
+        As attributes to the :py:class:`~mammos_mumag.simulation.Simulation` class can
+        be added at different stages, this check is postponed to the moment when the
+        script is actually executed. If one or more attributes are missing, errors
+        are raised.
+
         Args:
-            *args: Attribtes to check.
+            *args: Attributes to check.
 
         Raises:
-            AttributeError: Attribute has not been defined yet.
+            AttributeError: One or more attributes from the argument list have not been
+                defined yet.
 
         """
+        missing_attributes = []
         for attr in args:
             if self.__getattribute__(attr) is None:
-                raise AttributeError(f"Attribute `{attr}` has not been defined yet.")
+                missing_attributes.append(attr)
+        if missing_attributes:
+            raise AttributeError(
+                "The following attributes are required and have not been defined yet: "
+                f"{', '.join(missing_attributes)}"
+            )
 
     def check_numgrains(self) -> None:
         """Check that the number of grains match for mesh and material class."""
@@ -177,7 +189,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
+        self._check_attributes("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -215,7 +227,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
+        self._check_attributes("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -278,7 +290,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
+        self._check_attributes("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -330,7 +342,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
+        self._check_attributes("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -358,7 +370,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
+        self._check_attributes("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -388,7 +400,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
+        self._check_attributes("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -414,7 +426,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials")
+        self._check_attributes("mesh", "materials")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
@@ -440,7 +452,7 @@ class Simulation:
         """
         outdir = pathlib.Path(outdir)
         outdir.mkdir(exist_ok=True, parents=True)
-        self.check_attribute("mesh", "materials", "parameters")
+        self._check_attributes("mesh", "materials", "parameters")
         self.check_numgrains()
         self.mesh.write(outdir / f"{name}.fly")
         self.materials.write_krn(outdir / f"{name}.krn")
