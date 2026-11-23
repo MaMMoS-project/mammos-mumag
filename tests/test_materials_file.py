@@ -3,7 +3,6 @@
 import mammos_entity as me
 import mammos_units as u
 import pytest
-from pydantic import ValidationError
 
 from mammos_mumag.materials import MaterialDomain, Materials
 
@@ -166,7 +165,7 @@ def test_wrong_domains():
 
     All tests are supposed to raise `ValidationError`.
     """
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         MaterialDomain(K1="K1")
 
 
