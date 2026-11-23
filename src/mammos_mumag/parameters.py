@@ -226,12 +226,14 @@ class Parameters:
         initial_state = pars["initial state"]
         if "state" in initial_state:
             self.state = str(initial_state["state"])
-        self.m_vect = [
-            float(initial_state["mx"]),
-            float(initial_state["my"]),
-            float(initial_state["mz"]),
-        ]
-
+        self.m_vect = me.Entity(
+            "Vector",
+            [
+                float(initial_state["mx"]),
+                float(initial_state["my"]),
+                float(initial_state["mz"]),
+            ],
+        )
         field = pars["field"]
         if "hmag_on" in field:
             self.h_mag_on = bool(field["hmag_on"])
@@ -244,11 +246,14 @@ class Parameters:
         self.h_step = me.Entity(
             "ExternalMagneticField", (float(field["hstep"]) * u.T).to(u.A / u.m)
         )
-        self.h_vect = [
-            float(field["hx"]),
-            float(field["hy"]),
-            float(field["hz"]),
-        ]
+        self.h_vect = me.Entity(
+            "Vector",
+            [
+                float(field["hx"]),
+                float(field["hy"]),
+                float(field["hz"]),
+            ],
+        )
         if "mstep" in field:
             self.m_step = me.Entity(
                 "Magnetization", (float(field["mstep"]) * u.T).to(u.A / u.m)
