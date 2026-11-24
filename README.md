@@ -57,6 +57,23 @@ doi: [10.1109/TMAG.2026.3689962](https://doi.org/10.1109/TMAG.2026.3689962).
 }
 ```
 
+The software is also archived on Zenodo. To cite it independently of a specific
+release, use the Concept DOI:
+
+T. Schrefl et al., *mammos-mumag* [Software], Zenodo, 2025,
+doi: [10.5281/zenodo.15755164](https://doi.org/10.5281/zenodo.15755164).
+
+```bibtex
+@software{mammos_mumag_zenodo,
+  author={Schrefl, Thomas and Pathak, Swapneel Amit and Petrocchi, Andrea and Holt, Samuel and Lang, Martin and Adams, Michael and Fangohr, Hans},
+  title={mammos-mumag},
+  year={2025},
+  publisher={Zenodo},
+  doi={10.5281/zenodo.15755164},
+  url={https://doi.org/10.5281/zenodo.15755164}
+}
+```
+
 ## Acknowledgements
 
 This software has been supported by the European Union’s Horizon Europe research and innovation programme under grant agreement No 101135546 [MaMMoS](https://mammos-project.github.io/).
