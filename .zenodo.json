@@ -41,13 +41,6 @@
   "upload_type": "software",
   "license": "mit",
   "language": "eng",
-  "keywords": [
-    "micromagnetics",
-    "finite element method",
-    "magnetic materials",
-    "hysteresis",
-    "MaMMoS"
-  ],
   "grants": [
     {
       "id": "10.13039/501100000780::101135546"
